@@ -932,14 +932,24 @@
           </div>
         </div>
       </div>
-      <!-- Car 2: Mazda5 -->
+      <!-- Car 2: Mazda5 / KOMBO -->
       <div class="car-card">
-        <div class="car-img-placeholder">
-          🚙
-          <span class="car-type-badge badge-kaytto">Käyttöauto</span>
+        <div class="car-carousel" id="carousel-kmb">
+          <div class="carousel-track" id="track-kmb">
+            <div class="carousel-slide"><img src="KMB1.jpeg" alt="Kombo 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
+            <div class="carousel-slide"><img src="KMB2.jpeg" alt="Kombo 2" loading="lazy"></div>
+            <div class="carousel-slide"><img src="KMB3.jpeg" alt="Kombo 3" loading="lazy"></div>
+          </div>
+          <button class="carousel-btn prev" onclick="carouselMove('kmb',-1)">&#8249;</button>
+          <button class="carousel-btn next" onclick="carouselMove('kmb', 1)">&#8250;</button>
+          <div class="carousel-dots" id="dots-kmb">
+            <div class="carousel-dot active" onclick="carouselGo('kmb',0)"></div>
+            <div class="carousel-dot" onclick="carouselGo('kmb',1)"></div>
+            <div class="carousel-dot" onclick="carouselGo('kmb',2)"></div>
+          </div>
         </div>
         <div class="car-body">
-          <div class="car-name">Mazda5</div>
+          <div class="car-name">"Kombo" – Mazda5</div>
           <div class="car-owner">Omistaja: Wigeon</div>
           <div class="car-specs">
             <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">2013</span></div>
@@ -986,6 +996,8 @@
             <div class="carousel-slide"><img src="XVF2.png" alt="Falbina 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="XVF3.png" alt="Falbina 3" loading="lazy"></div>
             <div class="carousel-slide"><img src="XVF4.png" alt="Falbina 4" loading="lazy"></div>
+            <div class="carousel-slide"><img src="XVF5.jpeg" alt="Falbina 5" loading="lazy"></div>
+            <div class="carousel-slide"><img src="XVF6.jpeg" alt="Falbina 6" loading="lazy"></div>
           </div>
           <button class="carousel-btn prev" onclick="carouselMove('xvf',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('xvf', 1)">&#8250;</button>
@@ -994,6 +1006,8 @@
             <div class="carousel-dot" onclick="carouselGo('xvf',1)"></div>
             <div class="carousel-dot" onclick="carouselGo('xvf',2)"></div>
             <div class="carousel-dot" onclick="carouselGo('xvf',3)"></div>
+            <div class="carousel-dot" onclick="carouselGo('xvf',4)"></div>
+            <div class="carousel-dot" onclick="carouselGo('xvf',5)"></div>
           </div>
         </div>
         <div class="car-body">
@@ -1007,9 +1021,168 @@
           </div>
         </div>
       </div>
-      <div class="car-card"><div class="car-img-placeholder" style="color:#333; flex-direction:column; gap:8px; font-size:2rem;">🔧<span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase; color:#444;">Pian lisää</span></div><div class="car-body"><div class="car-name" style="color:#444;">Tulossa katalogiin</div><div class="car-owner" style="color:#3a3a3a;">Omistaja: ???</div><div class="car-specs"><div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value" style="color:#444;">—</span></div></div></div></div>
-      <div class="car-card"><div class="car-img-placeholder" style="color:#333; flex-direction:column; gap:8px; font-size:2rem;">🔧<span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase; color:#444;">Pian lisää</span></div><div class="car-body"><div class="car-name" style="color:#444;">Tulossa katalogiin</div><div class="car-owner" style="color:#3a3a3a;">Omistaja: ???</div><div class="car-specs"><div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value" style="color:#444;">—</span></div></div></div></div>
-      <div class="car-card"><div class="car-img-placeholder" style="color:#333; flex-direction:column; gap:8px; font-size:2rem;">🔧<span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase; color:#444;">Pian lisää</span></div><div class="car-body"><div class="car-name" style="color:#444;">Tulossa katalogiin</div><div class="car-owner" style="color:#3a3a3a;">Omistaja: ???</div><div class="car-specs"><div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value" style="color:#444;">—</span></div><div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value" style="color:#444;">—</span></div></div></div></div>
+
+      <!-- Car 5: Herra Frangus / HRF -->
+      <div class="car-card">
+        <div class="car-carousel" id="carousel-hrf">
+          <div class="carousel-track" id="track-hrf">
+            <div class="carousel-slide"><img src="HRF1.jpeg" alt="Herra Frangus 1" loading="lazy"><span class="car-type-badge badge-kakkosauto" style="position:absolute;top:10px;right:10px;">Kakkosauto</span></div>
+            <div class="carousel-slide"><img src="HRF2.jpeg" alt="Herra Frangus 2" loading="lazy"></div>
+            <div class="carousel-slide"><img src="HRF3.jpeg" alt="Herra Frangus 3" loading="lazy"></div>
+            <div class="carousel-slide"><img src="HRF4.png" alt="Herra Frangus 4" loading="lazy"></div>
+            <div class="carousel-slide"><img src="HRF5.png" alt="Herra Frangus 5" loading="lazy"></div>
+            <div class="carousel-slide"><img src="HRF6.jpeg" alt="Herra Frangus 6" loading="lazy"></div>
+            <div class="carousel-slide"><img src="HRF7.png" alt="Herra Frangus 7" loading="lazy"></div>
+            <div class="carousel-slide"><img src="HRF8.jpeg" alt="Herra Frangus 8" loading="lazy"></div>
+          </div>
+          <button class="carousel-btn prev" onclick="carouselMove('hrf',-1)">&#8249;</button>
+          <button class="carousel-btn next" onclick="carouselMove('hrf', 1)">&#8250;</button>
+          <div class="carousel-dots" id="dots-hrf">
+            <div class="carousel-dot active" onclick="carouselGo('hrf',0)"></div>
+            <div class="carousel-dot" onclick="carouselGo('hrf',1)"></div>
+            <div class="carousel-dot" onclick="carouselGo('hrf',2)"></div>
+            <div class="carousel-dot" onclick="carouselGo('hrf',3)"></div>
+            <div class="carousel-dot" onclick="carouselGo('hrf',4)"></div>
+            <div class="carousel-dot" onclick="carouselGo('hrf',5)"></div>
+            <div class="carousel-dot" onclick="carouselGo('hrf',6)"></div>
+            <div class="carousel-dot" onclick="carouselGo('hrf',7)"></div>
+          </div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">"Herra Frangus" – Volvo V70</div>
+          <div class="car-owner">Omistaja: Wigeon</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Kakkosauto</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 6: Duckling -->
+      <div class="car-card">
+        <div class="car-carousel" id="carousel-jup">
+          <div class="carousel-track" id="track-jup">
+            <div class="carousel-slide"><img src="JUPITER.jpeg" alt="Duckling" loading="lazy"><span class="car-type-badge badge-pommi" style="position:absolute;top:10px;right:10px;">Tonnin pommi</span></div>
+          </div>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-jup"></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Tonnin pommi</div>
+          <div class="car-owner">Omistaja: Duckling</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Tonnin pommi</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 7: XGX - Mallardin projekti Volvo -->
+      <div class="car-card">
+        <div class="car-carousel" id="carousel-xgx">
+          <div class="carousel-track" id="track-xgx">
+            <div class="carousel-slide"><img src="XGX1.jpeg" alt="Volvo projekti" loading="lazy"><span class="car-type-badge badge-projekti" style="position:absolute;top:10px;right:10px;">Projekti</span></div>
+          </div>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-xgx"></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Volvo 850</div>
+          <div class="car-owner">Omistaja: Mallard</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Projekti</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 8: XXJ - Mallardin käyttis Volvo V90 -->
+      <div class="car-card">
+        <div class="car-carousel" id="carousel-xxj">
+          <div class="carousel-track" id="track-xxj">
+            <div class="carousel-slide"><img src="XXJ1.png" alt="Volvo V90 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
+            <div class="carousel-slide"><img src="XXJ2.png" alt="Volvo V90 2" loading="lazy"></div>
+            <div class="carousel-slide"><img src="XXJ3.jpeg" alt="Volvo V90 3" loading="lazy"></div>
+          </div>
+          <button class="carousel-btn prev" onclick="carouselMove('xxj',-1)">&#8249;</button>
+          <button class="carousel-btn next" onclick="carouselMove('xxj', 1)">&#8250;</button>
+          <div class="carousel-dots" id="dots-xxj">
+            <div class="carousel-dot active" onclick="carouselGo('xxj',0)"></div>
+            <div class="carousel-dot" onclick="carouselGo('xxj',1)"></div>
+            <div class="carousel-dot" onclick="carouselGo('xxj',2)"></div>
+          </div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Volvo V90</div>
+          <div class="car-owner">Omistaja: Mallard</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Käyttöauto</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 9: MZB - Mallardin myyty BMW -->
+      <div class="car-card">
+        <div class="car-carousel" id="carousel-mzb">
+          <div class="carousel-track" id="track-mzb">
+            <div class="carousel-slide"><img src="MZB1.png" alt="BMW myyty" loading="lazy"><span class="car-type-badge badge-myyty" style="position:absolute;top:10px;right:10px;">Myyty</span></div>
+          </div>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-mzb"></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">BMW 3-sarja</div>
+          <div class="car-owner">Ent. omistaja: Mallard</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Myyty</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 10: ZNL - Mallardin myyty Passat -->
+      <div class="car-card">
+        <div class="car-carousel" id="carousel-znl">
+          <div class="carousel-track" id="track-znl">
+            <div class="carousel-slide"><img src="ZNL1.jpeg" alt="Passat 1" loading="lazy"><span class="car-type-badge badge-myyty" style="position:absolute;top:10px;right:10px;">Myyty</span></div>
+            <div class="carousel-slide"><img src="ZNL2.jpeg" alt="Passat 2" loading="lazy"></div>
+            <div class="carousel-slide"><img src="ZNL3.jpeg" alt="Passat 3" loading="lazy"></div>
+          </div>
+          <button class="carousel-btn prev" onclick="carouselMove('znl',-1)">&#8249;</button>
+          <button class="carousel-btn next" onclick="carouselMove('znl', 1)">&#8250;</button>
+          <div class="carousel-dots" id="dots-znl">
+            <div class="carousel-dot active" onclick="carouselGo('znl',0)"></div>
+            <div class="carousel-dot" onclick="carouselGo('znl',1)"></div>
+            <div class="carousel-dot" onclick="carouselGo('znl',2)"></div>
+          </div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">VW Passat GTE</div>
+          <div class="car-owner">Ent. omistaja: Mallard</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Myyty</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
     </div>
     <p style="text-align:center; margin-top:2rem; font-style:italic; font-size:0.85rem; color: var(--lightgray);">
       Autotiedot täydennetään jäseniltä saatujen tietojen perusteella. Autokuvat lisätään myöhemmin.
@@ -1196,7 +1369,7 @@
   }
 
   // Init all on load
-  ['vgs','lkp','xvf'].forEach(init);
+  ['vgs','lkp','xvf','kmb','hrf','jup','xgx','xxj','mzb','znl'].forEach(init);
 })();
 </script>
 
