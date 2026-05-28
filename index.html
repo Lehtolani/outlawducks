@@ -730,11 +730,11 @@
   .vasikka-close:hover { color: var(--lightgray); }
 
   /* RULES MOBILE PAGINATION */
-  .rules-page { display: none; }
+  .rules-page { display: contents; } /* desktop: kaikki näkyy */
   .rules-page.active { display: contents; }
 
   .rules-nav {
-    display: none;
+    display: none; /* piilotettu desktopilla */
     align-items: center; justify-content: space-between;
     margin-top: 1.5rem; gap: 1rem;
   }
@@ -762,8 +762,72 @@
 
   @media (max-width: 768px) {
     .rules-nav { display: flex; }
-    .rules-page { display: none !important; }
-    .rules-page.active { display: contents !important; }
+    .rules-page { display: none !important; } /* mobiilissa piilotetaan */
+    .rules-page.active { display: contents !important; } /* näytetään vain aktiivinen */
+  }
+
+  /* TAUSTAGRAFIIKKA */
+  #tarina { position: relative; overflow: hidden; }
+  #tarina::after {
+    content: '🦆';
+    position: absolute;
+    font-size: 18rem; opacity: 0.025;
+    filter: grayscale(1);
+    right: -2rem; bottom: -2rem;
+    transform: scaleX(-1) rotate(-15deg);
+    pointer-events: none; z-index: 0; line-height: 1;
+  }
+
+  #jasenet { position: relative; overflow: hidden; }
+  #jasenet::before {
+    content: '🦢';
+    position: absolute;
+    font-size: 14rem; opacity: 0.025;
+    filter: grayscale(1);
+    left: -2rem; top: 2rem;
+    transform: rotate(10deg);
+    pointer-events: none; z-index: 0; line-height: 1;
+  }
+
+  #saannot {
+    background-image: repeating-linear-gradient(
+      -55deg,
+      transparent, transparent 50px,
+      rgba(201,168,76,0.018) 50px,
+      rgba(201,168,76,0.018) 52px
+    );
+  }
+
+  #autot { position: relative; overflow: hidden; }
+  #autot::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 80px,
+      rgba(201,168,76,0.012) 80px,
+      rgba(201,168,76,0.012) 81px
+    );
+    pointer-events: none; z-index: 0;
+  }
+
+  #liity { position: relative; overflow: hidden; }
+  #liity::before {
+    content: '🦆';
+    position: absolute;
+    font-size: 30rem; opacity: 0.02;
+    filter: grayscale(1);
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    pointer-events: none; z-index: 0; line-height: 1;
+  }
+
+  #kauppa { position: relative; overflow: hidden; }
+  #kauppa::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 110%, rgba(201,168,76,0.05) 0%, transparent 65%);
+    pointer-events: none; z-index: 0;
   }
 
   /* CATALOG FILTERS */
