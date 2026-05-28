@@ -729,21 +729,183 @@
 
   .vasikka-close:hover { color: var(--lightgray); }
 
+  /* RULES MOBILE PAGINATION */
+  .rules-page { display: none; }
+  .rules-page.active { display: contents; }
+
+  .rules-nav {
+    display: none;
+    align-items: center; justify-content: space-between;
+    margin-top: 1.5rem; gap: 1rem;
+  }
+
+  .rules-nav-btn {
+    font-family: var(--font-body);
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 0.6rem 1.2rem; border-radius: 2px;
+    cursor: pointer; transition: all 0.2s;
+    flex: 1;
+  }
+
+  .rules-nav-btn:hover { background: var(--midgray); border-color: var(--gold); }
+  .rules-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .rules-page-indicator {
+    font-family: var(--font-body);
+    font-size: 0.75rem; color: var(--lightgray);
+    letter-spacing: 0.1em; text-align: center;
+    min-width: 60px;
+  }
+
+  @media (max-width: 768px) {
+    .rules-nav { display: flex; }
+    .rules-page { display: none !important; }
+    .rules-page.active { display: contents !important; }
+  }
+
+  /* CATALOG FILTERS */
+  .catalog-filters {
+    display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;
+  }
+
+  .filter-btn {
+    font-family: var(--font-body);
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--bone); background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 0.5rem 1.1rem; border-radius: 2px;
+    cursor: pointer; transition: all 0.2s;
+  }
+
+  .filter-btn:hover { border-color: rgba(201,168,76,0.6); color: var(--gold); }
+  .filter-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
+  .car-card { transition: opacity 0.25s, transform 0.25s; }
+  .car-card.hidden { display: none; }
+
+  /* MYYTY OVERLAY */
+  .car-card.sold { position: relative; }
+  .car-card.sold .car-carousel { filter: grayscale(0.85) brightness(0.6); }
+  .sold-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 220px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 4; pointer-events: none;
+    flex-direction: column; gap: 4px;
+  }
+  .sold-icon { font-size: 3rem; filter: drop-shadow(0 2px 8px #000); }
+  .sold-label {
+    font-family: var(--font-display);
+    font-size: 1.1rem; letter-spacing: 0.15em;
+    color: #888; text-transform: uppercase;
+    text-shadow: 0 1px 4px #000;
+  }
+
+  /* WALKING DUCK */
+  #walking-duck {
+    position: fixed;
+    bottom: 20px;
+    font-size: 2rem;
+    z-index: 9998;
+    pointer-events: none;
+    user-select: none;
+    transition: transform 0.1s;
+  }
+
+  @keyframes duckwaddle {
+    0%, 100% { transform: rotate(-8deg) translateY(0); }
+    50% { transform: rotate(8deg) translateY(-3px); }
+  }
+
+  /* HAMBURGER MENU */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 6px;
+    background: none;
+    border: none;
+    z-index: 1001;
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--bone);
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-mobile-menu {
+    display: none;
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: rgba(13,13,13,0.98);
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    padding: 1rem 0;
+  }
+
+  .nav-mobile-menu.open { display: block; }
+
+  .nav-mobile-menu a {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    padding: 0.75rem 2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .nav-mobile-menu a:hover { color: var(--gold); background: rgba(201,168,76,0.05); }
+
   @media (max-width: 768px) {
     nav { padding: 0 1rem; }
-    .nav-links { gap: 1rem; }
-    .nav-links li:nth-child(n+4) { display: none; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .duck-counter { display: none; }
     .story-grid { grid-template-columns: 1fr; gap: 2rem; }
     .members-grid { grid-template-columns: 1fr 1fr; }
     .cars-grid { grid-template-columns: 1fr; }
+    .car-carousel { height: 180px; }
+    .sold-overlay { height: 180px; }
     .rules-grid { grid-template-columns: 1fr; }
     .join-steps { grid-template-columns: 1fr; }
     .shop-grid { grid-template-columns: 1fr; }
-    .duck-counter { display: none; }
+    .section-inner { padding: 3rem 1.25rem; }
+    .hero h1 { font-size: clamp(2.5rem, 12vw, 5rem); }
   }
 </style>
 </head>
 <body>
+
+<!-- MOBILE MENU -->
+<div class="nav-mobile-menu" id="mobile-menu">
+  <a href="#tarina" onclick="closeMobileMenu()">Tarina</a>
+  <a href="#jasenet" onclick="closeMobileMenu()">Jäsenet</a>
+  <a href="#autot" onclick="closeMobileMenu()">Autot</a>
+  <a href="#saannot" onclick="closeMobileMenu()">Säännöt</a>
+  <a href="#liity" onclick="closeMobileMenu()">Liity</a>
+  <a href="#kauppa" onclick="closeMobileMenu()">Kauppa</a>
+  <a href="tapahtumat.html" onclick="closeMobileMenu()">Tapahtumat</a>
+</div>
 
 <nav>
   <a href="#" class="nav-logo">
@@ -762,10 +924,15 @@
     <li><a href="#kauppa">Kauppa</a></li>
     <li><a href="tapahtumat.html">Tapahtumat</a></li>
   </ul>
-  <div class="duck-counter" id="duck-counter" title="Kuvatut ankat">
-    <span class="duck-counter-icon">📸</span>
-    <span class="duck-counter-num" id="duck-count">0</span>
-    <span>/ 5</span>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <div class="duck-counter" id="duck-counter" title="Kuvatut ankat">
+      <span class="duck-counter-icon">📸</span>
+      <span class="duck-counter-num" id="duck-count">0</span>
+      <span>/ 5</span>
+    </div>
+    <button class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Valikko">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -789,26 +956,19 @@
     <div class="section-label">Alkuperä</div>
     <h2 class="section-title">Tarina</h2>
     <div class="section-divider"></div>
-    <div class="story-grid">
-      <div class="story-text">
-        <p>Kaikki alko linnusta. Sveitsin Könizissä, huhtikuussa 2025, tolppakamera otti kuvan rikoksen tekijästä. Nopeutta oli 52 km/h 30 km/h alueella. Syyllinen ei ollut ylinopeudesta tunnettu nuori mies tai pakoauton kuljettaja. Se oli sorsa.</p>
-        <p>Ja kuinka se sattuikaan, sama lintu oli käynyt samassa paikassa, samaan aikaan, täsmälleen samalla nopeudella jo vuonna 2018. Seitsemän vuotta aiemmin. Toistamiseen kiinni, täysin piittaamatta siitä, mitä laki sanoo.</p>
-        <p>Tämä ei ole kertomus paatuneesta sorsasta. Tämä on kertomus luontokappaleesta, joka ei vain voi olla se mitä on; vapaa, nopea ja täysin vastuuton aikatauluille.</p>
-        <p>Kesällä 2025 joukko ouluaisia autoihmisiä löysi itsensä saman pöydän äärestä. Yhteistä oli rakkaus koneisiin, tiehen ja siihen tunteeseen kun moottori laulaa juuri oikein. Outlaw Ducks TC syntyi. Ei vallankumouksena, vaan yhteisönä.</p>
-        <p>Jos ajammekin vahingossa ylinopeutta tutkaan, se on vain luonnon kutsua. Eihän luontokappaleita voi vastuuttaa pienestä ylinopeudesta. Pliis?</p>
-      </div>
-      <div>
-        <div class="story-badge">
-          Huhtikuussa 2025 sveitsiläinen liikennevalvontakamera nappasi sorsan lentämässä 52 km/h taajaman 30 km/h alueella. Pahempaa: sama yksilö oli kiinni täsmälleen samassa kohdassa, samana päivänä seitsemän vuotta aikaisemmin. Poliisi totesi, että eihän sorsa voi olla rikosoikeudellisessa vastuussa ja jätti sakon antamatta. Tästä nimi Outlaw Ducks.
-          <span class="badge-source">Inspiraatiomme — BBC News / Gemeinde Köniz, 2025</span>
-        </div>
-        <div class="disclaimer-strip">
-          ⚠️ Outlaw Ducks TC ei suosi liikennesääntöjen tahallista rikkomista. Tämä on huumoria. Ajakaa turvallisesti ja jos pitää hurjastella, senkin voi tehdä fiksummin.
-        </div>
-        <div class="story-badge" style="margin-top:1.5rem;">
-          Porukka koostuu täysi-ikäisistä, jotka tykkäävät värkätä autoja. Tai eihän siitä kukaan tykkää, mutta värkkää silti.
-          <span class="badge-source">Outlaw Ducks TC — Oulu, kesä 2025</span>
-        </div>
+
+    <div style="max-width: 720px;">
+      <p style="color:var(--bone); margin-bottom:1.2rem; font-size:1rem; line-height:1.8;">
+        Kaikki alko linnusta. Sveitsin Könizissä, huhtikuussa 2025, tolppakamera otti kuvan rikoksen tekijästä — 52 km/h, 30-alueella. Syyllinen ei ollut ylinopeudesta tunnettu nuori mies. Se oli sorsa. Sama lintu oli kiinni täsmälleen samassa paikassa, samana päivänä, seitsemän vuotta aiemmin. Poliisi totesi, ettei sorsaa voi asettaa rikosoikeudelliseen vastuuseen ja jätti sakon antamatta. Tästä nimi Outlaw Ducks.
+      </p>
+      <p style="color:var(--bone); margin-bottom:1.2rem; font-size:1rem; line-height:1.8;">
+        Kesällä 2025 joukko ouluaisia autoihmisiä löysi itsensä saman pöydän äärestä. Yhteistä oli rakkaus koneisiin, tiehen ja siihen tunteeseen kun moottori laulaa juuri oikein. Outlaw Ducks TC syntyi — ei vallankumouksena, vaan yhteisönä.
+      </p>
+      <p style="color:var(--bone); margin-bottom:2rem; font-size:1rem; line-height:1.8;">
+        Porukka koostuu täysi-ikäisistä, jotka tykkäävät värkätä autoja. Tai eihän siitä kukaan tykkää, mutta värkkää silti. Jos ajammekin vahingossa ylinopeutta tutkaan, se on vain luonnon kutsua — eihän luontokappaleita voi vastuuttaa. Pliis?
+      </p>
+      <div class="disclaimer-strip" style="margin: 0;">
+        ⚠️ Outlaw Ducks TC ei suosi liikennesääntöjen tahallista rikkomista. Tämä on huumoria. Ajakaa turvallisesti.
       </div>
     </div>
   </div>
@@ -859,22 +1019,6 @@
         <div class="member-info">
           <div class="member-callsign" style="color: #444;">???</div>
           <div class="member-role">Uusi jäsen</div>
-          <div class="member-desc" style="color:#555;">Tarina kirjoitetaan myöhemmin. Ehkä se oot sinä?</div>
-        </div>
-      </div>
-      <div class="member-card">
-        <div class="member-avatar" style="font-size:2rem; color: #444; flex-direction:column; gap:8px;"><span>🔒</span><span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span></div>
-        <div class="member-info">
-          <div class="member-callsign" style="color: #444;">???</div>
-          <div class="member-role">Uusi jäsen</div>
-          <div class="member-desc" style="color:#555;">Paikka auki. Löytyykö oikea lintu?</div>
-        </div>
-      </div>
-      <div class="member-card">
-        <div class="member-avatar" style="font-size:2rem; color: #444; flex-direction:column; gap:8px;"><span>🔒</span><span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span></div>
-        <div class="member-info">
-          <div class="member-callsign" style="color: #444;">???</div>
-          <div class="member-role">Uusi jäsen</div>
           <div class="member-desc" style="color:#555;">Vielä etsimättä. Rauhotettu vissii, joten elä ammu jos näät.</div>
         </div>
       </div>
@@ -889,20 +1033,26 @@
     <h2 class="section-title">Autot</h2>
     <div class="section-divider"></div>
 
-    <!-- KATEGORIALEGENDA -->
-    <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:2rem;">
-      <span class="car-type-badge badge-kaytto"    style="position:static;">Käyttöauto</span>
-      <span class="car-type-badge badge-pommi"     style="position:static;">Tonnin pommi</span>
-      <span class="car-type-badge badge-projekti"  style="position:static;">Projekti</span>
-      <span class="car-type-badge badge-nayttely"  style="position:static;">Näyttelyauto</span>
-      <span class="car-type-badge badge-kakkosauto"style="position:static;">Kakkosauto</span>
-      <span class="car-type-badge badge-tuhoutunut"style="position:static;">Tuhoutunut</span>
-      <span class="car-type-badge badge-myyty"     style="position:static;">Myyty</span>
+    <!-- SUODATTIMET -->
+    <div class="catalog-filters">
+      <button class="filter-btn active" onclick="showFeatured(this)">Suosikit</button>
+      <button class="filter-btn" onclick="filterCars('all', this)">Kaikki</button>
+      <button class="filter-btn" onclick="filterCars('mallard', this)">Mallard</button>
+      <button class="filter-btn" onclick="filterCars('wigeon', this)">Wigeon</button>
+      <button class="filter-btn" onclick="filterCars('goosander', this)">Goosander</button>
+      <button class="filter-btn" onclick="filterCars('duckling', this)">Duckling</button>
+      <button class="filter-btn" onclick="filterCars('kaytto', this)">Käyttöauto</button>
+      <button class="filter-btn" onclick="filterCars('pommi', this)">Tonnin pommi</button>
+      <button class="filter-btn" onclick="filterCars('projekti', this)">Projekti</button>
+      <button class="filter-btn" onclick="filterCars('nayttely', this)">Näyttelyauto</button>
+      <button class="filter-btn" onclick="filterCars('kakkosauto', this)">Kakkosauto</button>
+      <button class="filter-btn" onclick="filterCars('tuhoutunut', this)">Tuhoutunut</button>
+      <button class="filter-btn" onclick="filterCars('myyty', this)">Myyty</button>
     </div>
 
-    <div class="cars-grid">
+    <div class="cars-grid" id="cars-grid">
       <!-- Car 1: Renauldi -->
-      <div class="car-card">
+      <div class="car-card" data-owner="mallard" data-cat="pommi">
         <div class="car-carousel" id="carousel-vgs">
           <div class="carousel-track" id="track-vgs">
             <div class="carousel-slide"><img src="VGS1.png" alt="Renauldi 1" loading="lazy"><span class="car-type-badge badge-pommi" style="position:absolute;top:10px;right:10px;">Tonnin pommi</span></div>
@@ -933,7 +1083,7 @@
         </div>
       </div>
       <!-- Car 2: Mazda5 / KOMBO -->
-      <div class="car-card">
+      <div class="car-card" data-owner="wigeon" data-cat="kaytto">
         <div class="car-carousel" id="carousel-kmb">
           <div class="carousel-track" id="track-kmb">
             <div class="carousel-slide"><img src="KMB1.jpeg" alt="Kombo 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
@@ -960,7 +1110,7 @@
         </div>
       </div>
       <!-- Car 3: Golf Mk2 / LKP -->
-      <div class="car-card">
+      <div class="car-card" data-owner="goosander" data-cat="kaytto">
         <div class="car-carousel" id="carousel-lkp">
           <div class="carousel-track" id="track-lkp">
             <div class="carousel-slide"><img src="LKP1.jpg" alt="Golf Mk2 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
@@ -989,7 +1139,7 @@
         </div>
       </div>
       <!-- Car 4: Falbina -->
-      <div class="car-card">
+      <div class="car-card" data-owner="mallard" data-cat="projekti">
         <div class="car-carousel" id="carousel-xvf">
           <div class="carousel-track" id="track-xvf">
             <div class="carousel-slide"><img src="XVF1.png" alt="Falbina 1" loading="lazy"><span class="car-type-badge badge-projekti" style="position:absolute;top:10px;right:10px;">Projekti</span></div>
@@ -1023,7 +1173,7 @@
       </div>
 
       <!-- Car 5: Herra Frangus / HRF -->
-      <div class="car-card">
+      <div class="car-card" data-owner="wigeon" data-cat="kakkosauto">
         <div class="car-carousel" id="carousel-hrf">
           <div class="carousel-track" id="track-hrf">
             <div class="carousel-slide"><img src="HRF1.jpeg" alt="Herra Frangus 1" loading="lazy"><span class="car-type-badge badge-kakkosauto" style="position:absolute;top:10px;right:10px;">Kakkosauto</span></div>
@@ -1061,7 +1211,7 @@
       </div>
 
       <!-- Car 6: Duckling -->
-      <div class="car-card">
+      <div class="car-card" data-owner="duckling" data-cat="pommi">
         <div class="car-carousel" id="carousel-jup">
           <div class="carousel-track" id="track-jup">
             <div class="carousel-slide"><img src="JUPITER.jpeg" alt="Duckling" loading="lazy"><span class="car-type-badge badge-pommi" style="position:absolute;top:10px;right:10px;">Tonnin pommi</span></div>
@@ -1083,7 +1233,7 @@
       </div>
 
       <!-- Car 7: XGX - Mallardin projekti Volvo -->
-      <div class="car-card">
+      <div class="car-card" data-owner="mallard" data-cat="projekti">
         <div class="car-carousel" id="carousel-xgx">
           <div class="carousel-track" id="track-xgx">
             <div class="carousel-slide"><img src="XGX1.jpeg" alt="Volvo projekti" loading="lazy"><span class="car-type-badge badge-projekti" style="position:absolute;top:10px;right:10px;">Projekti</span></div>
@@ -1105,7 +1255,7 @@
       </div>
 
       <!-- Car 8: XXJ - Mallardin käyttis Volvo V90 -->
-      <div class="car-card">
+      <div class="car-card" data-owner="mallard" data-cat="kaytto">
         <div class="car-carousel" id="carousel-xxj">
           <div class="carousel-track" id="track-xxj">
             <div class="carousel-slide"><img src="XXJ1.png" alt="Volvo V90 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
@@ -1133,7 +1283,7 @@
       </div>
 
       <!-- Car 9: MZB - Mallardin myyty BMW -->
-      <div class="car-card">
+      <div class="car-card sold" data-owner="mallard" data-cat="myyty">
         <div class="car-carousel" id="carousel-mzb">
           <div class="carousel-track" id="track-mzb">
             <div class="carousel-slide"><img src="MZB1.png" alt="BMW myyty" loading="lazy"><span class="car-type-badge badge-myyty" style="position:absolute;top:10px;right:10px;">Myyty</span></div>
@@ -1141,6 +1291,7 @@
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
           <button class="carousel-btn next" style="display:none">&#8250;</button>
           <div class="carousel-dots" id="dots-mzb"></div>
+          <div class="sold-overlay"><div class="sold-icon">💸</div><div class="sold-label">Myyty</div></div>
         </div>
         <div class="car-body">
           <div class="car-name">BMW 3-sarja</div>
@@ -1155,7 +1306,7 @@
       </div>
 
       <!-- Car 10: ZNL - Mallardin myyty Passat -->
-      <div class="car-card">
+      <div class="car-card sold" data-owner="mallard" data-cat="myyty">
         <div class="car-carousel" id="carousel-znl">
           <div class="carousel-track" id="track-znl">
             <div class="carousel-slide"><img src="ZNL1.jpeg" alt="Passat 1" loading="lazy"><span class="car-type-badge badge-myyty" style="position:absolute;top:10px;right:10px;">Myyty</span></div>
@@ -1169,6 +1320,7 @@
             <div class="carousel-dot" onclick="carouselGo('znl',1)"></div>
             <div class="carousel-dot" onclick="carouselGo('znl',2)"></div>
           </div>
+          <div class="sold-overlay"><div class="sold-icon">💸</div><div class="sold-label">Myyty</div></div>
         </div>
         <div class="car-body">
           <div class="car-name">VW Passat GTE</div>
@@ -1196,24 +1348,36 @@
     <div class="section-label">Pelisäännöt</div>
     <h2 class="section-title">Säännöt</h2>
     <div class="section-divider"></div>
-    <div class="rules-grid">
-      <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Poliisia kuunnellaan. Aina. Ilman dramatiikkaa.</div></div>
-      <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Ei avointa rasismia, syrjintää tai turhaa draamaa — tässä porukassa tai sen nimissä.</div></div>
-      <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Arvojärjestystä noudatetaan. Johto on johto syystä.</div></div>
-      <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Kuljettajan ajoa ei kommentoida kesken ajon. Huomiot esitetään pysähdyksillä.</div></div>
-      <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Vain johtohenkilöstö voi antaa julkisia linjauksia porukan nimissä.</div></div>
-      <div class="rule-item"><div class="rule-num">06</div><div class="rule-text">Toisten työkaluja tai autoja ei kohdella kuin omia — ne kohdellaan paremmin.</div></div>
-      <div class="rule-item"><div class="rule-num">07</div><div class="rule-text">Kerhoa edustetaan selvinpäin. Tapahtumat ovat tapahtumia, ei juhlia.</div></div>
-      <div class="rule-item"><div class="rule-num">08</div><div class="rule-text">Turha huomionhaku ja sekoilu jätetään kotiin. Tapahtumissa ollaan asialla.</div></div>
-      <div class="rule-item"><div class="rule-num">09</div><div class="rule-text">Jokainen vastaa omista teoistaan ja sakoistaan. Kerho ei ole vakuutus.</div></div>
-      <div class="rule-item"><div class="rule-num">10</div><div class="rule-text">Riidat selvitetään kasvotusten. Ei somedraamaa, ei välitettyjä viestejä.</div></div>
-      <div class="rule-item"><div class="rule-num">11</div><div class="rule-text">Uudet jäsenet tulevat mukaan tutustumisjakson kautta. Kärsivällisyys kannattaa.</div></div>
-      <div class="rule-item"><div class="rule-num">12</div><div class="rule-text">Toisten yksityisyyttä kunnioitetaan — kuvia tai videoita ei julkaista ilman lupaa.</div></div>
-      <div class="rule-item"><div class="rule-num">13</div><div class="rule-text">Tallissa ja tapahtumissa pidetään paikat siistinä. Omat jäljet siivotaan.</div></div>
-      <div class="rule-item"><div class="rule-num">14</div><div class="rule-text">Autoilla ei tarkoituksella vaaranneta muita tienkäyttäjiä. Ei koskaan.</div></div>
-      <div class="rule-item"><div class="rule-num">15</div><div class="rule-text">Kerhon maineesta pidetään huolta myös netissä. Olet edustaja aina kun näyt.</div></div>
-      <div class="rule-item"><div class="rule-num">16</div><div class="rule-text">Jatkuvasti huonosti käyttäytyvä jäsen voidaan poistaa porukasta johdon päätöksellä.</div></div>
-      <div class="rule-item"><div class="rule-num">17</div><div class="rule-text">Musiikkia ei huudateta turhaan tapahtumissa tai kaupungilla. Naapureilla on korvat.</div></div>
+    <div class="rules-grid" id="rules-grid">
+      <div class="rules-page active" id="rules-p1">
+        <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Poliisia kuunnellaan. Aina. Ilman dramatiikkaa.</div></div>
+        <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Ei avointa rasismia, syrjintää tai turhaa draamaa — tässä porukassa tai sen nimissä.</div></div>
+        <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Arvojärjestystä noudatetaan. Johto on johto syystä.</div></div>
+        <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Kuljettajan ajoa ei kommentoida kesken ajon. Huomiot esitetään pysähdyksillä.</div></div>
+        <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Vain johtohenkilöstö voi antaa julkisia linjauksia porukan nimissä.</div></div>
+        <div class="rule-item"><div class="rule-num">06</div><div class="rule-text">Toisten työkaluja tai autoja ei kohdella kuin omia — ne kohdellaan paremmin.</div></div>
+      </div>
+      <div class="rules-page" id="rules-p2">
+        <div class="rule-item"><div class="rule-num">07</div><div class="rule-text">Kerhoa edustetaan selvinpäin. Tapahtumat ovat tapahtumia, ei juhlia.</div></div>
+        <div class="rule-item"><div class="rule-num">08</div><div class="rule-text">Turha huomionhaku ja sekoilu jätetään kotiin. Tapahtumissa ollaan asialla.</div></div>
+        <div class="rule-item"><div class="rule-num">09</div><div class="rule-text">Jokainen vastaa omista teoistaan ja sakoistaan. Kerho ei ole vakuutus.</div></div>
+        <div class="rule-item"><div class="rule-num">10</div><div class="rule-text">Riidat selvitetään kasvotusten. Ei somedraamaa, ei välitettyjä viestejä.</div></div>
+        <div class="rule-item"><div class="rule-num">11</div><div class="rule-text">Uudet jäsenet tulevat mukaan tutustumisjakson kautta. Kärsivällisyys kannattaa.</div></div>
+        <div class="rule-item"><div class="rule-num">12</div><div class="rule-text">Toisten yksityisyyttä kunnioitetaan — kuvia tai videoita ei julkaista ilman lupaa.</div></div>
+      </div>
+      <div class="rules-page" id="rules-p3">
+        <div class="rule-item"><div class="rule-num">13</div><div class="rule-text">Tallissa ja tapahtumissa pidetään paikat siistinä. Omat jäljet siivotaan.</div></div>
+        <div class="rule-item"><div class="rule-num">14</div><div class="rule-text">Autoilla ei tarkoituksella vaaranneta muita tienkäyttäjiä. Ei koskaan.</div></div>
+        <div class="rule-item"><div class="rule-num">15</div><div class="rule-text">Kerhon maineesta pidetään huolta myös netissä. Olet edustaja aina kun näyt.</div></div>
+        <div class="rule-item"><div class="rule-num">16</div><div class="rule-text">Jatkuvasti huonosti käyttäytyvä jäsen voidaan poistaa porukasta johdon päätöksellä.</div></div>
+        <div class="rule-item"><div class="rule-num">17</div><div class="rule-text">Musiikkia ei huudateta turhaan tapahtumissa tai kaupungilla. Naapureilla on korvat.</div></div>
+      </div>
+    </div>
+
+    <div class="rules-nav">
+      <button class="rules-nav-btn" id="rules-prev" onclick="rulesNav(-1)" disabled>← Edellinen</button>
+      <span class="rules-page-indicator" id="rules-indicator">1 / 3</span>
+      <button class="rules-nav-btn" id="rules-next" onclick="rulesNav(1)">Seuraava →</button>
     </div>
     <div class="warning-banner">
       <div class="warning-icon">🦆</div>
@@ -1268,10 +1432,10 @@
     </p>
     <div class="shop-grid">
       <div class="shop-card">
-        <div class="shop-img">🏷️</div>
+        <div class="shop-img">🦆</div>
         <div class="shop-body">
           <div class="shop-name">Outlaw Ducks Tarra</div>
-          <div class="shop-desc">Logotarra ehkä laadukkaalla vinyylipohjalla. Ehkä UV-kestävä, ehkä säänkestävä. Sopii ehkä auton korin, ikkunan tai kaiken muun koristeluun.</div>
+          <div class="shop-desc">Logotarra laadukkaalla vinyylipohjalla. UV-kestävä, säänkestävä. Sopii auton korin, ikkunan tai kaiken muun koristeluun.</div>
           <div class="shop-price-row">
             <div class="shop-price">0 €<span>+ postikulut n. 2–3 €</span></div>
             <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Outlaw Ducks Tarra" class="btn-order">Tilaa</a>
@@ -1279,10 +1443,10 @@
         </div>
       </div>
       <div class="shop-card">
-        <div class="shop-img">🌲</div>
+        <div class="shop-img">🏷️</div>
         <div class="shop-body">
-          <div class="shop-name">Autohajuste – Metsä</div>
-          <div class="shop-desc">Klassinen autohajuste Outlaw Ducks -brändillä. Haisee joltakin hyvältä. Tai ihan hyvältä.</div>
+          <div class="shop-name">Autohajuste – Joku hyvä tuoksu</div>
+          <div class="shop-desc">Klassinen autohajuste Outlaw Ducks -brändillä. Ehkä UV-kestävä, ehkä säänkestävä. Sopii ehkä auton peilin varteen tai kaiken muun koristeluun.</div>
           <div class="shop-price-row">
             <div class="shop-price">0 €<span>+ postikulut n. 3 €</span></div>
             <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Autohajuste" class="btn-order">Tilaa</a>
@@ -1333,11 +1497,89 @@
 <!-- VASIKKA OVERLAY -->
 <div id="vasikka-overlay">
   <div class="vasikka-text">VASIKKA</div>
-  <div class="vasikka-sub">Kuvasi 5 ankkaa. Koko Oulu tietää nyt.</div>
+  <div class="vasikka-sub">Nämä ankat on rauhoitettuja. Annappa niitten olla.</div>
   <button class="vasikka-close" onclick="document.getElementById('vasikka-overlay').classList.remove('show')">
     (En ole vasikka, se oli vahinko)
   </button>
+  <a href="https://sey.fi/tee-elainsuojeluilmoitus/" target="_blank" rel="noopener"
+     style="margin-top:0.75rem; font-family:var(--font-body); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:#a33; text-decoration:none; transition:color 0.2s;"
+     onmouseover="this.style.color='#ff4444'" onmouseout="this.style.color='#a33'">
+    Tee eläinsuojeluilmoitus itsestäsi
+  </a>
 </div>
+
+<!-- RULES NAV JS -->
+<script>
+(function() {
+  let rulesPage = 1;
+  const TOTAL = 3;
+
+  window.rulesNav = function(dir) {
+    rulesPage = Math.max(1, Math.min(TOTAL, rulesPage + dir));
+    for (let i = 1; i <= TOTAL; i++) {
+      const p = document.getElementById('rules-p' + i);
+      if (p) p.classList.toggle('active', i === rulesPage);
+    }
+    document.getElementById('rules-indicator').textContent = rulesPage + ' / ' + TOTAL;
+    document.getElementById('rules-prev').disabled = rulesPage === 1;
+    document.getElementById('rules-next').disabled = rulesPage === TOTAL;
+  };
+})();
+</script>
+
+<!-- HAMBURGER JS -->
+<script>
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const btn = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+// Close when clicking outside
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobile-menu');
+  const btn = document.getElementById('hamburger');
+  if (!menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
+</script>
+
+<!-- FILTER JS -->
+<script>
+const FEATURED_IDS = ['vgs','xvf','lkp','kmb','xxj'];
+
+function filterCars(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#cars-grid .car-card').forEach(card => {
+    const owner = card.dataset.owner;
+    const cat = card.dataset.cat;
+    let show = filter === 'all' ? true
+      : ['mallard','wigeon','goosander','duckling'].includes(filter) ? owner === filter
+      : cat === filter;
+    card.classList.toggle('hidden', !show);
+  });
+}
+
+function showFeatured(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#cars-grid .car-card').forEach(card => {
+    const id = (card.querySelector('.car-carousel') || {}).id?.replace('carousel-','');
+    card.classList.toggle('hidden', !FEATURED_IDS.includes(id));
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  showFeatured(document.querySelector('.filter-btn'));
+});
+</script>
 
 <!-- CAROUSEL JS -->
 <script>
@@ -1374,6 +1616,9 @@
 </script>
 
 
+<!-- WALKING DUCK -->
+<div id="walking-duck" style="position:fixed; bottom:18px; font-size:2.2rem; z-index:9997; user-select:none; display:none; animation: duckwaddle 0.25s ease-in-out infinite; cursor:pointer;" title="Ota kiinni!">🦆</div>
+
 <div id="roaming-duck" style="
   position: fixed; font-size: 3rem; cursor: pointer;
   z-index: 9999; user-select: none; transition: transform 0.1s;
@@ -1384,28 +1629,40 @@
 <div id="cam-flash" style="
   position: fixed; inset: 0; background: white; z-index: 10000;
   pointer-events: none; opacity: 0;
-  display: flex; align-items: center; justify-content: center;
-">
-  <div id="speed-text" style="
-    font-family: 'Prosto One', serif;
-    font-size: clamp(3rem, 12vw, 8rem);
-    color: #ff2200;
-    text-shadow: 0 0 30px #ff2200, 0 0 60px #ff000088;
-    letter-spacing: 0.05em; opacity: 0; transform: scale(0.8);
-  ">52 KM/H</div>
-</div>
+"></div>
 
 <script>
 (function() {
+  // 5 unique ducks — emoji + flash text + size
+  const DUCKS = [
+    { emoji: '🦆', text: '52 KM/H',       name: 'Tavallinen sorsa',     size: '3rem'  },
+    { emoji: '🦢', text: '52 KM/H',       name: 'Joutsen — arvokas',    size: '3.5rem'},
+    { emoji: '🐦', text: 'VARPUNEN??',    name: 'Ei tää oo edes sorsa', size: '2rem'  },
+    { emoji: '🦉', text: 'PÖLLÖ 52 KM/H', name: 'Öinen lentäjä',        size: '3rem'  },
+    { emoji: '🐧', text: 'PINGVIINI??',   name: 'Ei osaa edes lentää',  size: '2.8rem'},
+  ];
+
   const duck = document.getElementById('roaming-duck');
+  const wduck = document.getElementById('walking-duck');
   const flash = document.getElementById('cam-flash');
   const speedText = document.getElementById('speed-text');
+  const duckNameText = document.getElementById('duck-name-text');
   const countEl = document.getElementById('duck-count');
   const counterBox = document.getElementById('duck-counter');
   const vasikka = document.getElementById('vasikka-overlay');
 
   let duckCount = 0;
   const MAX = 5;
+  let catchOrder = [0,1,2,3,4]; // shuffled on start
+  // Shuffle
+  for (let i = catchOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [catchOrder[i], catchOrder[j]] = [catchOrder[j], catchOrder[i]];
+  }
+
+  function getDuckDef() {
+    return DUCKS[catchOrder[Math.min(duckCount, MAX - 1)]];
+  }
 
   function updateCounter() {
     countEl.textContent = duckCount;
@@ -1444,59 +1701,41 @@
   }
 
   function triggerCamera() {
+    window.triggerCamera = triggerCamera;
     duckCount++;
     updateCounter();
     playQuack();
 
-    flash.style.transition = 'none';
-    flash.style.opacity = '1';
-    speedText.style.transition = 'none';
-    speedText.style.opacity = '0';
-    speedText.style.transform = 'scale(0.8)';
-
+    flash.style.transition = 'none'; flash.style.opacity = '1';
     setTimeout(() => {
-      flash.style.transition = 'opacity 0.08s';
-      flash.style.opacity = '0.92';
-      speedText.style.transition = 'opacity 0.05s, transform 0.05s';
-      speedText.style.opacity = '1';
-      speedText.style.transform = 'scale(1.05)';
-      setTimeout(() => {
-        speedText.style.transition = 'opacity 0.3s, transform 0.3s';
-        speedText.style.transform = 'scale(1)';
-        setTimeout(() => {
-          flash.style.transition = 'opacity 0.4s';
-          flash.style.opacity = '0';
-          speedText.style.opacity = '0';
-          // Vasikka after flash fades
-          if (duckCount >= MAX) {
-            setTimeout(() => { vasikka.classList.add('show'); }, 300);
-          }
-        }, 600);
-      }, 80);
-    }, 30);
+      flash.style.transition = 'opacity 0.5s';
+      flash.style.opacity = '0';
+      if (duckCount >= MAX) setTimeout(() => { vasikka.classList.add('show'); }, 300);
+    }, 120);
 
     duck.style.transform = 'scale(1.3) rotate(-10deg)';
     setTimeout(() => { duck.style.transform = 'scale(1) rotate(0deg)'; }, 200);
     setTimeout(hideDuck, 1200);
   }
+  window.triggerCamera = triggerCamera;
 
   duck.addEventListener('click', triggerCamera);
   duck.addEventListener('touchstart', function(e) { e.preventDefault(); triggerCamera(); });
 
   function showDuck() {
-    if (duckCount >= MAX) return; // ei enää ankkoja vasikan jälkeen
+    if (duckCount >= MAX) return;
+    const def = getDuckDef();
+    duck.textContent = def.emoji;
+    duck.style.fontSize = def.size;
     const margin = 80;
     const maxX = window.innerWidth - 80 - margin;
     const maxY = window.innerHeight - 80 - margin;
     duck.style.left = (margin + Math.random() * maxX) + 'px';
     duck.style.top = (margin + Math.random() * (maxY - 100) + 100) + 'px';
-    duck.style.display = 'block';
-    duck.style.opacity = '0';
-    duck.style.transform = 'scale(0.5)';
+    duck.style.display = 'block'; duck.style.opacity = '0'; duck.style.transform = 'scale(0.5)';
     duck.style.transition = 'opacity 0.4s, transform 0.4s';
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      duck.style.opacity = '1';
-      duck.style.transform = 'scale(1)';
+      duck.style.opacity = '1'; duck.style.transform = 'scale(1)';
     }));
     clearTimeout(duck._hideTimer);
     duck._hideTimer = setTimeout(hideDuck, 6000);
@@ -1504,18 +1743,75 @@
 
   function hideDuck() {
     duck.style.transition = 'opacity 0.5s, transform 0.5s';
-    duck.style.opacity = '0';
-    duck.style.transform = 'scale(0.3)';
+    duck.style.opacity = '0'; duck.style.transform = 'scale(0.3)';
     setTimeout(() => { duck.style.display = 'none'; }, 500);
     scheduleNext();
   }
 
   function scheduleNext() {
     if (duckCount >= MAX) return;
-    setTimeout(showDuck, 15000 + Math.random() * 30000);
+    setTimeout(showDuck, 45000 + Math.random() * 60000);
   }
 
-  setTimeout(showDuck, 8000 + Math.random() * 10000);
+  setTimeout(showDuck, 30000 + Math.random() * 30000);
+
+  // --- WALKING DUCK ---
+  let wx = -60, wdir = 1, wwalking = false, wspeed = 2.2, wspooked = false;
+
+  function startWalk() {
+    if (wwalking || duckCount >= MAX) return;
+    wwalking = true; wspooked = false; wspeed = 2.2;
+    const def = getDuckDef();
+    wduck.textContent = def.emoji;
+    wduck.style.fontSize = def.size;
+    wx = wdir === 1 ? -80 : window.innerWidth + 80;
+    wduck.style.display = 'block';
+    wduck.style.pointerEvents = 'auto';
+    wduck.style.transform = wdir === 1 ? 'scaleX(1)' : 'scaleX(-1)';
+    wduck.style.animationDuration = '0.25s';
+    wstep();
+  }
+
+  function wstep() {
+    if (wspooked && wspeed < 14) wspeed += 0.18;
+    wx += wdir * wspeed;
+    wduck.style.left = wx + 'px';
+    wduck.style.animationDuration = Math.max(60, 250 - wspeed * 12) + 'ms';
+    const off = wdir === 1 ? wx > window.innerWidth + 80 : wx < -80;
+    if (off) {
+      wduck.style.display = 'none';
+      wwalking = false; wspooked = false;
+      wdir = wdir === 1 ? -1 : 1;
+      scheduleWalk();
+    } else {
+      requestAnimationFrame(wstep);
+    }
+  }
+
+  wduck.addEventListener('click', function(e) {
+    if (!wwalking) return;
+    e.stopPropagation();
+    triggerCamera();
+    wduck.style.fontSize = '2.8rem';
+    wspooked = true; wspeed = 8;
+    setTimeout(() => { wduck.style.fontSize = '2.2rem'; }, 300);
+  });
+
+  wduck.addEventListener('touchstart', function(e) { e.preventDefault(); wduck.click(); });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!wwalking || wspooked) return;
+    const rect = wduck.getBoundingClientRect();
+    const dist = Math.hypot(e.clientX - rect.left - rect.width/2, e.clientY - rect.top - rect.height/2);
+    if (dist < 120) { wspooked = true; wspeed = 5; }
+  });
+
+  function scheduleWalk() {
+    if (duckCount >= MAX) return;
+    setTimeout(startWalk, 60000 + Math.random() * 90000);
+  }
+
+  setTimeout(startWalk, 45000 + Math.random() * 30000);
 })();
 </script>
 
