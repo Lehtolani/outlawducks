@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tapahtumat – Outlaw Ducks TC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prosto+One&family=Oswald:wght@300;400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0d0d0d;
+    --offblack: #141414;
+    --darkgray: #1c1c1c;
+    --midgray: #2e2e2e;
+    --lightgray: #888;
+    --bone: #d4c9a8;
+    --gold: #c9a84c;
+    --white: #f5f0e8;
+    --font-display: 'Prosto One', serif;
+    --font-body: 'Oswald', sans-serif;
+    --font-text: 'Barlow', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(13,13,13,0.95);
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 64px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-logo img { height: 44px; width: 44px; object-fit: contain; }
+
+  .nav-brand {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+  }
+
+  .nav-brand span {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 300;
+    color: var(--lightgray);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+  .nav-links a {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--gold); }
+
+  /* MAIN */
+  main {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 2rem 4rem;
+    text-align: center;
+  }
+
+  /* Animated grid lines background */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .grid-bg::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridmove 20s linear infinite;
+  }
+
+  @keyframes gridmove {
+    from { transform: translateY(0); }
+    to { transform: translateY(60px); }
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+  }
+
+  .caution-tape {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 3rem;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .tape-strip {
+    background: repeating-linear-gradient(
+      -55deg,
+      var(--gold) 0px,
+      var(--gold) 20px,
+      var(--black) 20px,
+      var(--black) 40px
+    );
+    height: 32px;
+    width: 100%;
+    opacity: 0.7;
+  }
+
+  .tape-text {
+    white-space: nowrap;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 0.45rem 1.5rem;
+    min-width: max-content;
+  }
+
+  .event-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    animation: wobble 3s ease-in-out infinite;
+  }
+
+  @keyframes wobble {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+
+  .coming-soon-label {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.95;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+  }
+
+  .divider {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 0 auto 2rem;
+  }
+
+  .teaser-text {
+    font-size: 1.05rem;
+    color: var(--bone);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Classified document card */
+  .classified-card {
+    background: var(--offblack);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 4px;
+    padding: 2rem;
+    text-align: left;
+    margin-top: 2rem;
+    position: relative;
+  }
+
+  .classified-stamp {
+    position: absolute;
+    top: -14px;
+    right: 20px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    background: var(--offblack);
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 4px 12px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .classified-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed rgba(201,168,76,0.1);
+  }
+
+  .classified-row:last-child { border-bottom: none; }
+
+  .cl-label {
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    min-width: 110px;
+  }
+
+  .cl-value {
+    font-family: var(--font-text);
+    font-size: 0.95rem;
+    color: var(--bone);
+    flex: 1;
+  }
+
+  .cl-value em {
+    font-style: italic;
+    color: var(--lightgray);
+  }
+
+  .cl-value.redacted {
+    background: var(--bone);
+    color: var(--bone);
+    border-radius: 2px;
+    user-select: none;
+    cursor: not-allowed;
+    letter-spacing: 0.05em;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .cl-value.redacted:hover {
+    background: transparent;
+    color: var(--gold);
+  }
+
+  /* Makkara hint box */
+  .makkara-box {
+    margin-top: 2rem;
+    background: var(--darkgray);
+    border: 1px dashed rgba(201,168,76,0.3);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: left;
+  }
+
+  .makkara-emoji { font-size: 2.5rem; flex-shrink: 0; }
+
+  .makkara-text {
+    font-size: 0.9rem;
+    color: var(--bone);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .makkara-text strong {
+    font-style: normal;
+    color: var(--gold);
+    font-family: var(--font-body);
+    letter-spacing: 0.05em;
+    font-size: 1rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 3rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--gold); }
+
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="1779946768622_image.png" alt="Outlaw Ducks logo">
+    <div class="nav-brand">
+      Outlaw Ducks
+      <span>Tuning Crew · Oulu</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#tarina">Tarina</a></li>
+    <li><a href="index.html#jasenet">Jäsenet</a></li>
+    <li><a href="index.html#autot">Autot</a></li>
+    <li><a href="index.html#saannot">Säännöt</a></li>
+    <li><a href="index.html#liity">Liity</a></li>
+    <li><a href="index.html#kauppa">Kauppa</a></li>
+    <li><a href="tapahtumat.html" class="active">Tapahtumat</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="content">
+
+    <div class="caution-tape">
+      <div class="tape-strip"></div>
+      <div class="tape-text">Tulossa pian</div>
+      <div class="tape-strip"></div>
+    </div>
+
+    <span class="event-icon">🗓️</span>
+
+    <div class="coming-soon-label">Tapahtumakalenteri</div>
+    <h1>COMING<br>SOON</h1>
+    <div class="divider"></div>
+
+    <p class="teaser-text">
+      Tapahtumia suunnitellaan parasta aikaa. Siis melkein. Joku sanoi jotain kesästä, toisella oli idea, kolmas lupasi järjestää. Mennään niin kuin mennään — mutta tänne tulee kalenteri, kun joku muistaa kirjata asiat ylös.
+    </p>
+
+    <div class="classified-card">
+      <div class="classified-stamp">Luottamuksellinen</div>
+
+      <div class="classified-row">
+        <span class="cl-label">Seuraava tapahtuma</span>
+        <span class="cl-value"><em>Vahvistamatta — kysy Mallardilta</em></span>
+      </div>
+      <div class="classified-row">
+        <span class="cl-label">Sijainti</span>
+        <span class="cl-value redacted" title="Vie hiiri päälle">Oulu, tarkempi osoite paljastuu</span>
+      </div>
+      <div class="classified-row">
+        <span class="cl-label">Ohjelma</span>
+        <span class="cl-value">Autot, juttu, ehkä jotain muuta</span>
+      </div>
+      <div class="classified-row">
+        <span class="cl-label">Pukukoodi</span>
+        <span class="cl-value">Ei ole. Kunhan ei tule verkkareissa.</span>
+      </div>
+      <div class="classified-row">
+        <span class="cl-label">Ilmoittautuminen</span>
+        <span class="cl-value">Sähköpostilla tai löytämällä meidät</span>
+      </div>
+    </div>
+
+    <div class="makkara-box">
+      <div class="makkara-emoji">🌭</div>
+      <div class="makkara-text">
+        <strong>Sisäpiiritieto:</strong> Kuulopuheiden mukaan jossain vaiheessa, jonain päivänä, johonkin paikkaan — saattaa ilmestyä <strong>makkarakoju</strong>. Tietolähde ei suostunut vahvistamaan yksityiskohtia. Vain se tiedetään, että sinappi on pakollinen.
+      </div>
+    </div>
+
+    <a href="index.html" class="back-link">← Takaisin etusivulle</a>
+
+  </div>
+</main>
+
+<footer>
+  © 2025 Outlaw Ducks Tuning Crew · Oulu
+</footer>
+
+<!-- ROAMING DUCK -->
+<div id="roaming-duck" style="
+  position: fixed; font-size: 3rem; cursor: pointer; z-index: 9999;
+  user-select: none; transition: transform 0.1s; display: none;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+">🦆</div>
+
+<div id="cam-flash" style="
+  position: fixed; inset: 0; background: white; z-index: 10000;
+  pointer-events: none; opacity: 0;
+  display: flex; align-items: center; justify-content: center;
+">
+  <div id="speed-text" style="
+    font-family: 'Prosto One', serif; font-size: clamp(3rem, 12vw, 8rem);
+    color: #ff2200; text-shadow: 0 0 30px #ff2200, 0 0 60px #ff000088;
+    letter-spacing: 0.05em; opacity: 0; transform: scale(0.8);
+  ">52 KM/H</div>
+</div>
+
+<script>
+(function() {
+  const duck = document.getElementById('roaming-duck');
+  const flash = document.getElementById('cam-flash');
+  const speedText = document.getElementById('speed-text');
+
+  function playQuack() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator(); const gain1 = ctx.createGain();
+      osc1.connect(gain1); gain1.connect(ctx.destination);
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(600, now);
+      osc1.frequency.exponentialRampToValueAtTime(220, now + 0.18);
+      gain1.gain.setValueAtTime(0.35, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc1.start(now); osc1.stop(now + 0.22);
+      const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
+      osc2.connect(gain2); gain2.connect(ctx.destination);
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(900, now);
+      osc2.frequency.exponentialRampToValueAtTime(350, now + 0.14);
+      gain2.gain.setValueAtTime(0.15, now);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      osc2.start(now); osc2.stop(now + 0.16);
+      const osc3 = ctx.createOscillator(); const gain3 = ctx.createGain();
+      osc3.connect(gain3); gain3.connect(ctx.destination);
+      osc3.type = 'sawtooth';
+      osc3.frequency.setValueAtTime(500, now + 0.22);
+      osc3.frequency.exponentialRampToValueAtTime(180, now + 0.38);
+      gain3.gain.setValueAtTime(0.25, now + 0.22);
+      gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.40);
+      osc3.start(now + 0.22); osc3.stop(now + 0.40);
+    } catch(e) {}
+  }
+
+  function triggerCamera() {
+    playQuack();
+    flash.style.transition = 'none'; flash.style.opacity = '1';
+    speedText.style.transition = 'none'; speedText.style.opacity = '0'; speedText.style.transform = 'scale(0.8)';
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.08s'; flash.style.opacity = '0.92';
+      speedText.style.transition = 'opacity 0.05s, transform 0.05s'; speedText.style.opacity = '1'; speedText.style.transform = 'scale(1.05)';
+      setTimeout(() => {
+        speedText.style.transition = 'opacity 0.3s, transform 0.3s'; speedText.style.transform = 'scale(1)';
+        setTimeout(() => { flash.style.transition = 'opacity 0.4s'; flash.style.opacity = '0'; speedText.style.opacity = '0'; }, 600);
+      }, 80);
+    }, 30);
+    duck.style.transform = 'scale(1.3) rotate(-10deg)';
+    setTimeout(() => { duck.style.transform = 'scale(1) rotate(0deg)'; }, 200);
+    setTimeout(hideDuck, 1200);
+  }
+
+  duck.addEventListener('click', triggerCamera);
+  duck.addEventListener('touchstart', function(e) { e.preventDefault(); triggerCamera(); });
+
+  function showDuck() {
+    const margin = 80;
+    const maxX = window.innerWidth - 80 - margin;
+    const maxY = window.innerHeight - 80 - margin;
+    duck.style.left = (margin + Math.random() * maxX) + 'px';
+    duck.style.top = (margin + Math.random() * (maxY - 100) + 100) + 'px';
+    duck.style.display = 'block'; duck.style.opacity = '0'; duck.style.transform = 'scale(0.5)';
+    duck.style.transition = 'opacity 0.4s, transform 0.4s';
+    requestAnimationFrame(() => requestAnimationFrame(() => { duck.style.opacity = '1'; duck.style.transform = 'scale(1)'; }));
+    clearTimeout(duck._hideTimer);
+    duck._hideTimer = setTimeout(hideDuck, 6000);
+  }
+
+  function hideDuck() {
+    duck.style.transition = 'opacity 0.5s, transform 0.5s'; duck.style.opacity = '0'; duck.style.transform = 'scale(0.3)';
+    setTimeout(() => { duck.style.display = 'none'; }, 500);
+    scheduleNext();
+  }
+
+  function scheduleNext() { setTimeout(showDuck, 15000 + Math.random() * 30000); }
+  setTimeout(showDuck, 8000 + Math.random() * 10000);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outlaw Ducks TC – Oulu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prosto+One&family=Oswald:wght@300;400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0d0d0d;
+    --offblack: #141414;
+    --darkgray: #1c1c1c;
+    --midgray: #2e2e2e;
+    --lightgray: #888;
+    --bone: #d4c9a8;
+    --cream: #f0ead8;
+    --gold: #c9a84c;
+    --gold-dark: #9a7a2e;
+    --duck-green: #2d5a3d;
+    --duck-brown: #6b3c1e;
+    --duck-orange: #d4651a;
+    --white: #f5f0e8;
+    --red: #a02020;
+    --font-display: 'Prosto One', serif;
+    --font-body: 'Oswald', sans-serif;
+    --font-text: 'Barlow', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-text);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* NAVIGATION */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(13,13,13,0.95);
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 64px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-logo img {
+    height: 44px;
+    width: 44px;
+    object-fit: contain;
+  }
+
+  .nav-brand {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+  }
+
+  .nav-brand span {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 300;
+    color: var(--lightgray);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-ring {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.08);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: slowspin 40s linear infinite;
+  }
+
+  .hero-bg-ring:nth-child(2) {
+    width: 900px; height: 900px;
+    border-color: rgba(201,168,76,0.04);
+    animation-duration: 60s;
+    animation-direction: reverse;
+  }
+
+  @keyframes slowspin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  .hero-logo {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 0 40px rgba(201,168,76,0.2));
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 7rem);
+    letter-spacing: 0.05em;
+    color: var(--white);
+    line-height: 0.9;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 em {
+    display: block;
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    margin-top: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-divider {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 2rem auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tagline {
+    font-family: var(--font-text);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--bone);
+    max-width: 500px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-scroll {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--lightgray);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-family: var(--font-body);
+    position: relative;
+    z-index: 1;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+
+  .hero-scroll::after {
+    content: '▼';
+    font-size: 0.6rem;
+  }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-label {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 2rem;
+  }
+
+  .section-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin-bottom: 3rem;
+  }
+
+  /* STORY SECTION */
+  #tarina {
+    background: var(--offblack);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .story-text p {
+    color: var(--bone);
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .story-badge {
+    background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+    padding: 2rem;
+    font-family: var(--font-text);
+    font-style: italic;
+    color: var(--bone);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    position: relative;
+  }
+
+  .story-badge::before {
+    content: '"';
+    font-family: var(--font-display);
+    font-size: 5rem;
+    color: var(--gold);
+    opacity: 0.3;
+    position: absolute;
+    top: -1rem;
+    left: 1.5rem;
+    line-height: 1;
+  }
+
+  .story-badge .badge-source {
+    display: block;
+    margin-top: 1rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  /* MEMBERS */
+  #jasenet { background: var(--black); }
+
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .member-card {
+    background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .member-card:hover {
+    border-color: rgba(201,168,76,0.5);
+    transform: translateY(-4px);
+  }
+
+  .member-avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--midgray);
+    font-size: 5rem;
+  }
+
+  .member-info {
+    padding: 1.25rem;
+  }
+
+  .member-callsign {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--gold);
+    margin-bottom: 0.25rem;
+  }
+
+  .member-role {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    margin-bottom: 0.5rem;
+  }
+
+  .member-desc {
+    font-size: 0.9rem;
+    color: var(--bone);
+    line-height: 1.6;
+  }
+
+  .member-add {
+    opacity: 0.4;
+    font-style: italic;
+    color: var(--lightgray);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    font-size: 0.9rem;
+  }
+
+  /* CARS */
+  #autot {
+    background: var(--offblack);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .cars-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .car-card {
+    background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .car-card:hover { border-color: rgba(201,168,76,0.45); }
+
+  .car-img-placeholder {
+    width: 100%;
+    height: 200px;
+    background: var(--midgray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    position: relative;
+  }
+
+  .car-type-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  .badge-projekti { background: var(--duck-green); color: #a8d4b8; }
+  .badge-kaytto { background: var(--duck-brown); color: #d4b08a; }
+  .badge-nayttely { background: #4a2060; color: #c89de0; }
+
+  .car-body {
+    padding: 1.25rem;
+  }
+
+  .car-name {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--white);
+    margin-bottom: 0.2rem;
+  }
+
+  .car-owner {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .car-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  .spec-item {
+    background: var(--midgray);
+    padding: 0.5rem 0.75rem;
+    border-radius: 2px;
+  }
+
+  .spec-label {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .spec-value {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--white);
+  }
+
+  /* RULES */
+  #saannot { background: var(--black); }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 4px;
+    border-left: 3px solid var(--gold);
+    transition: background 0.2s;
+  }
+
+  .rule-item:hover { background: var(--midgray); }
+
+  .rule-num {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--gold);
+    opacity: 0.5;
+    min-width: 28px;
+    line-height: 1.4;
+  }
+
+  .rule-text {
+    font-size: 0.9rem;
+    color: var(--bone);
+    line-height: 1.5;
+  }
+
+  /* WARNING BANNER */
+  .warning-banner {
+    background: var(--midgray);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    margin-top: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .warning-icon { font-size: 2.5rem; }
+
+  .warning-text {
+    font-family: var(--font-text);
+    font-style: italic;
+    color: var(--bone);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  /* JOIN */
+  #liity {
+    background: var(--offblack);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    text-align: center;
+  }
+
+  .join-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .join-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 3rem 0;
+    text-align: left;
+  }
+
+  .join-step {
+    background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+
+  .join-step-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--gold);
+    opacity: 0.4;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .join-step-title {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .join-step-desc {
+    font-size: 0.85rem;
+    color: var(--bone);
+    line-height: 1.6;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    padding: 0.9rem 2.5rem;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .btn-primary:hover { background: var(--bone); transform: translateY(-2px); }
+
+  /* SHOP */
+  #kauppa { background: var(--black); }
+
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .shop-card {
+    background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .shop-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-4px);
+  }
+
+  .shop-img {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--midgray);
+    font-size: 4rem;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .shop-body {
+    padding: 1.25rem;
+  }
+
+  .shop-name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .shop-desc {
+    font-size: 0.85rem;
+    color: var(--bone);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .shop-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .shop-price {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--gold);
+  }
+
+  .shop-price span {
+    display: block;
+    font-family: var(--font-text);
+    font-size: 0.7rem;
+    color: var(--lightgray);
+    font-weight: 400;
+  }
+
+  .btn-order {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-order:hover {
+    background: var(--gold);
+    color: var(--black);
+  }
+
+  .shop-note {
+    margin-top: 2.5rem;
+    text-align: center;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--lightgray);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--offblack);
+    border-top: 1px solid rgba(201,168,76,0.2);
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-logo-img {
+    width: 80px;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .footer-sub {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--gold); }
+
+  .footer-social {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .social-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: var(--lightgray);
+    line-height: 1.8;
+  }
+
+  /* DISCLAIMER STRIP */
+  .disclaimer-strip {
+    background: rgba(201,168,76,0.06);
+    border-top: 1px dashed rgba(201,168,76,0.2);
+    border-bottom: 1px dashed rgba(201,168,76,0.2);
+    padding: 0.6rem 2rem;
+    text-align: center;
+    font-family: var(--font-text);
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--lightgray);
+    margin: 1.5rem 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 0 1rem; }
+    .nav-links { gap: 1rem; }
+    .nav-links li:nth-child(n+4) { display: none; }
+    .story-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .members-grid { grid-template-columns: 1fr 1fr; }
+    .cars-grid { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .join-steps { grid-template-columns: 1fr; }
+    .shop-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="1779946768622_image.png" alt="Outlaw Ducks logo">
+    <div class="nav-brand">
+      Outlaw Ducks
+      <span>Tuning Crew · Oulu</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#tarina">Tarina</a></li>
+    <li><a href="#jasenet">Jäsenet</a></li>
+    <li><a href="#autot">Autot</a></li>
+    <li><a href="#saannot">Säännöt</a></li>
+    <li><a href="#liity">Liity</a></li>
+    <li><a href="#kauppa">Kauppa</a></li>
+    <li><a href="tapahtumat.html">Tapahtumat</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-ring"></div>
+  <div class="hero-bg-ring"></div>
+
+  <img src="1779946768622_image.png" alt="Outlaw Ducks" class="hero-logo">
+
+  <h1>OUTLAW<br><em>DUCKS</em></h1>
+  <p class="hero-sub">Tuning Crew &nbsp;·&nbsp; Oulu &nbsp;·&nbsp; Est. 2025</p>
+
+  <div class="hero-divider"></div>
+
+  <p class="hero-tagline">
+    Olemme luontokappaleita tiellä. Vaistomme ajaa meitä eteenpäin. Joskus hieman nopeammin kuin laki sallii.
+  </p>
+
+  <div class="hero-scroll">Vieritä alas</div>
+</section>
+
+<!-- STORY -->
+<section id="tarina">
+  <div class="section-inner">
+    <div class="section-label">Alkuperä</div>
+    <h2 class="section-title">Tarina</h2>
+    <div class="section-divider"></div>
+
+    <div class="story-grid">
+      <div class="story-text">
+        <p>
+          Kaikki alko linnusta. Sveitsin Könizissä, huhtikuussa 2025, tolppakamera otti kuvan rikoksen tekijästä. Nopeutta oli 52 km/h 30 km/h alueella. Syyllinen ei ollut ylinopeudesta tunnettu nuori mies tai pakoauton kuljettaja. Se oli sorsa.
+        </p>
+        <p>
+          Ja kuinka se sattuikaan, sama lintu oli käynyt samassa paikassa, samaan aikaan, täsmälleen samalla nopeudella jo vuonna 2018. Seitsemän vuotta aiemmin. Toistamiseen kiinni, täysin piittaamatta siitä, mitä laki sanoo.
+        </p>
+        <p>
+          Tämä ei ole kertomus paatuneesta sorsasta. Tämä on kertomus luontokappaleesta, joka ei vain voi olla se mitä on; vapaa, nopea ja täysin vastuuton aikatauluille.
+        </p>
+        <p>
+          Kesällä 2025 joukko ouluaisia autoihmisiä löysi itsensä saman pöydän äärestä. Yhteistä oli rakkaus koneisiin, tiehen ja siihen tunteeseen kun moottori laulaa juuri oikein. Outlaw Ducks TC syntyi. Ei vallankumouksena, vaan yhteisönä.
+        </p>
+        <p>
+          Jos ajammekin vahingossa ylinopeutta tutkaan, se on vain luonnon kutsua. Eihän luontokappaleita voi vastuuttaa pienestä ylinopeudesta. Pliis?
+        </p>
+      </div>
+
+      <div>
+        <div class="story-badge">
+          Huhtikuussa 2025 sveitsiläinen liikennevalvontakamera nappasi sorsan lentämässä 52 km/h taajaman 30 km/h alueella. Pahempaa: sama yksilö oli kiinni täsmälleen samassa kohdassa, samana päivänä seitsemän vuotta aikaisemmin. Poliisi totesi, että eihän sorsa voi olla rikosoikeudellisessa vastuussa ja jätti sakon antamatta. Tästä nimi Outlaw Ducks.
+          <span class="badge-source">Inspiraatiomme — BBC News / Gemeinde Köniz, 2025</span>
+        </div>
+
+        <div class="disclaimer-strip">
+          ⚠️ Outlaw Ducks TC ei hyväksy liikennesääntöjen tahallista rikkomista. Tämä on huumoria. Ajakaa turvallisesti.
+        </div>
+
+        <div class="story-badge" style="margin-top:1.5rem;">
+          Porukka koostuu täysi-ikäisistä, jotka tykkäävät värkätä autoja. Tai eihän siitä kukaan tykkää, mutta värkkää silti.
+          <span class="badge-source">Outlaw Ducks TC — Oulu, kesä 2025</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERS -->
+<section id="jasenet">
+  <div class="section-inner">
+    <div class="section-label">Kalusto-osasto, ihmisosio</div>
+    <h2 class="section-title">Jäsenet</h2>
+    <div class="section-divider"></div>
+
+    <div class="members-grid">
+      <!-- Member 1 -->
+      <div class="member-card">
+        <div class="member-avatar">🦆</div>
+        <div class="member-info">
+          <div class="member-callsign">Mallard</div>
+          <div class="member-role">Perustaja &amp; Johto</div>
+          <div class="member-desc">Idean isä ja tekijämies. Ajaa töikseen, koulussa ja harrastuksena. Taitava ranankäyttäjä, kaikki menee! Lappalais-italialainen.</div>
+        </div>
+      </div>
+
+      <!-- Member 2 -->
+      <div class="member-card">
+        <div class="member-avatar">🦢</div>
+        <div class="member-info">
+          <div class="member-callsign">Goosander</div>
+          <div class="member-role">Jäsen</div>
+          <div class="member-desc">Rauhallinen velmuilija. Lehmän hermot, joita sopii koetella. Taloudenhoitaja, koska muut ei osaa. Tullut joskus itärajan takaa ja sen huomaa. On niin mukava mies, että varmasti öisin pahanteossa.</div>
+        </div>
+      </div>
+
+      <!-- Member 3 -->
+      <div class="member-card">
+        <div class="member-avatar">🐦</div>
+        <div class="member-info">
+          <div class="member-callsign">Wigeon</div>
+          <div class="member-role">Jäsen</div>
+          <div class="member-desc">Liikaa puhetta, liian vähän tekoja. Kuvaa kyllä, muttei postaa mitään. Aika ei riitä mihinkään ja kaikki on puolivalmista. Silti yrittää.</div>
+        </div>
+      </div>
+
+      <!-- THE LEGEND -->
+      <div class="member-card" style="border-color: rgba(201,168,76,0.4); position: relative;">
+        <div style="position:absolute; top:10px; left:10px; font-family: var(--font-body); font-size:0.6rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; background: var(--gold); color: var(--black); padding: 3px 8px; border-radius:2px; z-index:2;">Legenda</div>
+        <div class="member-avatar" style="background: #1a1400;">🦆</div>
+        <div class="member-info">
+          <div class="member-callsign" style="color: var(--gold);">The Outlaw Duck</div>
+          <div class="member-role">Köniz, Sveitsi · 2018 &amp; 2025</div>
+          <div class="member-desc">Kiinni kahdesti, samassa paikassa, samana päivänä, samalla nopeudella — seitsemän vuoden välein. 52 km/h, 30-alueella. Sakkoa ei tullut. Rikosoikeudellinen vastuu ei koske lintuja. Porukan henkinen isä ja ainoa jäsen, jolla on mediakattavuus BBC:ssä.</div>
+        </div>
+      </div>
+
+      <!-- Placeholders -->
+      <div class="member-card">
+        <div class="member-avatar" style="font-size:2rem; color: #444; flex-direction:column; gap:8px;">
+          <span>🔒</span>
+          <span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span>
+        </div>
+        <div class="member-info">
+          <div class="member-callsign" style="color: #444;">???</div>
+          <div class="member-role">Uusi jäsen</div>
+          <div class="member-desc" style="color:#555;">Tarina kirjoitetaan myöhemmin. Ehkä se olet sinä?</div>
+        </div>
+      </div>
+
+      <div class="member-card">
+        <div class="member-avatar" style="font-size:2rem; color: #444; flex-direction:column; gap:8px;">
+          <span>🔒</span>
+          <span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span>
+        </div>
+        <div class="member-info">
+          <div class="member-callsign" style="color: #444;">???</div>
+          <div class="member-role">Uusi jäsen</div>
+          <div class="member-desc" style="color:#555;">Paikka auki. Löytyykö oikea lintu?</div>
+        </div>
+      </div>
+
+      <div class="member-card">
+        <div class="member-avatar" style="font-size:2rem; color: #444; flex-direction:column; gap:8px;">
+          <span>🔒</span>
+          <span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span>
+        </div>
+        <div class="member-info">
+          <div class="member-callsign" style="color: #444;">???</div>
+          <div class="member-role">Uusi jäsen</div>
+          <div class="member-desc" style="color:#555;">Vielä etsimättä. Tai ehkä jo rullaamassa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARS -->
+<section id="autot">
+  <div class="section-inner">
+    <div class="section-label">Kalusto</div>
+    <h2 class="section-title">Autot</h2>
+    <div class="section-divider"></div>
+
+    <div class="cars-grid">
+
+      <!-- Car 1 -->
+      <div class="car-card">
+        <div class="car-img-placeholder">
+          🚗
+          <span class="car-type-badge badge-projekti">Projekti</span>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Volkswagen Golf MK3</div>
+          <div class="car-owner">Omistaja: Mallard</div>
+          <div class="car-specs">
+            <div class="spec-item">
+              <span class="spec-label">Vuosimalli</span>
+              <span class="spec-value">1995</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Teho</span>
+              <span class="spec-value">—</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Moottori</span>
+              <span class="spec-value">2.0 8v</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Tila</span>
+              <span class="spec-value">Rakennuksella</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 2 -->
+      <div class="car-card">
+        <div class="car-img-placeholder">
+          🚙
+          <span class="car-type-badge badge-kaytto">Käyttöauto</span>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Toyota Avensis</div>
+          <div class="car-owner">Omistaja: Wigeon</div>
+          <div class="car-specs">
+            <div class="spec-item">
+              <span class="spec-label">Vuosimalli</span>
+              <span class="spec-value">2004</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Teho</span>
+              <span class="spec-value">—</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Moottori</span>
+              <span class="spec-value">2.0 D-4D</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Tila</span>
+              <span class="spec-value">Päivittäisajo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 3 -->
+      <div class="car-card">
+        <div class="car-img-placeholder">
+          🏎️
+          <span class="car-type-badge badge-nayttely">Näyttely</span>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Honda Civic EG</div>
+          <div class="car-owner">Omistaja: Goosander</div>
+          <div class="car-specs">
+            <div class="spec-item">
+              <span class="spec-label">Vuosimalli</span>
+              <span class="spec-value">1993</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Teho</span>
+              <span class="spec-value">—</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Moottori</span>
+              <span class="spec-value">B18C</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Tila</span>
+              <span class="spec-value">Showkunto</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cars 4–8: Placeholder slots -->
+      <div class="car-card">
+        <div class="car-img-placeholder" style="color:#333; flex-direction:column; gap:8px; font-size:2rem;">
+          🔧
+          <span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase; color:#444;">Pian lisää</span>
+        </div>
+        <div class="car-body">
+          <div class="car-name" style="color:#444;">Tulossa katalogiin</div>
+          <div class="car-owner" style="color:#3a3a3a;">Omistaja: ???</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value" style="color:#444;">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <div class="car-img-placeholder" style="color:#333; flex-direction:column; gap:8px; font-size:2rem;">
+          🔧
+          <span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase; color:#444;">Pian lisää</span>
+        </div>
+        <div class="car-body">
+          <div class="car-name" style="color:#444;">Tulossa katalogiin</div>
+          <div class="car-owner" style="color:#3a3a3a;">Omistaja: ???</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value" style="color:#444;">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <div class="car-img-placeholder" style="color:#333; flex-direction:column; gap:8px; font-size:2rem;">
+          🔧
+          <span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase; color:#444;">Pian lisää</span>
+        </div>
+        <div class="car-body">
+          <div class="car-name" style="color:#444;">Tulossa katalogiin</div>
+          <div class="car-owner" style="color:#3a3a3a;">Omistaja: ???</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value" style="color:#444;">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <div class="car-img-placeholder" style="color:#333; flex-direction:column; gap:8px; font-size:2rem;">
+          🔧
+          <span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase; color:#444;">Pian lisää</span>
+        </div>
+        <div class="car-body">
+          <div class="car-name" style="color:#444;">Tulossa katalogiin</div>
+          <div class="car-owner" style="color:#3a3a3a;">Omistaja: ???</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value" style="color:#444;">—</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value" style="color:#444;">—</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="text-align:center; margin-top:2rem; font-style:italic; font-size:0.85rem; color: var(--lightgray);">
+      Autotiedot täydennetään jäseniltä saatujen tietojen perusteella. Autokuvat lisätään myöhemmin.
+    </p>
+  </div>
+</section>
+
+<!-- RULES -->
+<section id="saannot">
+  <div class="section-inner">
+    <div class="section-label">Pelisäännöt</div>
+    <h2 class="section-title">Säännöt</h2>
+    <div class="section-divider"></div>
+
+    <div class="rules-grid">
+      <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Poliisia kuunnellaan. Aina. Ilman dramatiikkaa.</div></div>
+      <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Ei avointa rasismia, syrjintää tai turhaa draamaa — tässä porukassa tai sen nimissä.</div></div>
+      <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Arvojärjestystä noudatetaan. Johto on johto syystä.</div></div>
+      <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Kuljettajan ajoa ei kommentoida kesken ajon. Huomiot esitetään pysähdyksillä.</div></div>
+      <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Vain johtohenkilöstö voi antaa julkisia linjauksia porukan nimissä.</div></div>
+      <div class="rule-item"><div class="rule-num">06</div><div class="rule-text">Toisten työkaluja tai autoja ei kohdella kuin omia — ne kohdellaan paremmin.</div></div>
+      <div class="rule-item"><div class="rule-num">07</div><div class="rule-text">Kerhoa edustetaan selvinpäin. Tapahtumat ovat tapahtumia, ei juhlia.</div></div>
+      <div class="rule-item"><div class="rule-num">08</div><div class="rule-text">Turha huomionhaku ja sekoilu jätetään kotiin. Tapahtumissa ollaan asialla.</div></div>
+      <div class="rule-item"><div class="rule-num">09</div><div class="rule-text">Jokainen vastaa omista teoistaan ja sakoistaan. Kerho ei ole vakuutus.</div></div>
+      <div class="rule-item"><div class="rule-num">10</div><div class="rule-text">Riidat selvitetään kasvotusten. Ei somedraamaa, ei välitettyjä viestejä.</div></div>
+      <div class="rule-item"><div class="rule-num">11</div><div class="rule-text">Uudet jäsenet tulevat mukaan tutustumisjakson kautta. Kärsivällisyys kannattaa.</div></div>
+      <div class="rule-item"><div class="rule-num">12</div><div class="rule-text">Toisten yksityisyyttä kunnioitetaan — kuvia tai videoita ei julkaista ilman lupaa.</div></div>
+      <div class="rule-item"><div class="rule-num">13</div><div class="rule-text">Tallissa ja tapahtumissa pidetään paikat siistinä. Omat jäljet siivotaan.</div></div>
+      <div class="rule-item"><div class="rule-num">14</div><div class="rule-text">Autoilla ei tarkoituksella vaaranneta muita tienkäyttäjiä. Ei koskaan.</div></div>
+      <div class="rule-item"><div class="rule-num">15</div><div class="rule-text">Kerhon maineesta pidetään huolta myös netissä. Olet edustaja aina kun näyt.</div></div>
+      <div class="rule-item"><div class="rule-num">16</div><div class="rule-text">Jatkuvasti huonosti käyttäytyvä jäsen voidaan poistaa porukasta johdon päätöksellä.</div></div>
+      <div class="rule-item"><div class="rule-num">17</div><div class="rule-text">Musiikkia ei huudateta turhaan tapahtumissa tai kaupungilla. Naapureilla on korvat.</div></div>
+    </div>
+
+    <div class="warning-banner">
+      <div class="warning-icon">🦆</div>
+      <div class="warning-text">
+        <strong>Huomio:</strong> Olemme luontokappaleita — ja luonto ei tunne nopeusrajoituksia. Mutta me tunnemme lain, naapurit ja sen, miten tästä porukasta pidetään hyvä nimi. Yksi sorsa ei ole kokonainen parvi — pidetään huolta toisistamme ja maineestamme.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOIN -->
+<section id="liity">
+  <div class="section-inner">
+    <div class="join-inner">
+      <div class="section-label">Haluatko mukaan?</div>
+      <h2 class="section-title">Liity porukkaan</h2>
+      <div class="section-divider" style="margin: 0 auto 2rem;"></div>
+
+      <p style="color: var(--bone); max-width:500px; margin: 0 auto; font-size:1rem; line-height:1.8;">
+        Outlaw Ducks TC on avoin porukka — kunhan sitoudut pelisääntöihin ja sinulla on aito into koneita kohtaan. Yhtään jäsentä ei etsitä etsintäkuulutuksilla, mutta jokainen oikea lintu löytää perheensä.
+      </p>
+
+      <div class="join-steps">
+        <div class="join-step">
+          <div class="join-step-num">01</div>
+          <div class="join-step-title">Ota yhteyttä</div>
+          <div class="join-step-desc">Lähetä meille sähköposti tai löydä meidät somesta. Kerro kuka olet ja mikä auto sinulla on.</div>
+        </div>
+        <div class="join-step">
+          <div class="join-step-num">02</div>
+          <div class="join-step-title">Tutustumisjakso</div>
+          <div class="join-step-desc">Tullaan tutuksi tapahtumissa ja ajoilla. Ei tenttiä, vaan aitoa seuraa ja katsomista, miten kemia toimii. Ja toimiihan se!</div>
+        </div>
+        <div class="join-step">
+          <div class="join-step-num">03</div>
+          <div class="join-step-title">Tervetuloa parveen</div>
+          <div class="join-step-desc">Johto kutsuu virallisesti mukaan. Saat etsiä nimimerkkisi ja olla osa porukkaa.</div>
+        </div>
+      </div>
+
+      <a href="mailto:OutlawDucksGarage@gmail.com" class="btn-primary">
+        Lähetä viesti &rarr;
+      </a>
+
+      <p style="margin-top:1.5rem; font-size:0.8rem; color: var(--lightgray); font-style:italic;">
+        OutlawDucksGarage@gmail.com
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section id="kauppa">
+  <div class="section-inner">
+    <div class="section-label">Kauppa</div>
+    <h2 class="section-title">Merch &amp; tarvikkeet</h2>
+    <div class="section-divider"></div>
+
+    <p style="color:var(--bone); margin-bottom:2.5rem; max-width:600px;">
+      Aluksi jaetaan ilmaiseksi — maksat vain postikulut. Tuotteita saa myös suoraan pyytämällä, jos törmäät meihin liikkeellä.
+    </p>
+
+    <div class="shop-grid">
+      <!-- Product 1 -->
+      <div class="shop-card">
+        <div class="shop-img">🏷️</div>
+        <div class="shop-body">
+          <div class="shop-name">Outlaw Ducks Tarra</div>
+          <div class="shop-desc">Logotarra laadukkaalle vinyylipohjalle. UV-kestävä, säänkestävä. Sopii auton korin, ikkunan tai kaiken muun koristeluun.</div>
+          <div class="shop-price-row">
+            <div class="shop-price">
+              0 €
+              <span>+ postikulut n. 2–3 €</span>
+            </div>
+            <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Outlaw Ducks Tarra" class="btn-order">Tilaa</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="shop-card">
+        <div class="shop-img">🌲</div>
+        <div class="shop-body">
+          <div class="shop-name">Autohajuste – Metsä</div>
+          <div class="shop-desc">Klassinen puuhajuste Outlaw Ducks -brändillä. Roikkuu siististi peilin varjossa ja muistuttaa, että luonnossa ollaan kotona.</div>
+          <div class="shop-price-row">
+            <div class="shop-price">
+              0 €
+              <span>+ postikulut n. 2–3 €</span>
+            </div>
+            <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Autohajuste" class="btn-order">Tilaa</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="shop-card">
+        <div class="shop-img">📦</div>
+        <div class="shop-body">
+          <div class="shop-name">Combo-paketti</div>
+          <div class="shop-desc">Tarra + hajuste yhdessä paketissa. Täydellinen lahja itselle tai kaverille, joka ei vielä tiedä, ettei hän voi elää ilman näitä.</div>
+          <div class="shop-price-row">
+            <div class="shop-price">
+              0 €
+              <span>+ postikulut n. 3–5 €</span>
+            </div>
+            <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Combo-paketti" class="btn-order">Tilaa</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="shop-note">
+      Tilaa sähköpostilla tai pyydä suoraan — jos näet meidät, me löydämme jonkun taskustamme.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <img src="1779946768622_image.png" alt="Outlaw Ducks" class="footer-logo-img">
+  <div class="footer-brand">Outlaw Ducks TC</div>
+  <div class="footer-sub">Oulu · Est. kesä 2025</div>
+
+  <div class="footer-links">
+    <a href="#tarina">Tarina</a>
+    <a href="#jasenet">Jäsenet</a>
+    <a href="#autot">Autot</a>
+    <a href="#saannot">Säännöt</a>
+    <a href="#liity">Liity</a>
+    <a href="#kauppa">Kauppa</a>
+    <a href="tapahtumat.html">Tapahtumat</a>
+  </div>
+
+  <div class="footer-social">
+    <a href="https://www.tiktok.com/@outlawducks" target="_blank" rel="noopener" class="social-btn">
+      ▶ TikTok
+    </a>
+    <a href="https://www.instagram.com/outlawducks.tc" target="_blank" rel="noopener" class="social-btn">
+      ◈ Instagram
+    </a>
+    <a href="mailto:OutlawDucksGarage@gmail.com" class="social-btn">
+      ✉ Sähköposti
+    </a>
+  </div>
+
+  <div class="footer-copy">
+    © 2025 Outlaw Ducks Tuning Crew, Oulu<br>
+    <em style="font-size:0.7rem; color:#555;">Olemme luontokappaleita. Nopeutemme on vaisto — ei ohjelma. Säännöt ovat kuitenkin selvät.</em>
+  </div>
+</footer>
+
+<!-- ROAMING DUCK EASTER EGG -->
+<div id="roaming-duck" style="
+  position: fixed;
+  font-size: 3rem;
+  cursor: pointer;
+  z-index: 9999;
+  user-select: none;
+  transition: transform 0.1s;
+  display: none;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+">🦆</div>
+
+<!-- SPEED CAMERA FLASH OVERLAY -->
+<div id="cam-flash" style="
+  position: fixed;
+  inset: 0;
+  background: white;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+">
+  <div id="speed-text" style="
+    font-family: 'Prosto One', serif;
+    font-size: clamp(3rem, 12vw, 8rem);
+    color: #ff2200;
+    text-shadow: 0 0 30px #ff2200, 0 0 60px #ff000088;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transform: scale(0.8);
+  ">52 KM/H</div>
+</div>
+
+<script>
+(function() {
+  const duck = document.getElementById('roaming-duck');
+  const flash = document.getElementById('cam-flash');
+  const speedText = document.getElementById('speed-text');
+
+  // Web Audio API — synth quack
+  function playQuack() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = ctx.currentTime;
+
+      // Oscillator 1 — main quack body
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.connect(gain1); gain1.connect(ctx.destination);
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(600, now);
+      osc1.frequency.exponentialRampToValueAtTime(220, now + 0.18);
+      gain1.gain.setValueAtTime(0.35, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc1.start(now); osc1.stop(now + 0.22);
+
+      // Oscillator 2 — nasal overtone
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.connect(gain2); gain2.connect(ctx.destination);
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(900, now);
+      osc2.frequency.exponentialRampToValueAtTime(350, now + 0.14);
+      gain2.gain.setValueAtTime(0.15, now);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      osc2.start(now); osc2.stop(now + 0.16);
+
+      // Oscillator 3 — second quack syllable
+      const osc3 = ctx.createOscillator();
+      const gain3 = ctx.createGain();
+      osc3.connect(gain3); gain3.connect(ctx.destination);
+      osc3.type = 'sawtooth';
+      osc3.frequency.setValueAtTime(500, now + 0.22);
+      osc3.frequency.exponentialRampToValueAtTime(180, now + 0.38);
+      gain3.gain.setValueAtTime(0.25, now + 0.22);
+      gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.40);
+      osc3.start(now + 0.22); osc3.stop(now + 0.40);
+    } catch(e) {}
+  }
+
+  function triggerCamera() {
+    playQuack();
+
+    // Flash white
+    flash.style.transition = 'none';
+    flash.style.opacity = '1';
+    speedText.style.transition = 'none';
+    speedText.style.opacity = '0';
+    speedText.style.transform = 'scale(0.8)';
+
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.08s';
+      flash.style.opacity = '0.92';
+      speedText.style.transition = 'opacity 0.05s, transform 0.05s';
+      speedText.style.opacity = '1';
+      speedText.style.transform = 'scale(1.05)';
+
+      setTimeout(() => {
+        speedText.style.transition = 'opacity 0.3s, transform 0.3s';
+        speedText.style.transform = 'scale(1)';
+
+        setTimeout(() => {
+          flash.style.transition = 'opacity 0.4s';
+          flash.style.opacity = '0';
+          speedText.style.opacity = '0';
+        }, 600);
+      }, 80);
+    }, 30);
+
+    // Duck reacts
+    duck.style.transform = 'scale(1.3) rotate(-10deg)';
+    setTimeout(() => { duck.style.transform = 'scale(1) rotate(0deg)'; }, 200);
+
+    // Hide duck after click
+    setTimeout(hideDuck, 1200);
+  }
+
+  duck.addEventListener('click', triggerCamera);
+  duck.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    triggerCamera();
+  });
+
+  function showDuck() {
+    const margin = 80;
+    const maxX = window.innerWidth - 80 - margin;
+    const maxY = window.innerHeight - 80 - margin;
+    const x = margin + Math.random() * maxX;
+    const y = margin + Math.random() * (maxY - 100) + 100;
+
+    duck.style.left = x + 'px';
+    duck.style.top = y + 'px';
+    duck.style.display = 'block';
+    duck.style.opacity = '0';
+    duck.style.transform = 'scale(0.5)';
+    duck.style.transition = 'opacity 0.4s, transform 0.4s';
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        duck.style.opacity = '1';
+        duck.style.transform = 'scale(1)';
+      });
+    });
+
+    // Auto-hide after 6 seconds if not clicked
+    clearTimeout(duck._hideTimer);
+    duck._hideTimer = setTimeout(hideDuck, 6000);
+  }
+
+  function hideDuck() {
+    duck.style.transition = 'opacity 0.5s, transform 0.5s';
+    duck.style.opacity = '0';
+    duck.style.transform = 'scale(0.3)';
+    setTimeout(() => { duck.style.display = 'none'; }, 500);
+    scheduleNext();
+  }
+
+  function scheduleNext() {
+    // Random between 15–45 seconds
+    const delay = 15000 + Math.random() * 30000;
+    setTimeout(showDuck, delay);
+  }
+
+  // First appearance after 8–18 seconds
+  setTimeout(showDuck, 8000 + Math.random() * 10000);
+})();
+</script>
+
+</body>
+
