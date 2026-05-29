@@ -343,7 +343,7 @@
 
   .members-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
 
@@ -352,11 +352,13 @@
     border: 1px solid rgba(201,168,76,0.15);
     border-radius: 4px; overflow: hidden;
     transition: border-color 0.3s, transform 0.3s;
+    display: grid;
+    grid-template-columns: 200px 1fr;
   }
 
   .member-card:hover {
     border-color: rgba(201,168,76,0.5);
-    transform: translateY(-4px);
+    transform: translateY(-3px);
   }
 
   .member-avatar {
@@ -371,23 +373,25 @@
     object-fit: cover; object-position: top center;
     display: block;
   }
-  }
 
-  .member-info { padding: 1.25rem; }
+  .member-info { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; }
 
   .member-callsign {
     font-family: var(--font-display);
-    font-size: 1.3rem; color: var(--gold); margin-bottom: 0.25rem;
+    font-size: 1.4rem; color: var(--gold); margin-bottom: 0.25rem;
   }
 
   .member-role {
     font-family: var(--font-body);
     font-size: 0.7rem; font-weight: 400;
     letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--lightgray); margin-bottom: 0.5rem;
+    color: var(--lightgray); margin-bottom: 0.75rem;
   }
 
-  .member-desc { font-size: 0.9rem; color: var(--bone); line-height: 1.6; }
+  .member-desc { font-size: 0.92rem; color: var(--bone); line-height: 1.7; }
+
+  /* Legend card spans full width */
+  .member-card.legend { grid-column: 1 / -1; grid-template-columns: 240px 1fr; }
 
   /* CARS */
   #autot {
@@ -1315,7 +1319,9 @@
     .duck-counter-num { font-size: 0.85rem; }
 
     .story-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .members-grid { grid-template-columns: 1fr 1fr; }
+    .members-grid { grid-template-columns: 1fr; }
+    .member-card { grid-template-columns: 120px 1fr; }
+    .member-card.legend { grid-template-columns: 120px 1fr; }
     .cars-grid { grid-template-columns: 1fr; }
     .car-carousel { height: 220px; }
     .sold-overlay { height: 220px; }
@@ -1443,7 +1449,7 @@
         </div>
       </div>
       <div class="member-card">
-        <div class="member-avatar">🐦</div>
+        <div class="member-avatar"><img src="tipi.png" alt="Wigeon"></div>
         <div class="member-info">
           <div class="member-callsign">Wigeon</div>
           <div class="member-role">Työkaluvänrikki</div>
@@ -1458,9 +1464,9 @@
           <div class="member-desc">U18, see you soon.</div>
         </div>
       </div>
-      <div class="member-card" style="border-color: rgba(201,168,76,0.4); position: relative;">
+      <div class="member-card legend" style="border-color: rgba(201,168,76,0.4); position: relative;">
         <div style="position:absolute; top:10px; left:10px; font-family: var(--font-body); font-size:0.6rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; background: var(--gold); color: var(--black); padding: 3px 8px; border-radius:2px; z-index:2;">Legenda</div>
-        <div class="member-avatar" style="background: #1a1400;">🦆</div>
+        <div class="member-avatar" style="background: #1a1400;"><img src="theoutlawduck.png" alt="The Outlaw Duck"></div>
         <div class="member-info">
           <div class="member-callsign" style="color: var(--gold);">The Outlaw Duck</div>
           <div class="member-role">Alkuperäinen Outlaw Duck</div>
@@ -1505,7 +1511,7 @@
           <img src="visa.png" alt="Mallard" style="width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:top center;flex-shrink:0;">Mallard
         </button>
         <button class="filter-btn btn-person" onclick="filterCars('wigeon', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
-          <span style="width:26px;height:26px;border-radius:50%;background:var(--midgray);display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🐦</span>Wigeon
+          <img src="tipi.png" alt="Wigeon" style="width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:top center;flex-shrink:0;">Wigeon
         </button>
         <button class="filter-btn btn-person" onclick="filterCars('goosander', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
           <img src="juho.png" alt="Goosander" style="width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:top center;flex-shrink:0;">Goosander
