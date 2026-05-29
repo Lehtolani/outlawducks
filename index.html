@@ -343,22 +343,38 @@
 
   .members-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
   }
 
+  /* Legend spans full width at top */
+  .member-card.legend {
+    grid-column: 1 / -1;
+    grid-template-columns: 240px 1fr;
+    display: grid;
+  }
+
+  /* Normal cards: stacked (image on top, text below) */
   .member-card {
     background: var(--darkgray);
     border: 1px solid rgba(201,168,76,0.15);
     border-radius: 4px; overflow: hidden;
     transition: border-color 0.3s, transform 0.3s;
-    display: grid;
-    grid-template-columns: 200px 1fr;
+    display: flex; flex-direction: column;
   }
 
   .member-card:hover {
     border-color: rgba(201,168,76,0.5);
     transform: translateY(-3px);
+  }
+
+  /* Legend card horizontal layout */
+  .member-card.legend {
+    flex-direction: row;
+  }
+
+  .member-card.legend .member-avatar {
+    width: 240px; flex-shrink: 0; aspect-ratio: 1;
   }
 
   .member-avatar {
@@ -374,7 +390,9 @@
     display: block;
   }
 
-  .member-info { padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; }
+  .member-info { padding: 1.25rem; display: flex; flex-direction: column; justify-content: center; }
+
+  .member-card.legend .member-info { padding: 1.75rem; }
 
   .member-callsign {
     font-family: var(--font-display);
@@ -388,10 +406,7 @@
     color: var(--lightgray); margin-bottom: 0.75rem;
   }
 
-  .member-desc { font-size: 0.92rem; color: var(--bone); line-height: 1.7; }
-
-  /* Legend card spans full width */
-  .member-card.legend { grid-column: 1 / -1; grid-template-columns: 240px 1fr; }
+  .member-desc { font-size: 0.9rem; color: var(--bone); line-height: 1.7; }
 
   /* CARS */
   #autot {
@@ -517,19 +532,40 @@
   }
 
   /* TUHOUTUNUT overlay */
-  .car-card.wrecked .car-carousel { filter: grayscale(0.7) brightness(0.55); }
+  .car-card.wrecked .car-carousel { filter: grayscale(0.6) brightness(0.5); }
   .wrecked-overlay {
     position: absolute; top: 0; left: 0; right: 0;
     height: 100%; display: flex; align-items: center;
     justify-content: center; z-index: 4; pointer-events: none;
-    flex-direction: column; gap: 4px;
   }
-  .wrecked-icon { font-size: 3rem; filter: drop-shadow(0 2px 8px #000); }
   .wrecked-label {
     font-family: var(--font-display);
-    font-size: 1.1rem; letter-spacing: 0.15em;
-    color: #e08080; text-transform: uppercase;
-    text-shadow: 0 1px 4px #000;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 900;
+    color: #ff2200;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 20px rgba(255,34,0,0.6), 0 2px 8px #000, 2px 2px 0 #600, -1px -1px 0 #000;
+    -webkit-text-stroke: 1px #000;
+  }
+
+  /* MYYTY overlay */
+  .car-card.sold { position: relative; }
+  .car-card.sold .car-carousel { filter: grayscale(0.9) brightness(0.45); }
+  .sold-overlay {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 100%; display: flex; align-items: center;
+    justify-content: center; z-index: 4; pointer-events: none;
+  }
+  .sold-label {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-weight: 900;
+    color: #ff2200;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 20px rgba(255,34,0,0.5), 0 2px 8px #000, 2px 2px 0 #600, -1px -1px 0 #000;
+    -webkit-text-stroke: 1px #000;
   }
 
   .badge-kaytto     { background: #1a3a5c; color: #8bbfe0; }
@@ -941,16 +977,16 @@
 
   /* Shared SVG feather/camo background — applied per section */
   :root {
-    --bg-feather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cellipse cx='20' cy='60' rx='8' ry='18' fill='none' stroke='rgba(107,60,30,0.07)' stroke-width='1.5' transform='rotate(-30 20 60)'/%3E%3Cellipse cx='60' cy='20' rx='6' ry='14' fill='none' stroke='rgba(45,90,61,0.06)' stroke-width='1.5' transform='rotate(20 60 20)'/%3E%3Cellipse cx='100' cy='80' rx='7' ry='16' fill='none' stroke='rgba(107,60,30,0.05)' stroke-width='1.5' transform='rotate(-15 100 80)'/%3E%3Cellipse cx='40' cy='100' rx='5' ry='12' fill='none' stroke='rgba(201,168,76,0.05)' stroke-width='1' transform='rotate(40 40 100)'/%3E%3C/svg%3E");
-    --bg-camo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cellipse cx='40' cy='50' rx='30' ry='18' fill='rgba(45,90,61,0.04)'/%3E%3Cellipse cx='130' cy='30' rx='20' ry='14' fill='rgba(107,60,30,0.04)'/%3E%3Cellipse cx='160' cy='110' rx='28' ry='16' fill='rgba(45,90,61,0.035)'/%3E%3Cellipse cx='60' cy='150' rx='22' ry='14' fill='rgba(107,60,30,0.03)'/%3E%3Cellipse cx='110' cy='170' rx='18' ry='12' fill='rgba(201,168,76,0.025)'/%3E%3Cellipse cx='20' cy='120' rx='14' ry='10' fill='rgba(45,90,61,0.03)'/%3E%3C/svg%3E");
+    --bg-feather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3C!-- Main feather shaft --%3E%3Cline x1='80' y1='10' x2='80' y2='150' stroke='rgba(107,60,30,0.18)' stroke-width='1.5'/%3E%3C!-- Barbs left --%3E%3Cline x1='80' y1='30' x2='45' y2='55' stroke='rgba(107,60,30,0.14)' stroke-width='1'/%3E%3Cline x1='80' y1='50' x2='40' y2='72' stroke='rgba(107,60,30,0.13)' stroke-width='1'/%3E%3Cline x1='80' y1='70' x2='42' y2='90' stroke='rgba(107,60,30,0.12)' stroke-width='1'/%3E%3Cline x1='80' y1='90' x2='48' y2='108' stroke='rgba(107,60,30,0.11)' stroke-width='1'/%3E%3Cline x1='80' y1='110' x2='55' y2='125' stroke='rgba(107,60,30,0.09)' stroke-width='1'/%3E%3C!-- Barbs right --%3E%3Cline x1='80' y1='30' x2='115' y2='55' stroke='rgba(107,60,30,0.14)' stroke-width='1'/%3E%3Cline x1='80' y1='50' x2='120' y2='72' stroke='rgba(107,60,30,0.13)' stroke-width='1'/%3E%3Cline x1='80' y1='70' x2='118' y2='90' stroke='rgba(107,60,30,0.12)' stroke-width='1'/%3E%3Cline x1='80' y1='90' x2='112' y2='108' stroke='rgba(107,60,30,0.11)' stroke-width='1'/%3E%3Cline x1='80' y1='110' x2='105' y2='125' stroke='rgba(107,60,30,0.09)' stroke-width='1'/%3E%3C!-- Tip oval --%3E%3Cellipse cx='80' cy='15' rx='5' ry='7' fill='none' stroke='rgba(45,90,61,0.15)' stroke-width='1.2'/%3E%3C/svg%3E");
+    --bg-camo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cellipse cx='40' cy='50' rx='32' ry='20' fill='rgba(45,90,61,0.09)'/%3E%3Cellipse cx='130' cy='30' rx='22' ry='15' fill='rgba(107,60,30,0.09)'/%3E%3Cellipse cx='160' cy='110' rx='30' ry='18' fill='rgba(45,90,61,0.08)'/%3E%3Cellipse cx='60' cy='155' rx='24' ry='15' fill='rgba(107,60,30,0.07)'/%3E%3Cellipse cx='110' cy='175' rx='20' ry='13' fill='rgba(201,168,76,0.06)'/%3E%3Cellipse cx='18' cy='120' rx='16' ry='11' fill='rgba(45,90,61,0.07)'/%3E%3Cellipse cx='90' cy='90' rx='12' ry='8' fill='rgba(107,60,30,0.05)'/%3E%3C/svg%3E");
   }
 
   body::after {
     content: '';
     position: fixed; inset: 0;
     background-image: var(--bg-feather);
-    background-size: 120px 120px;
-    pointer-events: none; z-index: 0; opacity: 0.6;
+    background-size: 160px 160px;
+    pointer-events: none; z-index: 0; opacity: 1;
   }
 
   .hero {
@@ -1320,8 +1356,8 @@
 
     .story-grid { grid-template-columns: 1fr; gap: 2rem; }
     .members-grid { grid-template-columns: 1fr; }
-    .member-card { grid-template-columns: 120px 1fr; }
-    .member-card.legend { grid-template-columns: 120px 1fr; }
+    .member-card.legend { flex-direction: column; }
+    .member-card.legend .member-avatar { width: 100%; }
     .cars-grid { grid-template-columns: 1fr; }
     .car-carousel { height: 220px; }
     .sold-overlay { height: 220px; }
@@ -1431,13 +1467,24 @@
     <h2 class="section-title">Jäsenet</h2>
     <div class="section-divider"></div>
     <div class="members-grid">
+      <!-- LEGENDA — full width, first -->
+      <div class="member-card legend" style="border-color: rgba(201,168,76,0.4); position: relative;">
+        <div style="position:absolute; top:10px; left:10px; font-family: var(--font-body); font-size:0.6rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; background: var(--gold); color: var(--black); padding: 3px 8px; border-radius:2px; z-index:2;">Legenda</div>
+        <div class="member-avatar" style="background: #1a1400;"><img src="theoutlawduck.png" alt="The Outlaw Duck"></div>
+        <div class="member-info">
+          <div class="member-callsign" style="color: var(--gold);">The Outlaw Duck</div>
+          <div class="member-role">Alkuperäinen Outlaw Duck</div>
+          <div class="member-desc">Kiinni kahdesti, samassa paikassa, samana päivänä, samalla nopeudella — seitsemän vuoden välein. 52 km/h, 30-alueella. Sakkoa ei tullut. Rikosoikeudellinen vastuu ei koske lintuja. Porukan legenda ja ainoa jäsen, jolla on globaali mediakattavuus.</div>
+        </div>
+      </div>
+      <!-- KOLME PERUSTAJAA -->
       <div class="member-card">
         <div class="member-avatar"><img src="visa.png" alt="Mallard"></div>
         <div class="member-info">
           <div class="member-callsign">Mallard</div>
           <div class="member-role">Perustaja &amp; Johto</div>
           <div class="member-desc">Idean isä ja tekijämies. Ajaa töikseen, koulussa ja harrastuksena. Taitava rahankäyttäjä, eli kaikki menee! Joku lappalais-italialainen hybridi.</div>
-          <a href="https://instagram.com/denssipakko" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.6rem; font-family:var(--font-body); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); text-decoration:none; border:1px solid rgba(201,168,76,0.3); padding:3px 10px; border-radius:2px; transition:background 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.1)'" onmouseout="this.style.background='transparent'">◈ @denssipakko</a>
+          <a href="https://instagram.com/denssipakko" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.75rem; font-family:var(--font-body); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); text-decoration:none; border:1px solid rgba(201,168,76,0.3); padding:3px 10px; border-radius:2px; transition:background 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.1)'" onmouseout="this.style.background='transparent'">◈ @denssipakko</a>
         </div>
       </div>
       <div class="member-card">
@@ -1456,6 +1503,7 @@
           <div class="member-desc">Liikaa puhetta, liian vähän tekoja. Kuvaa kyllä, muttei postaa mitään. Aika ei riitä mihinkään ja kaikki on puolivalmista. Silti yrittää. Länsirajan ylittäny ja joutas jo takas.</div>
         </div>
       </div>
+      <!-- GADWALL + TYHJÄ -->
       <div class="member-card">
         <div class="member-avatar">🐤</div>
         <div class="member-info">
@@ -1464,19 +1512,10 @@
           <div class="member-desc">U18, see you soon.</div>
         </div>
       </div>
-      <div class="member-card legend" style="border-color: rgba(201,168,76,0.4); position: relative;">
-        <div style="position:absolute; top:10px; left:10px; font-family: var(--font-body); font-size:0.6rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; background: var(--gold); color: var(--black); padding: 3px 8px; border-radius:2px; z-index:2;">Legenda</div>
-        <div class="member-avatar" style="background: #1a1400;"><img src="theoutlawduck.png" alt="The Outlaw Duck"></div>
-        <div class="member-info">
-          <div class="member-callsign" style="color: var(--gold);">The Outlaw Duck</div>
-          <div class="member-role">Alkuperäinen Outlaw Duck</div>
-          <div class="member-desc">Kiinni kahdesti, samassa paikassa, samana päivänä, samalla nopeudella — seitsemän vuoden välein. 52 km/h, 30-alueella. Sakkoa ei tullut. Rikosoikeudellinen vastuu ei koske lintuja. Porukan legenda ja ainoa jäsen, jolla on globaali mediakattavuus.</div>
-        </div>
-      </div>
       <div class="member-card">
-        <div class="member-avatar" style="font-size:2rem; color: #444; flex-direction:column; gap:8px;"><span>🔒</span><span style="font-size:0.75rem; font-family: var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span></div>
+        <div class="member-avatar" style="font-size:2rem; color:#444; flex-direction:column; gap:8px;"><span>🔒</span><span style="font-size:0.75rem; font-family:var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span></div>
         <div class="member-info">
-          <div class="member-callsign" style="color: #444;">???</div>
+          <div class="member-callsign" style="color:#444;">???</div>
           <div class="member-role">Uusi jäsen</div>
           <div class="member-desc" style="color:#555;">Vielä hakusessa. Rauhotettu vissii, joten elä ammu jos näät.</div>
         </div>
@@ -1495,8 +1534,11 @@
     <!-- SUODATTIMET -->
     <div class="catalog-filters">
       <div class="filter-row">
+        <button class="filter-btn btn-special active" onclick="filterCars('all', this)" style="font-size:0.8rem; padding:0.5rem 1.4rem;">Näytä kaikki</button>
+      </div>
+      <div class="filter-row">
         <span class="filter-row-label">Autot</span>
-        <button class="filter-btn btn-special active" onclick="showFeatured(this)">Suosikit</button>
+        <button class="filter-btn btn-special" onclick="showFeatured(this)">Suosikit</button>
         <button class="filter-btn btn-pommi"      onclick="filterCars('pommi', this)">Tonnin pommi</button>
         <button class="filter-btn btn-kaytto"     onclick="filterCars('kaytto', this)">Käyttöauto</button>
         <button class="filter-btn btn-projekti"   onclick="filterCars('projekti', this)">Projekti</button>
@@ -1519,7 +1561,6 @@
         <button class="filter-btn btn-person" onclick="filterCars('gadwall', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
           <span style="width:26px;height:26px;border-radius:50%;background:var(--midgray);display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🐤</span>Gadwall
         </button>
-        <button class="filter-btn btn-special" onclick="filterCars('all', this)">Näytä kaikki</button>
       </div>
     </div>
 
@@ -1754,7 +1795,7 @@
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
           <button class="carousel-btn next" style="display:none">&#8250;</button>
           <div class="carousel-dots" id="dots-cor"></div>
-          <div class="wrecked-overlay"><div class="wrecked-icon">💀</div><div class="wrecked-label">Tuhoutunut</div></div>
+          <div class="wrecked-overlay"><div class="wrecked-label">TUHOUTUNUT</div></div>
         </div>
         <div class="car-body">
           <div class="car-name">Toyota Corolla</div>
@@ -1778,7 +1819,7 @@
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
           <button class="carousel-btn next" style="display:none">&#8250;</button>
           <div class="carousel-dots" id="dots-cit"></div>
-          <div class="wrecked-overlay"><div class="wrecked-icon">💀</div><div class="wrecked-label">Tuhoutunut</div></div>
+          <div class="wrecked-overlay"><div class="wrecked-label">TUHOUTUNUT</div></div>
         </div>
         <div class="car-body">
           <div class="car-name">Citroën C5</div>
@@ -1832,7 +1873,7 @@
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
           <button class="carousel-btn next" style="display:none">&#8250;</button>
           <div class="carousel-dots" id="dots-mzb"></div>
-          <div class="sold-overlay"><div class="sold-icon">💸</div><div class="sold-label">Myyty</div></div>
+          <div class="sold-overlay"><div class="sold-label">MYYTY</div></div>
         </div>
         <div class="car-body">
           <div class="car-name">BMW 330e</div>
@@ -1863,7 +1904,7 @@
             <div class="carousel-dot" onclick="carouselGo('znl',1)"></div>
             <div class="carousel-dot" onclick="carouselGo('znl',2)"></div>
           </div>
-          <div class="sold-overlay"><div class="sold-icon">💸</div><div class="sold-label">Myyty</div></div>
+          <div class="sold-overlay"><div class="sold-label">MYYTY</div></div>
         </div>
         <div class="car-body">
           <div class="car-name">VW PASSAT B8 Variant</div>
@@ -2116,7 +2157,10 @@ function showFeatured(btn) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  showFeatured(document.querySelector('.filter-btn'));
+  // Default: show all cars since "Näytä kaikki" is active
+  document.querySelectorAll('#cars-grid .car-card').forEach(card => {
+    card.classList.remove('hidden');
+  });
 });
 </script>
 
