@@ -22,7 +22,8 @@
     --gold: #c9a84c;
     --gold-dark: #9a7a2e;
     --duck-green: #2d5a3d;
-    --duck-brown: #6b3c1e;
+    --duck-green-light: rgba(45,90,61,0.12);
+    --duck-green-mid: rgba(45,90,61,0.06);
     --duck-orange: #d4651a;
     --white: #f5f0e8;
     --red: #a02020;
@@ -108,6 +109,34 @@
   }
 
   .nav-links a:hover { color: var(--gold); }
+
+  /* NAV SOCIAL BUTTONS */
+  .nav-social-btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 5px; height: 32px; padding: 0 10px;
+    font-family: var(--font-body);
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); text-decoration: none;
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 2px;
+    transition: background 0.2s, border-color 0.2s;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  .nav-social-btn:hover { background: rgba(201,168,76,0.12); border-color: var(--gold); }
+
+  /* Desktop: show icon + full label, hide mobile label */
+  .social-icon-desktop { display: inline; }
+  .social-label-desktop { display: inline; }
+  .social-label-mobile { display: none; }
+
+  @media (max-width: 900px) {
+    .social-icon-desktop { display: none; }
+    .social-label-desktop { display: none; }
+    .social-label-mobile { display: inline; }
+    .nav-social-btn { padding: 0 8px; }
+  }
 
   /* DUCK COUNTER in nav */
   .duck-counter {
@@ -334,6 +363,14 @@
     width: 100%; aspect-ratio: 1;
     display: flex; align-items: center; justify-content: center;
     background: var(--midgray); font-size: 5rem;
+    overflow: hidden;
+  }
+
+  .member-avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top center;
+    display: block;
+  }
   }
 
   .member-info { padding: 1.25rem; }
@@ -362,7 +399,7 @@
   .cars-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 
   .car-card {
@@ -385,7 +422,7 @@
 
   /* ---- KUVAKARUSELLI ---- */
   .car-carousel {
-    width: 100%; height: 220px;
+    width: 100%; height: 280px;
     position: relative; overflow: hidden;
     background: var(--midgray);
     border-bottom: 1px solid rgba(201,168,76,0.1);
@@ -442,6 +479,53 @@
     font-size: 0.65rem; font-weight: 600;
     letter-spacing: 0.15em; text-transform: uppercase;
     padding: 4px 10px; border-radius: 2px;
+    z-index: 10; /* stays on top of carousel slides */
+    pointer-events: none;
+  }
+
+  /* Sticky badge wrapper — lives outside carousel-track so it doesn't scroll */
+  .car-carousel > .car-type-badge {
+    position: absolute; top: 12px; right: 12px; z-index: 10;
+  }
+
+  /* MUUTA kenttä */
+  .car-muuta {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(201,168,76,0.07);
+    border-left: 2px solid rgba(201,168,76,0.3);
+    border-radius: 0 2px 2px 0;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--bone);
+    line-height: 1.5;
+  }
+
+  .car-muuta-label {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-style: normal;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* TUHOUTUNUT overlay */
+  .car-card.wrecked .car-carousel { filter: grayscale(0.7) brightness(0.55); }
+  .wrecked-overlay {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 100%; display: flex; align-items: center;
+    justify-content: center; z-index: 4; pointer-events: none;
+    flex-direction: column; gap: 4px;
+  }
+  .wrecked-icon { font-size: 3rem; filter: drop-shadow(0 2px 8px #000); }
+  .wrecked-label {
+    font-family: var(--font-display);
+    font-size: 1.1rem; letter-spacing: 0.15em;
+    color: #e08080; text-transform: uppercase;
+    text-shadow: 0 1px 4px #000;
   }
 
   .badge-kaytto     { background: #1a3a5c; color: #8bbfe0; }
@@ -733,11 +817,11 @@
   .vasikka-close:hover { color: var(--lightgray); }
 
   /* RULES MOBILE PAGINATION */
-  .rules-page { display: contents; } /* desktop: kaikki näkyy */
+  .rules-page { display: none; } /* hidden by default, shown via JS */
   .rules-page.active { display: contents; }
 
   .rules-nav {
-    display: none; /* piilotettu desktopilla */
+    display: flex; /* visible on all screens */
     align-items: center; justify-content: space-between;
     margin-top: 1.5rem; gap: 1rem;
   }
@@ -765,33 +849,71 @@
 
   @media (max-width: 768px) {
     .rules-nav { display: flex; }
-    .rules-page { display: none !important; } /* mobiilissa piilotetaan */
-    .rules-page.active { display: contents !important; } /* näytetään vain aktiivinen */
+    /* rules already paginated globally */
   }
 
-  /* TAUSTAGRAFIIKKA */
+  /* TAUSTAGRAFIIKKA + VIHREÄ AKSENTTI */
+
+  /* Sections get subtle green left border accent */
+  #tarina, #jasenet, #autot, #saannot, #liity, #kauppa {
+    border-left: 3px solid rgba(45,90,61,0.2);
+  }
+
+  /* Hero — vihreä säteily */
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 60%, rgba(45,90,61,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(201,168,76,0.04) 0%, transparent 45%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* Tarina — ankka oikeassa alakulmassa + vihreä kaareva viiva */
   #tarina { position: relative; overflow: hidden; }
+  #tarina::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    border: 1px solid rgba(45,90,61,0.1);
+    right: -200px; bottom: -200px;
+    pointer-events: none; z-index: 0;
+  }
   #tarina::after {
     content: '🦆';
     position: absolute;
-    font-size: 18rem; opacity: 0.025;
+    font-size: 16rem; opacity: 0.028;
     filter: grayscale(1);
-    right: -2rem; bottom: -2rem;
+    right: -1rem; bottom: -1rem;
     transform: scaleX(-1) rotate(-15deg);
     pointer-events: none; z-index: 0; line-height: 1;
   }
 
+  /* Jäsenet — viistoviivapattern */
   #jasenet { position: relative; overflow: hidden; }
   #jasenet::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -55deg,
+      transparent, transparent 60px,
+      rgba(45,90,61,0.025) 60px,
+      rgba(45,90,61,0.025) 61px
+    );
+    pointer-events: none; z-index: 0;
+  }
+  #jasenet::after {
     content: '🦢';
     position: absolute;
-    font-size: 14rem; opacity: 0.025;
+    font-size: 12rem; opacity: 0.025;
     filter: grayscale(1);
-    left: -2rem; top: 2rem;
+    left: -1rem; top: 2rem;
     transform: rotate(10deg);
     pointer-events: none; z-index: 0; line-height: 1;
   }
 
+  /* Säännöt — varoitusnauha + vihreä piste */
   #saannot {
     background-image: repeating-linear-gradient(
       -55deg,
@@ -800,56 +922,265 @@
       rgba(201,168,76,0.018) 52px
     );
   }
+  #saannot::before {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,90,61,0.06) 0%, transparent 70%);
+    left: -100px; top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; z-index: 0;
+  }
 
-  #autot { position: relative; overflow: hidden; }
-  #autot::before {
+  /* ═══ TAUSTAGRAFIIKKA ═══ */
+
+  /* Shared SVG feather/camo background — applied per section */
+  :root {
+    --bg-feather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cellipse cx='20' cy='60' rx='8' ry='18' fill='none' stroke='rgba(107,60,30,0.07)' stroke-width='1.5' transform='rotate(-30 20 60)'/%3E%3Cellipse cx='60' cy='20' rx='6' ry='14' fill='none' stroke='rgba(45,90,61,0.06)' stroke-width='1.5' transform='rotate(20 60 20)'/%3E%3Cellipse cx='100' cy='80' rx='7' ry='16' fill='none' stroke='rgba(107,60,30,0.05)' stroke-width='1.5' transform='rotate(-15 100 80)'/%3E%3Cellipse cx='40' cy='100' rx='5' ry='12' fill='none' stroke='rgba(201,168,76,0.05)' stroke-width='1' transform='rotate(40 40 100)'/%3E%3C/svg%3E");
+    --bg-camo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cellipse cx='40' cy='50' rx='30' ry='18' fill='rgba(45,90,61,0.04)'/%3E%3Cellipse cx='130' cy='30' rx='20' ry='14' fill='rgba(107,60,30,0.04)'/%3E%3Cellipse cx='160' cy='110' rx='28' ry='16' fill='rgba(45,90,61,0.035)'/%3E%3Cellipse cx='60' cy='150' rx='22' ry='14' fill='rgba(107,60,30,0.03)'/%3E%3Cellipse cx='110' cy='170' rx='18' ry='12' fill='rgba(201,168,76,0.025)'/%3E%3Cellipse cx='20' cy='120' rx='14' ry='10' fill='rgba(45,90,61,0.03)'/%3E%3C/svg%3E");
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: var(--bg-feather);
+    background-size: 120px 120px;
+    pointer-events: none; z-index: 0; opacity: 0.6;
+  }
+
+  .hero {
+    background-image: var(--bg-camo);
+    background-size: 200px 200px;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 70%, rgba(45,90,61,0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 25%, rgba(107,60,30,0.08) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 50%, rgba(13,13,13,0.3) 0%, transparent 80%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* Tarina */
+  #tarina {
+    position: relative; overflow: hidden;
+    background-image: var(--bg-feather);
+    background-size: 120px 120px;
+    border-left: 3px solid rgba(107,60,30,0.3);
+  }
+  #tarina::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    border: 1px solid rgba(45,90,61,0.08);
+    right: -250px; bottom: -250px;
+    pointer-events: none; z-index: 0;
+  }
+  #tarina::after {
+    content: '🦆';
+    position: absolute;
+    font-size: 18rem; opacity: 0.03;
+    filter: grayscale(1) sepia(0.3);
+    right: -1rem; bottom: -1rem;
+    transform: scaleX(-1) rotate(-15deg);
+    pointer-events: none; z-index: 0; line-height: 1;
+  }
+
+  /* Jäsenet */
+  #jasenet {
+    position: relative; overflow: hidden;
+    background-image: var(--bg-camo);
+    background-size: 200px 200px;
+    border-left: 3px solid rgba(45,90,61,0.3);
+  }
+  #jasenet::before {
     content: '';
     position: absolute; inset: 0;
     background: repeating-linear-gradient(
-      90deg,
+      -40deg,
       transparent, transparent 80px,
-      rgba(201,168,76,0.012) 80px,
-      rgba(201,168,76,0.012) 81px
+      rgba(45,90,61,0.02) 80px,
+      rgba(45,90,61,0.02) 81px
+    );
+    pointer-events: none; z-index: 0;
+  }
+  #jasenet::after {
+    content: '🦢';
+    position: absolute;
+    font-size: 14rem; opacity: 0.025;
+    filter: grayscale(1);
+    left: -1rem; top: 3rem;
+    transform: rotate(10deg);
+    pointer-events: none; z-index: 0; line-height: 1;
+  }
+
+  /* Säännöt */
+  #saannot {
+    position: relative; overflow: hidden;
+    background-image: var(--bg-feather);
+    background-size: 120px 120px;
+    border-left: 3px solid rgba(201,168,76,0.25);
+  }
+  #saannot::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,90,61,0.07) 0%, transparent 70%);
+    left: -150px; top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; z-index: 0;
+  }
+  #saannot::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -55deg,
+      transparent, transparent 50px,
+      rgba(201,168,76,0.015) 50px,
+      rgba(201,168,76,0.015) 52px
     );
     pointer-events: none; z-index: 0;
   }
 
-  #liity { position: relative; overflow: hidden; }
+  /* Autot */
+  #autot {
+    position: relative; overflow: hidden;
+    background-image: var(--bg-camo);
+    background-size: 200px 200px;
+    border-left: 3px solid rgba(45,90,61,0.25);
+  }
+  #autot::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(45,90,61,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45,90,61,0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* Liity */
+  #liity {
+    position: relative; overflow: hidden;
+    background-image: var(--bg-feather);
+    background-size: 120px 120px;
+    border-left: 3px solid rgba(45,90,61,0.3);
+  }
   #liity::before {
     content: '🦆';
     position: absolute;
-    font-size: 30rem; opacity: 0.02;
-    filter: grayscale(1);
+    font-size: 28rem; opacity: 0.022;
+    filter: grayscale(1) sepia(0.2);
     left: 50%; top: 50%;
     transform: translate(-50%, -50%) rotate(-5deg);
     pointer-events: none; z-index: 0; line-height: 1;
   }
-
-  #kauppa { position: relative; overflow: hidden; }
-  #kauppa::before {
+  #liity::after {
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% 110%, rgba(201,168,76,0.05) 0%, transparent 65%);
+    background: radial-gradient(ellipse at 50% 50%, rgba(45,90,61,0.07) 0%, transparent 70%);
     pointer-events: none; z-index: 0;
   }
 
-  /* CATALOG FILTERS */
+  /* Kauppa */
+  #kauppa {
+    position: relative; overflow: hidden;
+    background-image: var(--bg-camo);
+    background-size: 200px 200px;
+    border-left: 3px solid rgba(107,60,30,0.25);
+  }
+  #kauppa::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 0% 100%, rgba(45,90,61,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 0%, rgba(107,60,30,0.06) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .section-inner { position: relative; z-index: 1; }
+
+  /* Gold→green gradient divider */
+  .section-divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--gold), #2d5a3d);
+    margin-bottom: 3rem;
+  }
+
+  nav { border-bottom: 1px solid rgba(45,90,61,0.4); }
+  .rule-item { border-left: 3px solid #2d5a3d; }
+
+  /* ═══ CATALOG FILTERS — värilliset, kahdella rivillä ═══ */
   .catalog-filters {
-    display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;
+    display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem;
+  }
+
+  .filter-row {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+  }
+
+  .filter-row-label {
+    font-family: var(--font-body);
+    font-size: 0.6rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--lightgray);
+    margin-right: 0.25rem;
+    min-width: 60px;
   }
 
   .filter-btn {
     font-family: var(--font-body);
-    font-size: 0.75rem; font-weight: 600;
-    letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--bone); background: var(--darkgray);
-    border: 1px solid rgba(201,168,76,0.2);
-    padding: 0.5rem 1.1rem; border-radius: 2px;
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.4rem 0.9rem; border-radius: 2px;
     cursor: pointer; transition: all 0.2s;
+    border: 1px solid transparent;
+    color: var(--bone);
   }
 
-  .filter-btn:hover { border-color: rgba(201,168,76,0.6); color: var(--gold); }
-  .filter-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  /* Suosikit + Näytä kaikki */
+  .filter-btn.btn-special {
+    background: var(--darkgray);
+    border-color: rgba(201,168,76,0.3);
+    color: var(--gold);
+  }
+  .filter-btn.btn-special:hover,
+  .filter-btn.btn-special.active {
+    background: var(--gold); color: var(--black); border-color: var(--gold);
+  }
+
+  /* Auto-kategoriat */
+  .filter-btn.btn-pommi    { background: #3a2400; border-color: #7a4e00; color: #f0a830; }
+  .filter-btn.btn-kaytto   { background: #0e2238; border-color: #1a4a7a; color: #8bbfe0; }
+  .filter-btn.btn-projekti { background: #162e1f; border-color: #2d5a3d; color: #a8d4b8; }
+  .filter-btn.btn-kakkosauto { background: #0e2218; border-color: #1a4a30; color: #70b080; }
+  .filter-btn.btn-nayttely { background: #28103c; border-color: #6a30a0; color: #c89de0; }
+  .filter-btn.btn-tuhoutunut { background: #3a0808; border-color: #8a2020; color: #e08080; }
+  .filter-btn.btn-myyty    { background: #222; border-color: #555; color: #888; }
+
+  .filter-btn.btn-pommi.active    { background: #f0a830; color: #0d0d0d; border-color: #f0a830; }
+  .filter-btn.btn-kaytto.active   { background: #8bbfe0; color: #0d0d0d; border-color: #8bbfe0; }
+  .filter-btn.btn-projekti.active { background: #a8d4b8; color: #0d0d0d; border-color: #a8d4b8; }
+  .filter-btn.btn-kakkosauto.active { background: #70b080; color: #0d0d0d; border-color: #70b080; }
+  .filter-btn.btn-nayttely.active { background: #c89de0; color: #0d0d0d; border-color: #c89de0; }
+  .filter-btn.btn-tuhoutunut.active { background: #e08080; color: #0d0d0d; border-color: #e08080; }
+  .filter-btn.btn-myyty.active    { background: #888; color: #0d0d0d; border-color: #888; }
+
+  /* Jäsen-painikkeet */
+  .filter-btn.btn-person {
+    background: rgba(45,90,61,0.15);
+    border-color: rgba(45,90,61,0.4);
+    color: #a8d4b8;
+  }
+  .filter-btn.btn-person:hover,
+  .filter-btn.btn-person.active {
+    background: #2d5a3d; color: var(--white); border-color: #4a8a5d;
+  }
 
   .car-card { transition: opacity 0.25s, transform 0.25s; }
   .car-card.hidden { display: none; }
@@ -944,15 +1275,51 @@
   .nav-mobile-menu a:hover { color: var(--gold); background: rgba(201,168,76,0.05); }
 
   @media (max-width: 768px) {
-    nav { padding: 0 1rem; }
+    /* NAV — kaksirivinen mobiililla */
+    nav {
+      padding: 0 1rem;
+      height: auto;
+      flex-wrap: wrap;
+      padding-top: 6px;
+      padding-bottom: 4px;
+      gap: 4px;
+    }
+
+    .nav-logo {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Brändinimi alle mobiililla */
+    .nav-brand {
+      font-size: 0.85rem;
+    }
+
+    .nav-brand span {
+      font-size: 0.55rem;
+    }
+
+    /* Oikea puoli: somet + counter + hampurilainen */
+    nav > div {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .nav-links { display: none; }
     .nav-hamburger { display: flex; }
-    .duck-counter { display: none; }
+
+    /* Kamerakuva pois counterista */
+    .duck-cam-icon { display: none; }
+    .duck-counter { font-size: 0.6rem; padding: 3px 7px; gap: 4px; }
+    .duck-counter-num { font-size: 0.85rem; }
+
     .story-grid { grid-template-columns: 1fr; gap: 2rem; }
     .members-grid { grid-template-columns: 1fr 1fr; }
     .cars-grid { grid-template-columns: 1fr; }
-    .car-carousel { height: 180px; }
-    .sold-overlay { height: 180px; }
+    .car-carousel { height: 220px; }
+    .sold-overlay { height: 220px; }
+    .wrecked-overlay { height: 220px; }
     .rules-grid { grid-template-columns: 1fr; }
     .join-steps { grid-template-columns: 1fr; }
     .shop-grid { grid-template-columns: 1fr; }
@@ -991,9 +1358,19 @@
     <li><a href="#kauppa">Kauppa</a></li>
     <li><a href="tapahtumat.html">Tapahtumat</a></li>
   </ul>
-  <div style="display:flex; align-items:center; gap:12px;">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <a href="https://www.tiktok.com/@outlawducks" target="_blank" rel="noopener" class="nav-social-btn" title="TikTok">
+      <span class="social-icon-desktop">▶</span>
+      <span class="social-label-desktop">TikTok</span>
+      <span class="social-label-mobile">TikTok</span>
+    </a>
+    <a href="https://www.instagram.com/outlawducks.tc" target="_blank" rel="noopener" class="nav-social-btn" title="Instagram">
+      <span class="social-icon-desktop">◈</span>
+      <span class="social-label-desktop">Instagram</span>
+      <span class="social-label-mobile">Insta</span>
+    </a>
     <div class="duck-counter" id="duck-counter" title="Kuvatut ankat">
-      <span class="duck-counter-icon">📸</span>
+      <span class="duck-counter-icon duck-cam-icon">📸</span>
       <span class="duck-counter-num" id="duck-count">0</span>
       <span>/ 5</span>
     </div>
@@ -1049,15 +1426,16 @@
     <div class="section-divider"></div>
     <div class="members-grid">
       <div class="member-card">
-        <div class="member-avatar">🦆</div>
+        <div class="member-avatar"><img src="visa.png" alt="Mallard"></div>
         <div class="member-info">
           <div class="member-callsign">Mallard</div>
           <div class="member-role">Perustaja &amp; Johto</div>
           <div class="member-desc">Idean isä ja tekijämies. Ajaa töikseen, koulussa ja harrastuksena. Taitava rahankäyttäjä, eli kaikki menee! Joku lappalais-italialainen hybridi.</div>
+          <a href="https://instagram.com/denssipakko" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.6rem; font-family:var(--font-body); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); text-decoration:none; border:1px solid rgba(201,168,76,0.3); padding:3px 10px; border-radius:2px; transition:background 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.1)'" onmouseout="this.style.background='transparent'">◈ @denssipakko</a>
         </div>
       </div>
       <div class="member-card">
-        <div class="member-avatar">🦢</div>
+        <div class="member-avatar"><img src="juho.png" alt="Goosander"></div>
         <div class="member-info">
           <div class="member-callsign">Goosander</div>
           <div class="member-role">Taloudenhoitaja</div>
@@ -1070,6 +1448,14 @@
           <div class="member-callsign">Wigeon</div>
           <div class="member-role">Työkaluvänrikki</div>
           <div class="member-desc">Liikaa puhetta, liian vähän tekoja. Kuvaa kyllä, muttei postaa mitään. Aika ei riitä mihinkään ja kaikki on puolivalmista. Silti yrittää. Länsirajan ylittäny ja joutas jo takas.</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar">🐤</div>
+        <div class="member-info">
+          <div class="member-callsign">Gadwall</div>
+          <div class="member-role">Jäsen</div>
+          <div class="member-desc">U18, see you soon.</div>
         </div>
       </div>
       <div class="member-card" style="border-color: rgba(201,168,76,0.4); position: relative;">
@@ -1102,19 +1488,33 @@
 
     <!-- SUODATTIMET -->
     <div class="catalog-filters">
-      <button class="filter-btn active" onclick="showFeatured(this)">Suosikit</button>
-      <button class="filter-btn" onclick="filterCars('all', this)">Kaikki</button>
-      <button class="filter-btn" onclick="filterCars('mallard', this)">Mallard</button>
-      <button class="filter-btn" onclick="filterCars('wigeon', this)">Wigeon</button>
-      <button class="filter-btn" onclick="filterCars('goosander', this)">Goosander</button>
-      <button class="filter-btn" onclick="filterCars('duckling', this)">Duckling</button>
-      <button class="filter-btn" onclick="filterCars('kaytto', this)">Käyttöauto</button>
-      <button class="filter-btn" onclick="filterCars('pommi', this)">Tonnin pommi</button>
-      <button class="filter-btn" onclick="filterCars('projekti', this)">Projekti</button>
-      <button class="filter-btn" onclick="filterCars('nayttely', this)">Näyttelyauto</button>
-      <button class="filter-btn" onclick="filterCars('kakkosauto', this)">Kakkosauto</button>
-      <button class="filter-btn" onclick="filterCars('tuhoutunut', this)">Tuhoutunut</button>
-      <button class="filter-btn" onclick="filterCars('myyty', this)">Myyty</button>
+      <div class="filter-row">
+        <span class="filter-row-label">Autot</span>
+        <button class="filter-btn btn-special active" onclick="showFeatured(this)">Suosikit</button>
+        <button class="filter-btn btn-pommi"      onclick="filterCars('pommi', this)">Tonnin pommi</button>
+        <button class="filter-btn btn-kaytto"     onclick="filterCars('kaytto', this)">Käyttöauto</button>
+        <button class="filter-btn btn-projekti"   onclick="filterCars('projekti', this)">Projekti</button>
+        <button class="filter-btn btn-kakkosauto" onclick="filterCars('kakkosauto', this)">Kakkosauto</button>
+        <button class="filter-btn btn-nayttely"   onclick="filterCars('nayttely', this)">Näyttelyauto</button>
+        <button class="filter-btn btn-tuhoutunut" onclick="filterCars('tuhoutunut', this)">Tuhoutunut</button>
+        <button class="filter-btn btn-myyty"      onclick="filterCars('myyty', this)">Myyty</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-row-label">Jäsenet</span>
+        <button class="filter-btn btn-person" onclick="filterCars('mallard', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
+          <img src="visa.png" alt="Mallard" style="width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:top center;flex-shrink:0;">Mallard
+        </button>
+        <button class="filter-btn btn-person" onclick="filterCars('wigeon', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
+          <span style="width:26px;height:26px;border-radius:50%;background:var(--midgray);display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🐦</span>Wigeon
+        </button>
+        <button class="filter-btn btn-person" onclick="filterCars('goosander', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
+          <img src="juho.png" alt="Goosander" style="width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:top center;flex-shrink:0;">Goosander
+        </button>
+        <button class="filter-btn btn-person" onclick="filterCars('gadwall', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
+          <span style="width:26px;height:26px;border-radius:50%;background:var(--midgray);display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🐤</span>Gadwall
+        </button>
+        <button class="filter-btn btn-special" onclick="filterCars('all', this)">Näytä kaikki</button>
+      </div>
     </div>
 
     <div class="cars-grid" id="cars-grid">
@@ -1122,12 +1522,14 @@
       <div class="car-card" data-owner="mallard" data-cat="pommi">
         <div class="car-carousel" id="carousel-vgs">
           <div class="carousel-track" id="track-vgs">
-            <div class="carousel-slide"><img src="VGS1.png" alt="Renauldi 1" loading="lazy"><span class="car-type-badge badge-pommi" style="position:absolute;top:10px;right:10px;">Tonnin pommi</span></div>
+            <div class="carousel-slide"><img src="VGS1.png" alt="Renauldi 1" loading="lazy"></div>
+            
             <div class="carousel-slide"><img src="VGS2.png" alt="Renauldi 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="VGS3.png" alt="Renauldi 3" loading="lazy"></div>
             <div class="carousel-slide"><img src="VGS4.png" alt="Renauldi 4" loading="lazy"></div>
             <div class="carousel-slide"><img src="VGS5.png" alt="Renauldi 5" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-pommi" style="position:absolute;top:12px;right:12px;z-index:10;">Tonnin pommi</span>
           <button class="carousel-btn prev" onclick="carouselMove('vgs',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('vgs', 1)">&#8250;</button>
           <div class="carousel-dots" id="dots-vgs">
@@ -1153,16 +1555,19 @@
       <div class="car-card" data-owner="wigeon" data-cat="kaytto">
         <div class="car-carousel" id="carousel-kmb">
           <div class="carousel-track" id="track-kmb">
-            <div class="carousel-slide"><img src="KMB1.jpeg" alt="Kombo 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
+            <div class="carousel-slide"><img src="KMB1.jpeg" alt="Kombo 1" loading="lazy"></div>
+            <div class="carousel-slide"><img src="KMB1_2.jpeg" alt="Kombo 1b" loading="lazy"></div>
             <div class="carousel-slide"><img src="KMB2.jpeg" alt="Kombo 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="KMB3.jpeg" alt="Kombo 3" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
           <button class="carousel-btn prev" onclick="carouselMove('kmb',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('kmb', 1)">&#8250;</button>
           <div class="carousel-dots" id="dots-kmb">
             <div class="carousel-dot active" onclick="carouselGo('kmb',0)"></div>
             <div class="carousel-dot" onclick="carouselGo('kmb',1)"></div>
             <div class="carousel-dot" onclick="carouselGo('kmb',2)"></div>
+            <div class="carousel-dot" onclick="carouselGo('kmb',3)"></div>
           </div>
         </div>
         <div class="car-body">
@@ -1180,11 +1585,14 @@
       <div class="car-card" data-owner="goosander" data-cat="kaytto">
         <div class="car-carousel" id="carousel-lkp">
           <div class="carousel-track" id="track-lkp">
-            <div class="carousel-slide"><img src="LKP1.jpg" alt="Golf Mk2 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
+            <div class="carousel-slide"><img src="LKP5.png" alt="Golf Mk2 5" loading="lazy"></div>
+            <div class="carousel-slide"><img src="LKP1.jpg" alt="Golf Mk2 1" loading="lazy"></div>
             <div class="carousel-slide"><img src="LKP2.jpg" alt="Golf Mk2 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="LKP3.jpg" alt="Golf Mk2 3" loading="lazy"></div>
             <div class="carousel-slide"><img src="LKP4.jpg" alt="Golf Mk2 4" loading="lazy"></div>
+            <div class="carousel-slide"><img src="LKP6.png" alt="Golf Mk2 6" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
           <button class="carousel-btn prev" onclick="carouselMove('lkp',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('lkp', 1)">&#8250;</button>
           <div class="carousel-dots" id="dots-lkp">
@@ -1192,6 +1600,8 @@
             <div class="carousel-dot" onclick="carouselGo('lkp',1)"></div>
             <div class="carousel-dot" onclick="carouselGo('lkp',2)"></div>
             <div class="carousel-dot" onclick="carouselGo('lkp',3)"></div>
+            <div class="carousel-dot" onclick="carouselGo('lkp',4)"></div>
+            <div class="carousel-dot" onclick="carouselGo('lkp',5)"></div>
           </div>
         </div>
         <div class="car-body">
@@ -1209,13 +1619,15 @@
       <div class="car-card" data-owner="mallard" data-cat="projekti">
         <div class="car-carousel" id="carousel-xvf">
           <div class="carousel-track" id="track-xvf">
-            <div class="carousel-slide"><img src="XVF1.png" alt="Falbina 1" loading="lazy"><span class="car-type-badge badge-projekti" style="position:absolute;top:10px;right:10px;">Projekti</span></div>
+            <div class="carousel-slide"><img src="XVF1.png" alt="Falbina 1" loading="lazy"></div>
+            
             <div class="carousel-slide"><img src="XVF2.png" alt="Falbina 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="XVF3.png" alt="Falbina 3" loading="lazy"></div>
             <div class="carousel-slide"><img src="XVF4.png" alt="Falbina 4" loading="lazy"></div>
             <div class="carousel-slide"><img src="XVF5.jpeg" alt="Falbina 5" loading="lazy"></div>
             <div class="carousel-slide"><img src="XVF6.jpeg" alt="Falbina 6" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-projekti" style="position:absolute;top:12px;right:12px;z-index:10;">Projekti</span>
           <button class="carousel-btn prev" onclick="carouselMove('xvf',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('xvf', 1)">&#8250;</button>
           <div class="carousel-dots" id="dots-xvf">
@@ -1243,7 +1655,8 @@
       <div class="car-card" data-owner="wigeon" data-cat="kakkosauto">
         <div class="car-carousel" id="carousel-hrf">
           <div class="carousel-track" id="track-hrf">
-            <div class="carousel-slide"><img src="HRF1.jpeg" alt="Herra Frangus 1" loading="lazy"><span class="car-type-badge badge-kakkosauto" style="position:absolute;top:10px;right:10px;">Kakkosauto</span></div>
+            <div class="carousel-slide"><img src="HRF1.jpeg" alt="Herra Frangus 1" loading="lazy"></div>
+            
             <div class="carousel-slide"><img src="HRF2.jpeg" alt="Herra Frangus 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="HRF3.jpeg" alt="Herra Frangus 3" loading="lazy"></div>
             <div class="carousel-slide"><img src="HRF4.png" alt="Herra Frangus 4" loading="lazy"></div>
@@ -1252,6 +1665,7 @@
             <div class="carousel-slide"><img src="HRF7.png" alt="Herra Frangus 7" loading="lazy"></div>
             <div class="carousel-slide"><img src="HRF8.jpeg" alt="Herra Frangus 8" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-kakkosauto" style="position:absolute;top:12px;right:12px;z-index:10;">Kakkosauto</span>
           <button class="carousel-btn prev" onclick="carouselMove('hrf',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('hrf', 1)">&#8250;</button>
           <div class="carousel-dots" id="dots-hrf">
@@ -1281,8 +1695,10 @@
       <div class="car-card" data-owner="duckling" data-cat="pommi">
         <div class="car-carousel" id="carousel-jup">
           <div class="carousel-track" id="track-jup">
-            <div class="carousel-slide"><img src="JUPITER.jpeg" alt="Duckling" loading="lazy"><span class="car-type-badge badge-pommi" style="position:absolute;top:10px;right:10px;">Tonnin pommi</span></div>
+            <div class="carousel-slide"><img src="JUPITER.jpeg" alt="Duckling" loading="lazy"></div>
+            
           </div>
+          <span class="car-type-badge badge-pommi" style="position:absolute;top:12px;right:12px;z-index:10;">Tonnin pommi</span>
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
           <button class="carousel-btn next" style="display:none">&#8250;</button>
           <div class="carousel-dots" id="dots-jup"></div>
@@ -1303,8 +1719,9 @@
       <div class="car-card" data-owner="mallard" data-cat="projekti">
         <div class="car-carousel" id="carousel-xgx">
           <div class="carousel-track" id="track-xgx">
-            <div class="carousel-slide"><img src="XGX1.jpeg" alt="Volvo projekti" loading="lazy"><span class="car-type-badge badge-projekti" style="position:absolute;top:10px;right:10px;">Projekti</span></div>
+            <div class="carousel-slide"><img src="XGX1.jpeg" alt="Volvo 850" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-projekti" style="position:absolute;top:12px;right:12px;z-index:10;">Projekti</span>
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
           <button class="carousel-btn next" style="display:none">&#8250;</button>
           <div class="carousel-dots" id="dots-xgx"></div>
@@ -1321,14 +1738,63 @@
         </div>
       </div>
 
+      <!-- Car 11: Toyota Corolla - Tuhoutunut -->
+      <div class="car-card wrecked" data-owner="mallard" data-cat="tuhoutunut">
+        <div class="car-carousel" id="carousel-cor">
+          <div class="carousel-track" id="track-cor">
+            <div class="carousel-slide" style="background:var(--midgray);display:flex;align-items:center;justify-content:center;font-size:3.5rem;">🚗</div>
+          </div>
+          <span class="car-type-badge badge-tuhoutunut" style="position:absolute;top:12px;right:12px;z-index:10;">Tuhoutunut</span>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-cor"></div>
+          <div class="wrecked-overlay"><div class="wrecked-icon">💀</div><div class="wrecked-label">Tuhoutunut</div></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Toyota Corolla</div>
+          <div class="car-owner">Omistaja: —</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">1994</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">84kW / 114hv</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">1.6 bensa manuaali</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Tuhoutunut</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car 12: Citroen C5 - Tuhoutunut -->
+      <div class="car-card wrecked" data-owner="mallard" data-cat="tuhoutunut">
+        <div class="car-carousel" id="carousel-cit">
+          <div class="carousel-track" id="track-cit">
+            <div class="carousel-slide" style="background:var(--midgray);display:flex;align-items:center;justify-content:center;font-size:3.5rem;">🚗</div>
+          </div>
+          <span class="car-type-badge badge-tuhoutunut" style="position:absolute;top:12px;right:12px;z-index:10;">Tuhoutunut</span>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-cit"></div>
+          <div class="wrecked-overlay"><div class="wrecked-icon">💀</div><div class="wrecked-label">Tuhoutunut</div></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Citroën C5</div>
+          <div class="car-owner">Omistaja: —</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">2002</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">100kW / 136hv</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">2.0 bensa manuaali</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Tuhoutunut</span></div>
+          </div>
+        </div>
+      </div>
+
       <!-- Car 8: XXJ - Mallardin käyttis Volvo V90 -->
       <div class="car-card" data-owner="mallard" data-cat="kaytto">
         <div class="car-carousel" id="carousel-xxj">
           <div class="carousel-track" id="track-xxj">
-            <div class="carousel-slide"><img src="XXJ1.png" alt="Volvo V90 1" loading="lazy"><span class="car-type-badge badge-kaytto" style="position:absolute;top:10px;right:10px;">Käyttöauto</span></div>
+            <div class="carousel-slide"><img src="XXJ1.png" alt="Volvo V90 1" loading="lazy"></div>
             <div class="carousel-slide"><img src="XXJ2.png" alt="Volvo V90 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="XXJ3.jpeg" alt="Volvo V90 3" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
           <button class="carousel-btn prev" onclick="carouselMove('xxj',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('xxj', 1)">&#8250;</button>
           <div class="carousel-dots" id="dots-xxj">
@@ -1353,8 +1819,10 @@
       <div class="car-card sold" data-owner="mallard" data-cat="myyty">
         <div class="car-carousel" id="carousel-mzb">
           <div class="carousel-track" id="track-mzb">
-            <div class="carousel-slide"><img src="MZB1.png" alt="BMW myyty" loading="lazy"><span class="car-type-badge badge-myyty" style="position:absolute;top:10px;right:10px;">Myyty</span></div>
+            <div class="carousel-slide"><img src="MZB1.png" alt="BMW myyty" loading="lazy"></div>
+            
           </div>
+          <span class="car-type-badge badge-myyty" style="position:absolute;top:12px;right:12px;z-index:10;">Myyty</span>
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
           <button class="carousel-btn next" style="display:none">&#8250;</button>
           <div class="carousel-dots" id="dots-mzb"></div>
@@ -1376,10 +1844,12 @@
       <div class="car-card sold" data-owner="mallard" data-cat="myyty">
         <div class="car-carousel" id="carousel-znl">
           <div class="carousel-track" id="track-znl">
-            <div class="carousel-slide"><img src="ZNL1.jpeg" alt="Passat 1" loading="lazy"><span class="car-type-badge badge-myyty" style="position:absolute;top:10px;right:10px;">Myyty</span></div>
+            <div class="carousel-slide"><img src="ZNL1.jpeg" alt="Passat 1" loading="lazy"></div>
+            
             <div class="carousel-slide"><img src="ZNL2.jpeg" alt="Passat 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="ZNL3.jpeg" alt="Passat 3" loading="lazy"></div>
           </div>
+          <span class="car-type-badge badge-myyty" style="position:absolute;top:12px;right:12px;z-index:10;">Myyty</span>
           <button class="carousel-btn prev" onclick="carouselMove('znl',-1)">&#8249;</button>
           <button class="carousel-btn next" onclick="carouselMove('znl', 1)">&#8250;</button>
           <div class="carousel-dots" id="dots-znl">
@@ -1402,17 +1872,13 @@
       </div>
 
     </div>
-    </div>
-    <p style="text-align:center; margin-top:2rem; font-style:italic; font-size:0.85rem; color: var(--lightgray);">
-      Autotiedot täydennetään jäseniltä saatujen tietojen perusteella. Autokuvat lisätään myöhemmin.
-    </p>
   </div>
 </section>
 
 <!-- RULES -->
 <section id="saannot">
   <div class="section-inner">
-    <div class="section-label">Pelisäännöt</div>
+    <div class="section-label">Käyttäytymiskoodi</div>
     <h2 class="section-title">Säännöt</h2>
     <div class="section-divider"></div>
     <div class="rules-grid" id="rules-grid">
@@ -1499,7 +1965,7 @@
     </p>
     <div class="shop-grid">
       <div class="shop-card">
-        <div class="shop-img">🦆</div>
+        <div class="shop-img" style="padding:0;overflow:hidden;"><img src="tarraTAIhajuste.png" alt="Outlaw Ducks tarra ja hajuste" style="width:100%;height:100%;object-fit:cover;"></div>
         <div class="shop-body">
           <div class="shop-name">Outlaw Ducks Tarra</div>
           <div class="shop-desc">Logotarra laadukkaalla vinyylipohjalla. UV-kestävä, säänkestävä. Sopii auton korin, ikkunan tai kaiken muun koristeluun.</div>
@@ -1510,7 +1976,7 @@
         </div>
       </div>
       <div class="shop-card">
-        <div class="shop-img">🏷️</div>
+        <div class="shop-img" style="padding:0;overflow:hidden;"><img src="tarraTAIhajuste.png" alt="Autohajuste" style="width:100%;height:100%;object-fit:cover;"></div>
         <div class="shop-body">
           <div class="shop-name">Autohajuste – Joku hyvä tuoksu</div>
           <div class="shop-desc">Klassinen autohajuste Outlaw Ducks -brändillä. Ehkä UV-kestävä, ehkä säänkestävä. Sopii ehkä auton peilin varteen tai kaiken muun koristeluun.</div>
@@ -1557,7 +2023,7 @@
   </div>
   <div class="footer-copy">
     © 2025 Outlaw Ducks Tuning Crew, Oulu<br>
-    <em style="font-size:0.7rem; color:#555;">Täyttä ymmärrystä vailla ja alentuneesti syyntakeinen sorsaparvi. Ei oo nii diippiä.</em>
+    <em style="font-size:0.7rem; color:#555;">Alentuneesti syyntakeinen sorsaparvi. Ei oo nii diippiä.</em>
   </div>
 </footer>
 
@@ -1622,20 +2088,20 @@ document.addEventListener('click', function(e) {
 const FEATURED_IDS = ['vgs','xvf','lkp','kmb','xxj'];
 
 function filterCars(filter, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.catalog-filters .filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   document.querySelectorAll('#cars-grid .car-card').forEach(card => {
     const owner = card.dataset.owner;
     const cat = card.dataset.cat;
     let show = filter === 'all' ? true
-      : ['mallard','wigeon','goosander','duckling'].includes(filter) ? owner === filter
+      : ['mallard','wigeon','goosander','gadwall','duckling'].includes(filter) ? owner === filter
       : cat === filter;
     card.classList.toggle('hidden', !show);
   });
 }
 
 function showFeatured(btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.catalog-filters .filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   document.querySelectorAll('#cars-grid .car-card').forEach(card => {
     const id = (card.querySelector('.car-carousel') || {}).id?.replace('carousel-','');
@@ -1678,7 +2144,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Init all on load
-  ['vgs','lkp','xvf','kmb','hrf','jup','xgx','xxj','mzb','znl'].forEach(init);
+  ['vgs','lkp','xvf','kmb','hrf','jup','xgx','xxj','mzb','znl','cor','cit'].forEach(init);
 })();
 </script>
 
@@ -1817,10 +2283,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function scheduleNext() {
     if (duckCount >= MAX) return;
-    setTimeout(showDuck, 45000 + Math.random() * 60000);
+    setTimeout(showDuck, 32000 + Math.random() * 46000);
   }
 
-  setTimeout(showDuck, 30000 + Math.random() * 30000);
+  setTimeout(showDuck, 22000 + Math.random() * 22000);
 
   // --- WALKING DUCK ---
   let wx = -60, wdir = 1, wwalking = false, wspeed = 2.2, wspooked = false;
@@ -1875,10 +2341,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function scheduleWalk() {
     if (duckCount >= MAX) return;
-    setTimeout(startWalk, 60000 + Math.random() * 90000);
+    setTimeout(startWalk, 42000 + Math.random() * 62000);
   }
 
-  setTimeout(startWalk, 45000 + Math.random() * 30000);
+  setTimeout(startWalk, 32000 + Math.random() * 22000);
 })();
 </script>
 
