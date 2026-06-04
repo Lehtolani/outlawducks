@@ -10,6 +10,11 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
 <title>Outlaw Ducks TC – Oulu</title>
+<meta name="description" content="Outlaw Ducks Tuning Crew – Oululainen autoporukka. Autot, jäsenet, tapahtumat ja merch. Olemme luontokappaleita tiellä.">
+<meta property="og:title" content="Outlaw Ducks TC – Oulu">
+<meta property="og:description" content="Oululainen autoporukka. Autot, jäsenet, tapahtumat ja merch.">
+<meta property="og:image" content="https://outlawducks.com/pyoreä.png">
+<meta property="og:url" content="https://outlawducks.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Prosto+One&family=Oswald:wght@300;400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -341,10 +346,15 @@
   }
 
   /* Legend spans full width at top */
+  /* Legend card — full width, horizontal layout */
   .member-card.legend {
     grid-column: 1 / -1;
-    grid-template-columns: 240px 1fr;
-    display: grid;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .member-card.legend .member-avatar {
+    width: 240px; min-width: 240px; flex-shrink: 0; aspect-ratio: 1;
   }
 
   /* Normal cards: stacked (image on top, text below) */
@@ -361,15 +371,6 @@
     transform: translateY(-3px);
   }
 
-  /* Legend card horizontal layout */
-  .member-card.legend {
-    flex-direction: row;
-  }
-
-  .member-card.legend .member-avatar {
-    width: 240px; flex-shrink: 0; aspect-ratio: 1;
-  }
-
   .member-avatar {
     width: 100%; aspect-ratio: 1;
     display: flex; align-items: center; justify-content: center;
@@ -383,9 +384,9 @@
     display: block;
   }
 
-  .member-info { padding: 1.25rem; display: flex; flex-direction: column; justify-content: center; }
+  .member-info { padding: 1.25rem; display: flex; flex-direction: column; justify-content: center; min-width: 0; overflow: hidden; }
 
-  .member-card.legend .member-info { padding: 1.75rem; }
+  .member-card.legend .member-info { padding: 1.75rem; min-width: 0; }
 
   .member-callsign {
     font-family: var(--font-display);
@@ -399,7 +400,7 @@
     color: var(--lightgray); margin-bottom: 0.75rem;
   }
 
-  .member-desc { font-size: 0.9rem; color: var(--bone); line-height: 1.7; }
+  .member-desc { font-size: 0.9rem; color: var(--bone); line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word; }
 
   /* CARS */
   #autot {
@@ -1085,7 +1086,8 @@
     .story-grid { grid-template-columns: 1fr; gap: 2rem; }
     .members-grid { grid-template-columns: 1fr; }
     .member-card.legend { flex-direction: column; }
-    .member-card.legend .member-avatar { width: 100%; }
+    .member-card.legend .member-avatar { width: 100%; min-width: unset; aspect-ratio: 16/9; }
+    .member-card.legend .member-info { padding: 1.25rem; }
     .cars-grid { grid-template-columns: 1fr; }
     .car-carousel { height: 220px; }
     .sold-overlay { height: 220px; }
