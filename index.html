@@ -426,9 +426,69 @@
 
   .cars-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
+    position: relative;
   }
+
+  /* Square carousel images */
+  .car-carousel { width: 100%; height: 0; padding-bottom: 100%; position: relative; overflow: hidden; background: var(--midgray); border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .carousel-track { display: flex; height: 100%; position: absolute; inset: 0; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+  .carousel-slide { min-width: 100%; height: 100%; position: relative; flex-shrink: 0; }
+  .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* SHOW MORE / FADE */
+  .cars-grid-wrapper { position: relative; }
+
+  .cars-fade {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 220px;
+    background: linear-gradient(to bottom, transparent, var(--offblack) 85%);
+    pointer-events: none;
+    transition: opacity 0.4s;
+    z-index: 5;
+  }
+
+  .cars-fade.hidden { opacity: 0; pointer-events: none; }
+
+  .show-more-btn {
+    display: block;
+    margin: 1.5rem auto 0;
+    font-family: var(--font-body);
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--black); background: var(--gold);
+    border: none; padding: 0.75rem 2rem;
+    border-radius: 2px; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .show-more-btn:hover { background: var(--bone); transform: translateY(-2px); }
+  .show-more-btn.hidden { display: none; }
+
+  /* Cards hidden initially beyond threshold */
+  .car-card.show-more-hidden { display: none; }
+
+  /* SWIPE HINT */
+  .swipe-hint {
+    display: none;
+    position: absolute;
+    bottom: 10px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.5);
+    padding: 3px 10px; border-radius: 20px;
+    pointer-events: none; z-index: 8;
+    white-space: nowrap;
+  }
+
+  /* CAROUSEL DOTS — better visibility */
+  .carousel-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 6; }
+  .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); cursor: pointer; transition: background 0.2s; }
+  .carousel-dot.active { background: var(--gold); }
 
   .car-card {
     background: var(--darkgray);
@@ -1105,9 +1165,10 @@
     .member-card.legend { flex-direction: row; gap: 1rem; padding: 1rem; }
     .member-card.legend .member-avatar { width: 80px; min-width: 80px; height: 80px; }
     .cars-grid { grid-template-columns: 1fr; }
-    .car-carousel { height: 220px; }
-    .sold-overlay { height: 220px; }
-    .wrecked-overlay { height: 220px; }
+    .car-carousel { padding-bottom: 75%; height: 0; }
+    .sold-overlay { height: 100%; }
+    .wrecked-overlay { height: 100%; }
+    .swipe-hint { display: block; }
     .rules-grid { grid-template-columns: 1fr; }
     .join-steps { grid-template-columns: 1fr; }
     .shop-grid { grid-template-columns: 1fr; }
@@ -1259,11 +1320,11 @@
         </div>
       </div>
       <div class="member-card">
-        <div class="member-avatar" style="font-size:2rem; color:#444; flex-direction:column; gap:8px;"><span>🔒</span><span style="font-size:0.75rem; font-family:var(--font-body); letter-spacing:0.1em; text-transform:uppercase;">Tulossa</span></div>
+        <div class="member-avatar" style="color:#444;">?</div>
         <div class="member-info">
           <div class="member-callsign" style="color:#444;">???</div>
           <div class="member-role">Uusi jäsen</div>
-          <div class="member-desc" style="color:#555;">Vielä hakusessa. Rauhotettu vissii, joten elä ammu jos näät.</div>
+          <div class="member-desc" style="color:#555;">Tulossa.</div>
         </div>
       </div>
     </div>
@@ -1310,7 +1371,8 @@
       </div>
     </div>
 
-    <div class="cars-grid" id="cars-grid">
+    <div class="cars-grid-wrapper">
+      <div class="cars-grid" id="cars-grid">
       <!-- Car 1: Renauldi -->
       <div class="car-card" data-owner="mallard" data-cat="pommi">
         <div class="car-carousel" id="carousel-vgs">
@@ -1664,11 +1726,12 @@
         </div>
       </div>
 
-    </div>
+    </div><!-- end cars-grid -->
+    <div class="cars-fade" id="cars-fade"></div>
+    <button class="show-more-btn" id="show-more-btn" onclick="showAllCars()">Näytä kaikki autot ↓</button>
+    </div><!-- end cars-grid-wrapper -->
   </div>
 </section>
-
-<!-- RULES -->
 <section id="saannot">
   <div class="section-inner">
     <div class="section-label">Käyttäytymiskoodi</div>
@@ -1910,13 +1973,114 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- SHOW MORE JS -->
+<script>
+const DESKTOP_SHOW = 6;  // show first 6 on desktop (2 rows of 3)
+const MOBILE_SHOW = 3;   // show first 3 on mobile
+let allShown = false;
+
+function initShowMore() {
+  const cards = Array.from(document.querySelectorAll('#cars-grid .car-card'));
+  const isMobile = window.innerWidth <= 768;
+  const threshold = isMobile ? MOBILE_SHOW : DESKTOP_SHOW;
+
+  if (allShown) return;
+
+  cards.forEach((card, i) => {
+    if (!card.classList.contains('hidden')) {
+      // count visible cards
+    }
+  });
+
+  // Only apply show-more to unfiltered state
+  updateShowMore();
+}
+
+function updateShowMore() {
+  if (allShown) return;
+  const cards = Array.from(document.querySelectorAll('#cars-grid .car-card:not(.hidden)'));
+  const isMobile = window.innerWidth <= 768;
+  const threshold = isMobile ? MOBILE_SHOW : DESKTOP_SHOW;
+
+  const fade = document.getElementById('cars-fade');
+  const btn = document.getElementById('show-more-btn');
+
+  if (cards.length <= threshold) {
+    if (fade) fade.classList.add('hidden');
+    if (btn) btn.classList.add('hidden');
+    return;
+  }
+
+  cards.forEach((card, i) => {
+    card.classList.toggle('show-more-hidden', i >= threshold);
+  });
+
+  if (fade) fade.classList.remove('hidden');
+  if (btn) {
+    btn.classList.remove('hidden');
+    const remaining = cards.length - threshold;
+    const isMob = window.innerWidth <= 768;
+    btn.textContent = isMob ? `Näytä lisää (${remaining}) ↓` : 'Näytä kaikki autot ↓';
+  }
+}
+
+function showAllCars() {
+  allShown = true;
+  document.querySelectorAll('.car-card.show-more-hidden').forEach(c => c.classList.remove('show-more-hidden'));
+  document.getElementById('cars-fade').classList.add('hidden');
+  document.getElementById('show-more-btn').classList.add('hidden');
+}
+
+// Reset show-more when filter changes
+const origFilterCars = window.filterCars;
+window.filterCars = function(filter, btn) {
+  allShown = false;
+  origFilterCars(filter, btn);
+  setTimeout(updateShowMore, 50);
+};
+
+const origShowFeatured = window.showFeatured;
+window.showFeatured = function(btn) {
+  allShown = false;
+  origShowFeatured(btn);
+  setTimeout(updateShowMore, 50);
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('#cars-grid .car-card').forEach(card => card.classList.remove('hidden'));
+  updateShowMore();
+});
+</script>
+
 <!-- CAROUSEL JS -->
 <script>
 (function() {
   const carousels = {};
 
   function init(id) {
-    carousels[id] = { index: 0, total: document.querySelectorAll('#track-' + id + ' .carousel-slide').length };
+    const total = document.querySelectorAll('#track-' + id + ' .carousel-slide').length;
+    carousels[id] = { index: 0, total };
+    if (total <= 1) return;
+
+    const carousel = document.getElementById('carousel-' + id);
+    if (!carousel) return;
+
+    // Swipe hint on mobile
+    if (!carousel.querySelector('.swipe-hint')) {
+      const hint = document.createElement('div');
+      hint.className = 'swipe-hint';
+      hint.textContent = '← pyyhkäise →';
+      carousel.appendChild(hint);
+      carousel.addEventListener('touchstart', () => { hint.style.opacity = '0'; }, { once: true, passive: true });
+    }
+
+    // Touch swipe
+    let startX = 0;
+    carousel.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    carousel.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) carouselMove(id, dx < 0 ? 1 : -1);
+    });
   }
 
   window.carouselMove = function(id, dir) {
@@ -1934,12 +2098,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function update(id) {
     const c = carousels[id];
-    document.getElementById('track-' + id).style.transform = 'translateX(-' + (c.index * 100) + '%)';
+    const track = document.getElementById('track-' + id);
+    if (track) track.style.transform = 'translateX(-' + (c.index * 100) + '%)';
     const dots = document.querySelectorAll('#dots-' + id + ' .carousel-dot');
     dots.forEach((d, i) => d.classList.toggle('active', i === c.index));
   }
 
-  // Init all on load
   ['vgs','lkp','xvf','kmb','hrf','jup','xgx','xxj','mzb','znl','cor','cit'].forEach(init);
 })();
 </script>
