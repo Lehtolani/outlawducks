@@ -2,115 +2,1454 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Peli – Outlaw Ducks TC</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Prosto+One&family=Oswald:wght@300;400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Wigeon & V70</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Prosto+One&family=Oswald:wght@300;400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
   :root {
-    --black: #0d0d0d; --offblack: #141414; --darkgray: #1c1c1c;
-    --midgray: #2e2e2e; --lightgray: #888; --bone: #d4c9a8;
-    --gold: #c9a84c; --white: #f5f0e8;
-    --font-display: 'Prosto One', serif;
-    --font-body: 'Oswald', sans-serif;
-    --font-text: 'Barlow', sans-serif;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--black); color: var(--white); font-family: var(--font-text); min-height: 100vh; }
-
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    background: rgba(13,13,13,0.95); border-bottom: 1px solid rgba(45,90,61,0.4);
-    backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 2.5rem; height: 64px;
-  }
-  .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-  .nav-logo img { height: 44px; width: 44px; object-fit: contain; }
-  .nav-brand { font-family: var(--font-display); font-size: 1.1rem; color: var(--gold); }
-  .nav-brand span { display: block; font-family: var(--font-body); font-size: 0.65rem; font-weight: 300; color: var(--lightgray); letter-spacing: 0.2em; text-transform: uppercase; }
-  .nav-back { font-family: var(--font-body); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bone); text-decoration: none; transition: color 0.2s; }
-  .nav-back:hover { color: var(--gold); }
-
-  main {
-    min-height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 80px 2rem 4rem; text-align: center;
+    /* Outlaw Ducks palette */
+    --grease: #0d0d0d;      /* black bg */
+    --rust: #c9a84c;        /* gold (was rust accent) */
+    --rust-light: #e0c068;  /* light gold */
+    --oil: #1c1c1c;         /* dark gray panel */
+    --concrete: #888;       /* light gray text */
+    --yellow: #c9a84c;      /* gold highlight */
+    --cream: #f0ead8;       /* cream/bone text */
+    --red: #a02020;
+    --sky: #2d5a3d;         /* duck green (interrupt) */
+    --green: #2d5a3d;       /* duck green */
+    --phone: #1d3a28;       /* dark duck green */
+    --phone-light: #3d7a55;
   }
 
-  .game-container {
-    width: 100%; max-width: 800px;
-    background: var(--darkgray);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 4px;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--grease);
+    color: var(--cream);
+    font-family: 'Barlow', sans-serif;
+    font-size: 18px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%230d0d0d'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23161616' opacity='0.6'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23161616' opacity='0.4'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  #game { position:relative; z-index:1; max-width:480px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
+
+  /* HEADER */
+  #header { background:var(--oil); border-bottom:3px solid var(--rust); padding:9px 13px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:10; }
+  #header-text h1 { font-family:'Oswald',sans-serif; font-size:17px; letter-spacing:2px; color:var(--yellow); line-height:1; }
+  #header-text p  { font-size:10px; color:var(--concrete); font-style:italic; letter-spacing:1px; }
+  #progress-bar-wrap { margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+  #progress-label { font-size:9px; color:var(--concrete); font-family:'Oswald',sans-serif; letter-spacing:1px; }
+  #progress-bar { width:68px; height:7px; background:var(--grease); border:1px solid var(--rust); border-radius:2px; overflow:hidden; }
+  #progress-fill { height:100%; background:linear-gradient(90deg,var(--rust),var(--yellow)); transition:width 0.5s ease; width:0%; }
+
+  /* STATS */
+  #stats { background:var(--oil); border-bottom:2px solid #333; padding:7px 13px; display:flex; flex-direction:column; gap:5px; }
+  .stat-row { display:flex; align-items:center; gap:8px; }
+  .stat-name { font-family:'Oswald',sans-serif; font-size:11px; letter-spacing:1px; color:var(--concrete); width:54px; flex-shrink:0; }
+  .stat-track { flex:1; height:8px; background:#111; border-radius:2px; overflow:hidden; border:1px solid #333; }
+  .stat-fill { height:100%; border-radius:2px; transition:width 0.45s ease; }
+  .stat-fill.hermot { background:linear-gradient(90deg,var(--red),var(--yellow)); }
+  .stat-fill.raha   { background:linear-gradient(90deg,#806010,#e8c840); }
+  .stat-fill.aika   { background:linear-gradient(90deg,#2a4a6a,var(--sky)); }
+  .stat-val { font-family:'Oswald',sans-serif; font-size:12px; color:var(--yellow); width:26px; text-align:right; flex-shrink:0; }
+
+  #kulu-strip { background:#1a1608; border-bottom:1px solid #2a2008; padding:5px 13px; font-size:11px; color:var(--concrete); display:flex; align-items:center; gap:6px; font-family:'Oswald',sans-serif; letter-spacing:1px; flex-wrap:wrap; }
+  #kulu-strip .kval { color:var(--yellow); font-size:13px; }
+
+  /* SCENE */
+  #scene { flex:1; padding:0 0 28px; display:flex; flex-direction:column; }
+  #scene-visual { width:100%; height:108px; background:var(--oil); border-bottom:2px solid var(--rust); display:flex; align-items:center; justify-content:center; font-size:58px; position:relative; overflow:hidden; }
+  #scene-visual::after { content:''; position:absolute; inset:0; background:linear-gradient(to bottom,transparent 50%,var(--grease)); }
+  #scene-emoji { position:relative; z-index:1; animation:bob 3s ease-in-out infinite; filter:drop-shadow(0 0 18px rgba(200,100,30,0.4)); }
+  @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+
+
+  #story-box { padding:14px 13px 8px; line-height:1.65; font-size:17px; }
+  #story-box p+p { margin-top:10px; }
+
+  /* NAAPURI */
+  #naapuri-section { display:none; margin:10px 13px 6px; border:2px solid var(--sky); border-radius:5px; overflow:hidden; transition:opacity 0.3s; }
+  #naapuri-header { background:var(--sky); color:#fff; font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:2px; padding:6px 12px; display:flex; align-items:center; gap:8px; }
+  #naapuri-speech { background:#1a2a36; padding:10px 12px; font-style:italic; font-size:16px; color:#c0d8e8; line-height:1.45; }
+  #naapuri-vastaukset { background:#121f28; padding:8px 10px; display:flex; flex-direction:column; gap:6px; }
+  #naapuri-vastaukset .vastaus-label { font-size:10px; color:var(--sky); font-family:'Oswald',sans-serif; letter-spacing:1px; margin-bottom:2px; }
+  .vastaus-btn { background:#1a2a36; border:1px solid var(--sky); color:#c0d8e8; font-family:'Barlow',sans-serif; font-size:15px; padding:9px 12px; text-align:left; border-radius:3px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background 0.1s; }
+  .vastaus-btn:active { background:#253a4a; }
+  .ohita-btn { border-color:#6a4a3a; color:#b08878; font-style:italic; font-size:14px; margin-top:2px; }
+  .ohita-btn:active { background:#2a1a12; }
+
+  /* CHOICES */
+  #choices { padding:6px 13px; display:flex; flex-direction:column; gap:9px; margin-top:4px; }
+  .choice-btn { background:var(--oil); border:2px solid var(--rust); color:var(--cream); font-family:'Barlow',sans-serif; font-size:16px; line-height:1.4; padding:13px 13px; text-align:left; border-radius:3px; cursor:pointer; position:relative; overflow:hidden; -webkit-tap-highlight-color:transparent; transition:opacity 0.2s, border-color 0.2s; }
+  .choice-btn::before { content:''; position:absolute; inset:0; background:var(--rust); opacity:0; transition:opacity 0.15s; }
+  .choice-btn:active::before { opacity:0.2; }
+  .choice-btn .choice-letter { font-family:'Oswald',sans-serif; font-size:12px; color:var(--yellow); letter-spacing:2px; display:block; margin-bottom:3px; }
+  .choice-btn.locked { opacity:0.3; pointer-events:none; border-color:#444; }
+  .locked-hint { font-size:12px; color:var(--sky); font-style:italic; padding:0 13px 4px; display:none; }
+
+  /* RESULT */
+  #result-screen { display:none; padding:13px; }
+  #result-text { background:var(--oil); border-left:4px solid var(--rust-light); padding:13px 13px; font-style:italic; line-height:1.6; font-size:16px; margin-bottom:10px; border-radius:0 3px 3px 0; }
+  #stat-delta { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; min-height:10px; }
+  .delta-chip { font-family:'Oswald',sans-serif; font-size:12px; letter-spacing:1px; padding:4px 10px; border-radius:3px; }
+  .delta-chip.pos { background:#1a3a1a; color:#80c880; border:1px solid var(--green); }
+  .delta-chip.neg { background:#3a1a1a; color:#e08080; border:1px solid var(--red); }
+  #continue-btn { width:100%; background:var(--rust); color:var(--cream); border:none; font-family:'Oswald',sans-serif; font-size:20px; letter-spacing:3px; padding:15px; border-radius:3px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  #continue-btn:active { background:var(--rust-light); }
+
+  /* ============================================================
+     PHONE CALL POPUP — täysruutu, tärisee, soi
+     ============================================================ */
+  #phone-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+  #phone-overlay.show { display: flex; animation: overlayFade 0.3s ease; }
+  @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
+
+  #phone-popup {
+    background: linear-gradient(160deg, #0a1a0a, #1a3a1a);
+    border-radius: 28px;
+    width: 100%;
+    max-width: 340px;
+    padding: 28px 22px 22px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(80,200,80,0.3), 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(120,220,120,0.2);
+    animation: phonePulse 1.4s ease-in-out infinite;
+  }
+  @keyframes phonePulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(80,200,80,0.25), 0 10px 30px rgba(0,0,0,0.5); }
+    50% { box-shadow: 0 0 50px rgba(80,200,80,0.55), 0 10px 30px rgba(0,0,0,0.5); }
+  }
+
+  #phone-popup .ringing-emoji {
+    font-size: 50px;
+    margin-bottom: 8px;
+    display: inline-block;
+    animation: ringPulse 1.4s ease infinite;
+  }
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+
+  #phone-popup .incoming-label {
+    color: #80c880;
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  #phone-popup .caller-name {
+    color: #fff;
+    font-family: 'Oswald', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  #phone-popup .caller-number {
+    color: #a0e0a0;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  #phone-popup .caller-context {
+    color: #b0d0b0;
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.4;
+    padding: 8px 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    margin-bottom: 18px;
+  }
+
+  #phone-popup .phone-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .phone-action {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #e0f0e0;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    text-align: left;
+    border-radius: 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s, transform 0.1s;
+    line-height: 1.4;
+  }
+  .phone-action:active { background: rgba(255,255,255,0.15); transform: scale(0.98); }
+  .phone-action .icon { font-size: 18px; margin-right: 8px; vertical-align: middle; }
+  .phone-action.accept { background: rgba(60,160,60,0.2); border-color: rgba(120,220,120,0.4); }
+  .phone-action.reject { background: rgba(160,60,60,0.15); border-color: rgba(220,120,120,0.3); color: #f0c0c0; }
+  .phone-action.reject:active { background: rgba(160,60,60,0.25); }
+
+  /* ============ SWIPE ============ */
+  #swipe-container {
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    margin-bottom: 6px;
+  }
+  #swipe-card {
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #e8f0e8;
+    font-size: 15px;
+    line-height: 1.4;
+    touch-action: pan-y;
+    cursor: grab;
+    transition: transform 0.2s ease, background 0.2s, border-color 0.2s;
+    position: relative;
     overflow: hidden;
   }
-
-  .game-header {
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1rem;
+  #swipe-card.dragging { transition: none; cursor: grabbing; }
+  #swipe-card .swipe-icon { font-size: 22px; margin-right: 8px; vertical-align: middle; }
+  #swipe-card .swipe-hints {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-size: 11px;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.4);
   }
-
-  .game-title {
-    font-family: var(--font-display);
-    font-size: 1.5rem; color: var(--gold);
+  #swipe-card .hint-left { color: rgba(220,120,120,0.7); }
+  #swipe-card .hint-right { color: rgba(120,220,120,0.8); }
+  .swipe-bg-indicator {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
   }
+  .swipe-bg-indicator.left { left: 0; color: #ff8080; }
+  .swipe-bg-indicator.right { right: 0; color: #80ff80; }
 
-  .game-frame {
+  /* Result after answering */
+  #phone-result {
+    color: #c0e0c0;
+    font-size: 14px;
+    font-style: italic;
+    padding: 16px 8px 12px;
+    line-height: 1.5;
+    display: none;
+  }
+  #phone-close-btn {
     width: 100%;
-    background: var(--black);
-    display: flex; align-items: center; justify-content: center;
-    min-height: 400px;
-    padding: 2rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #e0f0e0;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: none;
+    -webkit-tap-highlight-color: transparent;
   }
+  #phone-close-btn:active { background: rgba(255,255,255,0.18); }
 
-  .coming-soon {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 6vw, 4rem);
-    color: var(--white); line-height: 1;
-    margin-bottom: 1rem;
-  }
+  /* ANIM */
+  @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+  .shake { animation:shake 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+  .fade-in { animation:fadeIn 0.3s ease forwards; }
 
-  .coming-sub {
-    font-family: var(--font-body);
-    font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--lightgray); margin-bottom: 2rem;
-  }
+  /* RAIN */
+  #rain-container { position:fixed; top:0; left:0; right:0; height:220px; pointer-events:none; z-index:5; overflow:hidden; display:none; }
+  .raindrop { position:absolute; width:1px; height:14px; background:linear-gradient(to bottom,transparent,#6ab0d0); animation:fall linear infinite; opacity:0.5; }
+  @keyframes fall { from{transform:translateY(-20px);} to{transform:translateY(230px);} }
 
-  .game-emoji { font-size: 4rem; animation: float 3s ease-in-out infinite; display: block; margin-bottom: 1rem; }
+  /* TITLE / ROUTE COMBINED */
+  #title-screen { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 18px 32px; text-align:center; }
+  .big-car { font-size:80px; margin-bottom:6px; animation:bob 2s ease-in-out infinite; filter:drop-shadow(0 0 28px rgba(200,100,30,0.5)); }
+  #title-screen h1 { font-family:'Prosto One',serif; font-size:42px; letter-spacing:3px; color:var(--cream); line-height:1; margin-bottom:4px; }
+  #title-screen h2 { font-family:'Oswald',sans-serif; font-size:20px; letter-spacing:2px; color:var(--rust-light); margin-bottom:6px; }
+  .tagline { color:var(--concrete); font-style:italic; margin-bottom:24px; font-size:14px; line-height:1.6; }
+  .route-divider { font-family:'Oswald',sans-serif; font-size:14px; letter-spacing:3px; color:var(--concrete); margin-bottom:14px; }
+  .route-btn { width:100%; background:var(--oil); border:2px solid var(--rust); color:var(--cream); font-family:'Barlow',sans-serif; font-size:16px; line-height:1.45; padding:14px 14px; text-align:left; border-radius:4px; cursor:pointer; margin-bottom:10px; -webkit-tap-highlight-color:transparent; transition:border-color 0.15s,transform 0.1s; }
+  .route-btn:active { border-color:var(--rust-light); transform:scale(0.99); }
+  .route-btn .route-label { font-family:'Oswald',sans-serif; font-size:13px; color:var(--yellow); letter-spacing:2px; display:block; margin-bottom:4px; }
+  .route-btn.lucky { border-color:var(--green); }
+  .route-btn.lucky .route-label { color:#80c880; }
+  .footer-note { margin-top:10px; font-size:11px; color:var(--concrete); font-style:italic; }
 
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  /* END */
+  #end-screen { display:none; padding:26px 15px 40px; }
+  #end-screen h2 { font-family:'Oswald',sans-serif; font-size:34px; letter-spacing:3px; color:var(--yellow); text-align:center; margin-bottom:4px; }
+  .end-subtitle { color:var(--concrete); font-style:italic; text-align:center; margin-bottom:16px; font-size:16px; }
+  .end-card { background:var(--oil); border:1px solid var(--rust); border-radius:4px; padding:13px 14px; margin-bottom:12px; font-size:15px; line-height:1.8; }
+  .end-card h3 { font-family:'Oswald',sans-serif; font-size:14px; letter-spacing:2px; color:var(--yellow); margin-bottom:8px; border-bottom:1px solid #3a2a10; padding-bottom:5px; }
+  .kulu-line { display:flex; justify-content:space-between; font-size:14px; padding:1px 0; }
+  .kulu-line.total { border-top:1px solid #3a2a10; margin-top:6px; padding-top:6px; font-weight:600; color:var(--yellow); font-size:15px; }
+  .kulu-line.korjaamo { color:#e08080; }
+  .kulu-line.saasto   { color:#80c880; }
+  .kulu-line.tuntipalkka { color:var(--yellow); font-style:italic; }
+  #restart-btn { width:100%; background:var(--rust); color:var(--cream); border:none; font-family:'Oswald',sans-serif; font-size:22px; letter-spacing:3px; padding:16px; border-radius:3px; cursor:pointer; margin-top:4px; -webkit-tap-highlight-color:transparent; }
 </style>
 </head>
 <body>
-<nav>
-  <a href="index.html" class="nav-logo">
-    <img src="pyoreä.png" alt="Outlaw Ducks">
-    <div class="nav-brand">Outlaw Ducks<span>Tuning Crew · Oulu</span></div>
-  </a>
-  <a href="index.html" class="nav-back">← Takaisin</a>
-</nav>
+<div id="rain-container"></div>
 
-<main>
-  <div class="game-container">
-    <div class="game-header">
-      <div class="game-title">🎮 Outlaw Ducks – Peli</div>
+<!-- PHONE POPUP -->
+<div id="phone-overlay">
+  <div id="phone-popup">
+    <!-- VAIHE 1: INCOMING CALL — only name + swipe -->
+    <div id="phone-step1">
+      <div class="ringing-emoji">📱</div>
+      <div class="incoming-label">SAAPUVA PUHELU</div>
+      <div class="caller-name" id="phone-caller-name">—</div>
+      <div class="caller-number" id="phone-caller-number">—</div>
+      <div id="swipe-container">
+        <div id="swipe-card">
+          <span class="swipe-icon">📱</span>
+          <span>Pyyhkäise vastataksesi tai hylätäksesi</span>
+          <div class="swipe-hints">
+            <span class="hint-left">← VEDÄ HYLÄTÄKSESI</span>
+            <span class="hint-right">VEDÄ VASTATAKSESI →</span>
+          </div>
+          <div class="swipe-bg-indicator left">✕</div>
+          <div class="swipe-bg-indicator right">✓</div>
+        </div>
+      </div>
     </div>
-    <div class="game-frame">
-      <div>
-        <span class="game-emoji">🦆</span>
-        <div class="coming-soon">Peli tulossa</div>
-        <div class="coming-sub">Rakennetaan parhaillaan</div>
-        <p style="color:var(--bone); font-size:0.9rem; max-width:400px; margin:0 auto;">
-          Tähän tulee Outlaw Ducks -peli. Sitä odotellessa voit yrittää napata sivun alareunasta juoksevan sorsan.
-        </p>
+    <!-- VAIHE 2: KONTEKSTI + ACTIONS -->
+    <div id="phone-step2" style="display:none;">
+      <div style="font-size:36px;margin-bottom:6px;">📞</div>
+      <div class="caller-name" id="phone-caller-name2">—</div>
+      <div class="caller-context" id="phone-caller-context">—</div>
+      <div class="phone-actions" id="phone-actions"></div>
+    </div>
+    <div id="phone-result"></div>
+    <button id="phone-close-btn" onclick="closePhone()">SULJE ▶</button>
+  </div>
+</div>
+
+<div id="game">
+
+  <!-- TITLE + ROUTE -->
+  <div id="title-screen">
+    <a href="index.html" style="position:absolute;top:14px;left:16px;color:var(--concrete);text-decoration:none;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;">← Outlaw Ducks</a>
+    <div class="big-car">🚗</div>
+    <h1>WIGEON</h1>
+    <h2>& Volvo V70</h2>
+    <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:3px;color:var(--rust);text-transform:uppercase;margin-bottom:6px;">Outlaw Ducks TC · pelimökki</div>
+    <div class="tagline">
+      Vetoakseli nakuttaa. Mies on päättänyt korjata sen itse.<br>
+      Rivitalon parkkipaikalla.<br>
+      <em>Mitä voisikaan mennä pieleen?</em>
+    </div>
+    <div style="background:#2a1a10; border:1px solid var(--rust); border-radius:4px; padding:10px 14px; margin-bottom:18px; font-size:12px; color:var(--concrete); font-style:italic; line-height:1.5;">
+      ⚠️ Tämä ei ole ohje vetoakselin vaihtoon. Vaikka olisi, kaikki menisi silti ihan eri tavalla tosielämässä.
+    </div>
+    <div class="route-divider">— VALITSE NÄKÖKULMA —</div>
+    <button class="route-btn lucky" onclick="startGame('lucky')">
+      <span class="route-label">⏱ ODOTUKSET — TUNNIN HOMMA</span>
+      "Vaihdetaan akseli, tunnissa valmis. Ei hätää."<br>
+      <span style="font-size:13px;color:#6ab870;font-style:italic;">Näin se päässä menee.</span>
+    </button>
+    <button class="route-btn" onclick="startGame('normal')">
+      <span class="route-label">🛠 TODELLISUUS — KUN HOMMIIN RYHTYY</span>
+      Akseli, hylsy, kaasupullo, sade, Rauhala, äiti, koira...<br>
+      <span style="font-size:13px;color:var(--concrete);font-style:italic;">Perustuu todellisiin tapahtumiin.</span>
+    </button>
+    <div class="footer-note">Pelaa puhelimella, peli on rakennettu sille.</div>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-screen" style="display:none;flex-direction:column;flex:1;">
+    <div id="header">
+      <div id="header-text">
+        <h1>WIGEON</h1>
+        <p>V70 · VETOAKSELI · RIVITALON PARKKI</p>
+      </div>
+      <div id="progress-bar-wrap">
+        <div id="progress-label">EDISTYMINEN</div>
+        <div id="progress-bar"><div id="progress-fill"></div></div>
+      </div>
+    </div>
+    <div id="stats">
+      <div class="stat-row"><div class="stat-name">HERMOT</div><div class="stat-track"><div class="stat-fill hermot" id="fill-hermot" style="width:100%"></div></div><div class="stat-val" id="val-hermot">5/5</div></div>
+      <div class="stat-row"><div class="stat-name">RAHAT</div><div class="stat-track"><div class="stat-fill raha" id="fill-raha" style="width:100%"></div></div><div class="stat-val" id="val-raha">5/5</div></div>
+      <div class="stat-row"><div class="stat-name">AIKA</div><div class="stat-track"><div class="stat-fill aika" id="fill-aika" style="width:100%"></div></div><div class="stat-val" id="val-aika">5/5</div></div>
+    </div>
+    <div id="kulu-strip">
+      💸 <span class="kval" id="kulu-total">89 €</span>
+      &nbsp;·&nbsp; 👴 <span class="kval" id="kulu-naapuri">0</span>
+      &nbsp;·&nbsp; 📱 <span class="kval" id="kulu-puhelin">0</span>
+    </div>
+    <div id="scene">
+      <div id="scene-visual"><div id="scene-emoji">🔧</div></div>
+      <div id="naapuri-section">
+        <div id="naapuri-header"><span style="font-size:18px">👴</span><span id="naapuri-header-text">NAAPURI TULEE JUTTELEMAAN</span></div>
+        <div id="naapuri-speech"></div>
+        <div id="naapuri-vastaukset"></div>
+      </div>
+      <div id="story-box"></div>
+      <div class="locked-hint" id="locked-hint">↑ Hoida ensin keskeytys</div>
+      <div id="choices"></div>
+      <div id="result-screen">
+        <div id="result-text"></div>
+        <div id="stat-delta"></div>
+        <button id="continue-btn" onclick="nextScene()">JATKETAAN ▶</button>
       </div>
     </div>
   </div>
-</main>
+
+  <!-- END -->
+  <div id="end-screen">
+    <div style="font-size:54px;text-align:center;margin-bottom:10px;" id="end-emoji">🔧</div>
+    <h2 id="end-title">HOMMA TEHTY</h2>
+    <div class="end-subtitle" id="end-subtitle"></div>
+    <div class="end-card"><h3>💸 KUSTANNUSLASKELMA</h3><div id="cost-lines"></div></div>
+    <div class="end-card"><h3>📊 YHTEENVETO</h3><div id="end-summary"></div></div>
+    <button id="restart-btn" onclick="location.reload()">UUDESTAAN →</button>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const VASTAUKSET = ["Jepsis...","Joo-o.","Niihäse.","Mm-joo.","No joo.","Aha.","Selvä.","Niinpä.","Noni.","Juu.","Justii.","Mjaa."];
+
+const NAAPURIT = [
+  { teksti:"Jaa! Vähän enemmän ku renkaanvaihto!", hiljaa:false },
+  { teksti:"Noni, jätkät on autohommissa. Oikiaa hommaa.", hiljaa:false },
+  { teksti:"No sielähän on pojat melekeen pää eellä auton alla.", hiljaa:false },
+  { teksti:"Autoremppaa, autoremppaa...", hiljaa:false },
+  { teksti:"Mitä te teettä?", hiljaa:false, tylyt:[
+    "\"Mitä luulet?\"",
+    "\"Pestään korvia, että kuulis fiksut kysymykset paremmin.\"",
+    "\"Salasanaa keksitään.\""
+  ]},
+  { teksti:"Onko tää diisselikonneella? Mulla oli itellä samanlainen, mutta mää möin sen. Siinä piti aina kesällä lämmittää ennen liikkeellelähtöä, muuten sammu liikennevaloihin...", hiljaa:false },
+  { teksti:"Alakaakohan tuo satalemmaa illalla?", hiljaa:false },
+  { teksti:"Autohommissa. Se on oikeen.", hiljaa:false },
+  { teksti:"Jaa että renkaanvaihtoa.", hiljaa:false },
+  { teksti:null, hiljaa:true },
+  { teksti:"No mutta nuori mies, ootsä koskaan ajatellu, että veisit sen korjaamolle?", hiljaa:false },
+  { teksti:"Kahvit on keitetty, oisitko ottamassa?", hiljaa:false },
+  { teksti:null, hiljaa:true, koira:true }, // naapurin koira
+];
+
+// ============================================================
+// PHONE CALLS — vähemmän, luonnollisempia
+// ============================================================
+const PUHELUT = {
+  myynti: {
+    nimi: "TUNTEMATON",
+    numero: "+358 40 123 4567",
+    konteksti: "Soittaja näkyy nimellä \"Helsingin alue\". Kuulostaa myyntipuhelulta.",
+    ringingTime: 3500,
+    actions: [
+      { teksti:"Vastataan nenällä — kädet öljyssä.", icon:"👃", tyyppi:"accept", tulos:"Wigeon painaa nenällä vihreää. \"Hei, soitan ABC-vakuutuksesta...\" Wigeon sanoo \"ei kiitos\" nenä yhä luurin yläpuolella. Kestää 8 sekuntia.", hermot:0, aika:0 },
+      { teksti:"Otetaan hanska pois ja vastataan.", icon:"🧤", tyyppi:"accept", tulos:"Myyntipuhelu. Vakuutuskampanja. Kaksi minuuttia hukkaan, hanska tahriintuu öljyyn taskussa.", hermot:-1, aika:-1 },
+      { teksti:"Ei vastata.", icon:"✕", tyyppi:"reject", tulos:"Ei soittanut uudestaan. Ei ollut tärkeää.", hermot:0, aika:0 }
+    ]
+  },
+  motonet: {
+    nimi: "MOTONET",
+    numero: "Tilaus #44291",
+    konteksti: "Motonet soittaa. Liittyy varmaan vetoakseliin.",
+    ringingTime: 3500,
+    actions: [
+      { teksti:"Vastataan — tärkeä juttu.", icon:"✓", tyyppi:"accept", tulos:"Motonet: \"Hyvät uutiset, oikea akseli on noudettavissa maanantaina.\" Wigeon hengittää syvään.", hermot:1, aika:0 },
+      { teksti:"Vastataan myöhemmin.", icon:"⏰", tyyppi:"reject", tulos:"Sähköposti tulee tunnin päästä. Sama asia, vähemmän ystävällisesti muotoiltuna.", hermot:0, aika:0 }
+    ]
+  },
+  mikko: {
+    nimi: "MIKKO",
+    numero: "Kaveri",
+    konteksti: "Mikko. Eilen oli puhetta että voisi tulla auttamaan auton kanssa.",
+    ringingTime: 3000,
+    actions: [
+      { teksti:"Vastataan — voisi tulla apu hyvään tarpeeseen.", icon:"🤝", tyyppi:"accept", tulos:"Mikko on Hervannassa, ei pääse tänään. \"Sori jätkä, ens viikolla?\" Wigeon sanoo \"joo\". Pettymys jää.", hermot:-1, aika:0 },
+      { teksti:"Soitellaan illalla, nyt ei kerkee.", icon:"⏰", tyyppi:"reject", tulos:"Mikko lähettää viestin: \"sori, en kuitenkaa pääsis tänää\". Hyvä että ei vastannut.", hermot:0, aika:0 }
+    ]
+  },
+  aiti: {
+    nimi: "ÄITI ❤️",
+    numero: "Soittaa harvoin",
+    konteksti: "Äiti. Pitkä puhelu varmasti. Mutta tuntuisi pahalta jättää vastaamatta.",
+    ringingTime: 4500,
+    actions: [
+      { teksti:"Vastataan. Äiti on äiti.", icon:"❤️", tyyppi:"accept", tulos:"Äiti kertoo että mummo Maijan koira kuoli. 12 minuuttia. Wigeon istuu autoa vasten ja kuuntelee. Itse asiassa tämä on hetken arvoinen tauko.", hermot:1, aika:-1 },
+      { teksti:"Lähetetään viesti: \"Soitan illalla 🤍\"", icon:"💬", tyyppi:"reject", tulos:"Viesti lähti. Wigeon tuntee piston rinnassa. Lupaus on lupaus.", hermot:-1, aika:0 }
+    ]
+  },
+  pomo: {
+    nimi: "PEKKA (TYÖ)",
+    numero: "Pomo",
+    konteksti: "Pomo soittaa lauantaina. Joko tärkeä asia tai ei mitään.",
+    ringingTime: 3500,
+    actions: [
+      { teksti:"Vastataan kohteliaasti.", icon:"💼", tyyppi:"accept", tulos:"Pomo: \"Ei mitään hätää, kysyin vaan maanantain palaverista.\" 8 minuuttia juttua. Korvaan jää öljyä.", hermot:-1, aika:-1 },
+      { teksti:"Ei vastata. Lauantai on lauantai.", icon:"✕", tyyppi:"reject", tulos:"Pekka jättää viestin: \"soita kun ehdit\". Ei kiireellinen. Oikea päätös.", hermot:1, aika:0 }
+    ]
+  },
+  meri: {
+    nimi: "MERI ❤️",
+    numero: "Vaimo",
+    konteksti: "Meri. Lyhyt asia varmaan, tai sitten ei.",
+    ringingTime: 2500,
+    actions: [
+      { teksti:"Vastataan heti.", icon:"❤️", tyyppi:"accept", tulos:"Meri: \"Toisitsä leipää kun tulet?\" Wigeon: \"Joo.\" Yksinkertaista kerrankin.", hermot:0, aika:0 },
+      { teksti:"Soitellaan kohta takaisin.", icon:"💬", tyyppi:"reject", tulos:"Meri lähettää viestin. Toisen viestin. Kolmannen. Wigeonin pitää lukea ne kaikki.", hermot:-1, aika:0 }
+    ]
+  },
+  ducks: {
+    nimi: "OUTLAW DUCKS",
+    numero: "52",
+    konteksti: "Tuntematon — mainospuhelu yhdistyksestä?",
+    ringingTime: 0,
+    isFlash: true, // näkyy vain hetken
+    actions: [
+      { teksti:"(ei ehditty)", icon:"📵", tyyppi:"reject", tulos:"Puhelin pirisi vain kerran. Kun Wigeon sai kädet pois öljystä, se oli jo lopettanut. Numero 52 — outoa.", hermot:0, aika:0 }
+    ]
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+const MAX = 5;
+let tila = {
+  reitti: 'normal',
+  kohtausIdx: 0,
+  hermot: MAX,
+  raha: MAX,
+  aika: MAX,
+  naapuriLkm: 0,
+  naapurisopu: 5,
+  puhelinLkm: 0,
+  puhelutHylatty: 0,
+  hylatytPuhelut: [], // list of caller names rejected
+  loukkaantuminen: null, // null | 'sormi' | 'paa' | 'selka'
+  hyvatValinnat: 0,
+  huonotValinnat: 0,
+  lukittu: false,
+  seuraava: null,
+  pendingChoiceContinue: false,
+};
+
+let kulut = [{ nimi:"Vetoakseli (Motonet, tilausmaksu)", summa:89 }];
+
+function lisaaKulu(nimi, summa) { if(summa>0) kulut.push({nimi,summa}); paivitaKuluStrip(); }
+function kuluYht() { return kulut.reduce((s,k)=>s+k.summa,0); }
+function paivitaKuluStrip() { document.getElementById('kulu-total').textContent = kuluYht()+'€'; }
+function rajaa(v) { return Math.max(0,Math.min(MAX,v)); }
+
+function paivitaPalkit() {
+  const total = tila.reitti==='lucky' ? LUCKY_SCENES.length-1 : KOHTAUKSET.length-1;
+  document.getElementById('fill-hermot').style.width = (tila.hermot/MAX*100)+'%';
+  document.getElementById('fill-raha').style.width   = (tila.raha/MAX*100)+'%';
+  document.getElementById('fill-aika').style.width   = (tila.aika/MAX*100)+'%';
+  document.getElementById('val-hermot').textContent  = Math.round(tila.hermot)+'/'+MAX;
+  document.getElementById('val-raha').textContent    = Math.round(tila.raha)+'/'+MAX;
+  document.getElementById('val-aika').textContent    = Math.round(tila.aika)+'/'+MAX;
+  document.getElementById('progress-fill').style.width = (tila.kohtausIdx/total*100)+'%';
+  document.getElementById('kulu-naapuri').textContent = tila.naapuriLkm;
+  document.getElementById('kulu-puhelin').textContent = tila.puhelinLkm;
+}
+
+function naytaDelta(hermot,raha,aika) {
+  const el=document.getElementById('stat-delta'); el.innerHTML='';
+  [{nimi:'Hermot',arvo:hermot},{nimi:'Rahat',arvo:raha},{nimi:'Aika',arvo:aika}].forEach(d=>{
+    if(!d.arvo) return;
+    const c=document.createElement('div');
+    c.className='delta-chip '+(d.arvo>0?'pos':'neg');
+    c.textContent=d.nimi+' '+(d.arvo>0?'+':'')+d.arvo;
+    el.appendChild(c);
+  });
+}
+
+function naytaSade() {
+  const c=document.getElementById('rain-container'); c.style.display='block'; c.innerHTML='';
+  for(let i=0;i<35;i++){const d=document.createElement('div');d.className='raindrop';d.style.left=Math.random()*100+'%';d.style.animationDuration=(0.4+Math.random()*0.7)+'s';d.style.animationDelay=Math.random()*1.2+'s';c.appendChild(d);}
+}
+function piilotaSade(){document.getElementById('rain-container').style.display='none';}
+function sekoita(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+// ============================================================
+// PHONE — TÄYSRUUTU-POPUP
+// ============================================================
+let phoneAutoMissTimer = null;
+
+let currentPhonePuhelu = null;
+let currentPhoneOnClose = null;
+
+let swipeEnabledAt = 0; // timestamp when swipe becomes active (1s lockout)
+
+function triggerPhone(puhelu, onClose) {
+  if(!puhelu) { if(onClose) onClose(); return; }
+  tila.puhelinLkm++;
+  currentPhonePuhelu = puhelu;
+  currentPhoneOnClose = onClose;
+
+  const overlay = document.getElementById('phone-overlay');
+  const actionsEl = document.getElementById('phone-actions');
+  const resultEl = document.getElementById('phone-result');
+  const closeBtn = document.getElementById('phone-close-btn');
+
+  // Reset both steps
+  document.getElementById('phone-step1').style.display = 'block';
+  document.getElementById('phone-step2').style.display = 'none';
+  document.getElementById('phone-caller-name').textContent = puhelu.nimi;
+  document.getElementById('phone-caller-number').textContent = puhelu.numero;
+  document.getElementById('phone-caller-name2').textContent = puhelu.nimi;
+  document.getElementById('phone-caller-context').textContent = puhelu.konteksti;
+
+  actionsEl.style.display = 'none';
+  actionsEl.innerHTML = '';
+  resultEl.style.display = 'none';
+  resultEl.innerHTML = '';
+  closeBtn.style.display = 'none';
+
+  // Reset swipe card position
+  const card = document.getElementById('swipe-card');
+  card.style.transform = '';
+  card.style.opacity = '';
+  card.querySelectorAll('.swipe-bg-indicator').forEach(el => el.style.opacity = '0');
+
+  attachSwipeHandlers();
+
+  overlay.classList.add('show');
+
+  // FLASH CALL — vain sekunti, ei ehdi vastata
+  if(puhelu.isFlash) {
+    setTimeout(() => {
+      // Show flash result
+      handlePhoneAction(puhelu.actions[0], puhelu, onClose);
+    }, 1100);
+    return;
+  }
+
+  // 1 second lockout before swipe can be used (enforced in onStart)
+  swipeEnabledAt = Date.now() + 1000;
+
+  // Auto-miss after a longer time
+  if(phoneAutoMissTimer) clearTimeout(phoneAutoMissTimer);
+  phoneAutoMissTimer = setTimeout(() => {
+    if(!overlay.classList.contains('show')) return;
+    if(document.getElementById('phone-step1').style.display !== 'none') {
+      const missedAction = {
+        teksti: "(et ehtinyt)", icon:"📵", tyyppi:"reject",
+        tulos: "Puhelu meni ohi. Kädet olivat liian likaiset. Soittaja lopettaa neljännen pirinän jälkeen.",
+        hermot: 0, aika: 0
+      };
+      handlePhoneAction(missedAction, puhelu, onClose);
+    }
+  }, (puhelu.ringingTime || 3500) + 10000);
+}
+
+function attachSwipeHandlers() {
+  const card = document.getElementById('swipe-card');
+  let startX = 0, currentX = 0, dragging = false;
+  const threshold = 130; // higher so you can't accidentally swipe
+
+  function onStart(e) {
+    if(Date.now() < swipeEnabledAt) return; // lockout active
+    dragging = true;
+    startX = (e.touches ? e.touches[0].clientX : e.clientX);
+    card.classList.add('dragging');
+  }
+  function onMove(e) {
+    if(!dragging) return;
+    currentX = (e.touches ? e.touches[0].clientX : e.clientX);
+    let dx = currentX - startX;
+    // Dead zone — first 15px does nothing, prevents accidental answers
+    const deadZone = 15;
+    if(Math.abs(dx) < deadZone) {
+      card.style.transform = '';
+      card.querySelectorAll('.swipe-bg-indicator').forEach(el => el.style.opacity = '0');
+      return;
+    }
+    dx = dx > 0 ? dx - deadZone : dx + deadZone;
+    card.style.transform = `translateX(${dx}px) rotate(${dx * 0.05}deg)`;
+    const leftInd = card.querySelector('.swipe-bg-indicator.left');
+    const rightInd = card.querySelector('.swipe-bg-indicator.right');
+    if(dx > 0) {
+      rightInd.style.opacity = Math.min(1, dx / threshold);
+      leftInd.style.opacity = 0;
+      card.style.borderColor = `rgba(120,220,120,${Math.min(0.7, dx/threshold)})`;
+    } else if(dx < 0) {
+      leftInd.style.opacity = Math.min(1, -dx / threshold);
+      rightInd.style.opacity = 0;
+      card.style.borderColor = `rgba(220,120,120,${Math.min(0.7, -dx/threshold)})`;
+    } else {
+      leftInd.style.opacity = 0;
+      rightInd.style.opacity = 0;
+    }
+  }
+  function onEnd(e) {
+    if(!dragging) return;
+    dragging = false;
+    card.classList.remove('dragging');
+    const dx = currentX - startX;
+    if(dx > threshold) {
+      // Accept
+      card.style.transform = `translateX(400px) rotate(20deg)`;
+      card.style.opacity = '0';
+      setTimeout(() => handleSwipe('accept'), 220);
+    } else if(dx < -threshold) {
+      // Reject
+      card.style.transform = `translateX(-400px) rotate(-20deg)`;
+      card.style.opacity = '0';
+      setTimeout(() => handleSwipe('reject'), 220);
+    } else {
+      // Snap back
+      card.style.transform = '';
+      card.style.borderColor = '';
+      card.querySelectorAll('.swipe-bg-indicator').forEach(el => el.style.opacity = '0');
+    }
+  }
+
+  // Remove old handlers (clone trick)
+  const fresh = card.cloneNode(true);
+  card.parentNode.replaceChild(fresh, card);
+
+  fresh.addEventListener('touchstart', onStart, {passive:true});
+  fresh.addEventListener('touchmove', onMove, {passive:true});
+  fresh.addEventListener('touchend', onEnd);
+  fresh.addEventListener('mousedown', onStart);
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onEnd);
+}
+
+function handleSwipe(direction) {
+  const puhelu = currentPhonePuhelu;
+  const onClose = currentPhoneOnClose;
+  if(!puhelu) return;
+
+  // Hide step 1 entirely
+  document.getElementById('phone-step1').style.display = 'none';
+
+  if(direction === 'reject') {
+    const rejectAction = puhelu.actions.find(a => a.tyyppi === 'reject');
+    if(rejectAction) {
+      if(phoneAutoMissTimer) { clearTimeout(phoneAutoMissTimer); phoneAutoMissTimer = null; }
+      handlePhoneAction(rejectAction, puhelu, onClose);
+    }
+  } else {
+    // Accept — show step 2: context + accept actions
+    document.getElementById('phone-step2').style.display = 'block';
+    const acceptActions = puhelu.actions.filter(a => a.tyyppi === 'accept');
+    const actionsEl = document.getElementById('phone-actions');
+    actionsEl.style.display = 'flex';
+    actionsEl.innerHTML = '<div style="color:#a0e0a0;font-size:11px;letter-spacing:2px;font-family:Oswald,sans-serif;text-align:center;margin:8px 0 4px;">VASTAUSTAPA</div>';
+
+    if(acceptActions.length === 0) {
+      handlePhoneAction(puhelu.actions[0], puhelu, onClose);
+      return;
+    }
+
+    acceptActions.forEach(action => {
+      const btn = document.createElement('button');
+      btn.className = 'phone-action accept';
+      btn.innerHTML = `<span class="icon">${action.icon || ''}</span>${action.teksti}`;
+      btn.onclick = () => {
+        if(phoneAutoMissTimer) { clearTimeout(phoneAutoMissTimer); phoneAutoMissTimer = null; }
+        handlePhoneAction(action, puhelu, onClose);
+      };
+      actionsEl.appendChild(btn);
+    });
+
+    document.getElementById('phone-popup').style.animation = 'none';
+    document.getElementById('phone-popup').querySelector('.ringing-emoji').style.animation = 'none';
+  }
+}
+
+function handlePhoneAction(action, puhelu, onClose) {
+  tila.hermot = rajaa(tila.hermot + (action.hermot||0));
+  tila.aika = rajaa(tila.aika + (action.aika||0));
+  if(action.tyyppi === 'reject') {
+    tila.puhelutHylatty++;
+    tila.hylatytPuhelut.push(puhelu.nimi);
+  }
+  paivitaPalkit();
+
+  // Hide both steps, show only the result
+  document.getElementById('phone-step1').style.display = 'none';
+  document.getElementById('phone-step2').style.display = 'none';
+  document.getElementById('phone-actions').style.display = 'none';
+  const resultEl = document.getElementById('phone-result');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = action.tulos;
+  document.getElementById('phone-close-btn').style.display = 'block';
+
+  // Stop the shake animation
+  document.getElementById('phone-popup').style.animation = 'none';
+  document.getElementById('phone-popup').querySelector('.ringing-emoji').style.animation = 'none';
+
+  // Save onClose for closePhone
+  document.getElementById('phone-close-btn')._onCloseCb = onClose;
+}
+
+function closePhone() {
+  const overlay = document.getElementById('phone-overlay');
+  overlay.classList.remove('show');
+  // Restore animations for next time
+  setTimeout(() => {
+    document.getElementById('phone-popup').style.animation = '';
+    document.getElementById('phone-popup').querySelector('.ringing-emoji').style.animation = '';
+  }, 300);
+  const cb = document.getElementById('phone-close-btn')._onCloseCb;
+  if(cb) cb();
+}
+
+// ============================================================
+// NEIGHBOR
+// ============================================================
+function renderNaapuri(naapuri) {
+  const osio=document.getElementById('naapuri-section');
+  const puhe=document.getElementById('naapuri-speech');
+  const vastEl=document.getElementById('naapuri-vastaukset');
+  if(!naapuri){osio.style.display='none';osio.dataset.vastattu='1';return;}
+
+  tila.naapuriLkm++;
+  delete osio.dataset.vastattu;
+  tila.lukittu=true;
+  osio.style.display='block'; osio.style.opacity='1'; osio.style.pointerEvents='auto';
+
+  if(naapuri.hiljaa){
+    if(naapuri.koira){
+      document.getElementById('naapuri-header-text').textContent='🐕 NAAPURIN KOIRA TULEE TUIJOTTAMAAN';
+      puhe.innerHTML='<em>Naapurin musta sekarotuinen koira lähestyy hitaasti. Istuu kahden metrin päähän ja katsoo Wigeonia. Hihna roikkuu maahan asti — pakeni varmaan kuistilta. Ei haukahdusta. Vain katse.</em>';
+      vastEl.innerHTML='<div class="vastaus-label">REAGOI:</div>';
+      const opt1=document.createElement('button'); opt1.className='vastaus-btn';
+      opt1.textContent='Annetaan sen olla rauhassa. Lähtee itse kun tylsistyy.';
+      opt1.onclick=()=>{naapuriVastattu(false);};
+      vastEl.appendChild(opt1);
+
+      const opt2=document.createElement('button'); opt2.className='vastaus-btn';
+      opt2.textContent='Hätistät pois käden heilautuksella. "Mee ny sinäki siitä."';
+      opt2.onclick=()=>{naapuriVastattu(false);};
+      vastEl.appendChild(opt2);
+
+      const opt3=document.createElement('button'); opt3.className='vastaus-btn';
+      opt3.textContent='⚠️ Heität sitä lista-avaimella. Mitäs nuuskii.';
+      opt3.style.color = '#ffb0b0';
+      opt3.style.background = '#3a1a1a';
+      opt3.style.borderColor = '#c04040';
+      opt3.style.borderWidth = '2px';
+      opt3.style.fontWeight = '600';
+      opt3.style.fontSize = '15px';
+      opt3.style.marginTop = '4px';
+      opt3.onclick=()=>{koiraJakkari();};
+      vastEl.appendChild(opt3);
+    } else {
+      document.getElementById('naapuri-header-text').textContent='NAAPURI TULEE TUIJOTTAMAAN';
+      puhe.innerHTML='<em>Naapuri kävelee viereen parkkipaikalla ja jää tuijottamaan hiljaa. Ei sano mitään.</em>';
+      vastEl.innerHTML='<div class="vastaus-label">REAGOI:</div>';
+      const btn=document.createElement('button'); btn.className='vastaus-btn';
+      btn.textContent='Nyökkäät ja jatkat hommia.'; btn.onclick=()=>naapuriVastattu(false);
+      vastEl.appendChild(btn);
+    }
+  } else {
+    document.getElementById('naapuri-header-text').textContent='NAAPURI TULEE JUTTELEMAAN';
+    puhe.innerHTML='"<em>'+naapuri.teksti+'</em>"';
+    vastEl.innerHTML='<div class="vastaus-label">VASTAA ENSIN:</div>';
+    const vastausLista = naapuri.tylyt ? naapuri.tylyt : sekoita(VASTAUKSET).slice(0,3).map(v=>'"'+v+'"');
+    vastausLista.forEach(v=>{
+      const btn=document.createElement('button'); btn.className='vastaus-btn';
+      btn.textContent=v; btn.onclick=()=>naapuriVastattu(false);
+      vastEl.appendChild(btn);
+    });
+    const ohita=document.createElement('button'); ohita.className='vastaus-btn ohita-btn';
+    ohita.textContent='Ei kuulla, jatketaan hommia.'; ohita.onclick=()=>naapuriVastattu(true);
+    vastEl.appendChild(ohita);
+  }
+  lukitseValinnat(true);
+}
+
+function koiraJakkari() {
+  // Jakkari triggers bite → injury → big delay
+  const osio=document.getElementById('naapuri-section');
+  osio.dataset.vastattu='1';
+  osio.style.opacity='0.4';
+  osio.style.pointerEvents='none';
+  document.getElementById('naapuri-vastaukset').innerHTML=
+    '<div style="color:#e08080;font-size:13px;padding:6px 0;line-height:1.5;font-style:italic;">🐕💢 Koira ei pidä siitä. Lista-avain osuu lautasen ohi mutta lähelle. Koira säikähtää, syöksyy Wigeonin kimppuun ja puraisee käsivarteen ennen kuin pakenee. Verta valuu hihaa pitkin.<br><br><strong style="color:#ff9090;">Sairaalareissu, tetanusrokote, kolme tikkiä. Auto seisoo neljä päivää.</strong></div>';
+  tila.hermot = rajaa(tila.hermot - 3);
+  tila.aika = rajaa(tila.aika - 3);
+  tila.naapurisopu = Math.max(0, tila.naapurisopu - 2);
+  tila.loukkaantuminen = 'jakkari';
+  tila.loukkaantumisVrk = 4;
+  lisaaKulu('Sairaalareissu + tetanusrokote', 95);
+  paivitaPalkit();
+  tila.lukittu=false;
+  lukitseValinnat(false);
+}
+
+function naapuriVastattu(ohitettu) {
+  const osio=document.getElementById('naapuri-section');
+  osio.dataset.vastattu='1';
+  if(ohitettu){
+    tila.naapurisopu=Math.max(0,tila.naapurisopu-1);
+    osio.style.opacity='0.35'; osio.style.pointerEvents='none';
+    document.getElementById('naapuri-vastaukset').innerHTML=
+      '<div style="color:#c06040;font-size:12px;font-family:Oswald,sans-serif;letter-spacing:1px;padding:4px 0;">— Ohitettu. Naapuri katsoo perään. Naapurisopu −1.</div>';
+  } else {
+    osio.style.opacity='0.4'; osio.style.pointerEvents='none';
+    document.getElementById('naapuri-vastaukset').innerHTML=
+      '<div style="color:#6ab0d0;font-size:12px;font-family:Oswald,sans-serif;letter-spacing:1px;padding:4px 0;">✓ Vastattu — naapuri nyökkää ja jää hetkeksi seisomaan.</div>';
+  }
+  tila.lukittu=false;
+  lukitseValinnat(false);
+}
+
+function lukitseValinnat(lukko) {
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.toggle('locked',lukko));
+  document.getElementById('locked-hint').style.display=lukko?'block':'none';
+}
+
+// ============================================================
+// SCENES — looginen järjestys, vähemmän puheluita
+// ============================================================
+const KOHTAUKSET = [
+
+  // 0 — INTRO
+  { id:'intro', emoji:'🚗', paiva:'LAUANTAI · AAMU · KLO 9:00', naapuri:null, puhelu:null,
+    tarina:`<p>Wigeon astuu ulos kahvikuppi kädessä. V70 seisoo omalla paikallaan parkkipaikalla — vetoakseli on naksuttanut jo kolme viikkoa.</p>
+<p>Varaosat on tilattu Motonetistä. YouTube auki. <em>Tänään homma hoituu — tunnissa pari.</em></p>`,
+    valinnat:[
+      {teksti:"Avataan paketti ja nostetaan auto tunkilla.",tulos:"Wigeon avaa Motonetin paketin samalla kun toinen käsi pumppaa tunkkia. Tehokasta.",hyva:true,hermot:0,raha:0,aika:-1,kulu:null,seuraava:1},
+      {teksti:"Katsotaan vielä kerran ohjevideo.",tulos:"Kolmas katselu ei tuonut uutta tietoa. Video oli 47 minuuttia pitkä ja käsitteli eri automallia.",hyva:false,hermot:0,raha:0,aika:-2,kulu:null,seuraava:1}
+    ]
+  },
+
+  // 1 — VÄÄRÄ OSA + MYYNTIPUHELU
+  { id:'wrong_part', emoji:'📦', paiva:'LAUANTAI · AAMU · KLO 9:30', naapuri:null, puhelu:PUHELUT.myynti,
+    tarina:`<p>Paketti auki, akseli esiin. Wigeon sovittaa.</p>
+<p>Hyvältä näyttää... <em>odota hetki.</em></p>
+<p>Tämä on oikean puolen akseli. Wigeon tarvitsee vasemman puolen.</p>`,
+    valinnat:[
+      {teksti:"Soitetaan Motonetiin, vaihdetaan osa.",tulos:"\"Nii-in... tässähän luki P oikealla.\" Oikea akseli saapuu maanantaina. Hinta sama.",hyva:true,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:2},
+      {teksti:"Koitetaanpa asentaa se silti.",tulos:"Wigeon tietää heti, ettei se mene. Mutta piti yrittää. Viisi minuuttia hukkaan.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:2}
+    ]
+  },
+
+  // 2 — 10MM + NAAPURI
+  { id:'wrench_lost', emoji:'🔩', paiva:'LAUANTAI · AAMU · KLO 10:30', naapuri:NAAPURIT[0], puhelu:null,
+    tarina:`<p>Osa tulee maanantaina. Sillä välin Wigeon voi irrottaa vanhan akselin valmiiksi.</p>
+<p>Hän etsii 10 mm hylsyä. 8, 9, 11, 12... <em>10 mm puuttuu.</em> Se on aina kadonnut.</p>`,
+    valinnat:[
+      {teksti:"Käytetään pihtiä. Kyllä se sieltä lähtee.",vaara:true,tulos:"Pihti pyöristi mutterin kantaa, mutta ei saanut sitä liikkumaan. Nyt kanta on osittain pyöreä — vaikeampi tarttua jatkossa.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:3},
+      {teksti:"Käydään naapurilta lainaamassa.",tulos:"Naapurilla on 10 mm hylsy. Lainan yhteyteen kuuluu pitkä tarina hänen vanhasta Opelistaan. Wigeon kuuntelee kohteliaasti.",hyva:true,hermot:0,raha:0,aika:-1,kulu:null,seuraava:3}
+    ]
+  },
+
+  // 3 — PULTTI EI IRTOA → KAASUPULLO PRISMASTA
+  { id:'stuck_bolt', emoji:'💥', paiva:'LAUANTAI · AAMUPÄIVÄ · KLO 11:15', naapuri:NAAPURIT[4], puhelu:null,
+    tarina:`<p>Yksi ruostunut pultti ei irtoa. Räikkä, jatkovarsi, koko keho jännittyy — ei milliäkään.</p>
+<p>Pitää kuumentaa. Kaasupullo on tyhjä.</p>
+<p>Wigeon ajaa Biltemaan — ovessa lukee käsinkirjoitettu lappu: <strong>SULJETTU VESIVAHINGON VUOKSI.</strong></p>`,
+    valinnat:[
+      {teksti:"Käydään Puuilossa, sieltä saa edullisemmin.",tulos:"Puuilossa kaasupullo 22,90 €. Vähän pidempi ajomatka, mutta säästö on selvä. Wigeon jutustelee kassan kanssa muutaman virkkeen.",hyva:true,hermot:0,raha:-1,aika:-2,kulu:{nimi:"Kaasupullo (Puuilo)",summa:23},seuraava:4},
+      {teksti:"Haetaan kaasua Prismasta — se on lähinnä.",tulos:"Prismassa kierrätettävä kaasupullo maksaa 36,90 €. Bilteman hinta olisi ollut noin 16 €. Wigeon ottaa sen hiljaa.",hyva:true,hermot:-1,raha:-2,aika:-1,kulu:{nimi:"Kaasupullo (Prisma)",summa:37},seuraava:4},
+      {teksti:"Liotetaan WD-40:llä, jatketaan huomenna.",tulos:"WD-40 ruiskutettu. Wigeon käy sisällä kahvilla. Päätös osoittautui viisaaksi — tai ainakin halvemmaksi.",hyva:false,hermot:0,raha:0,aika:-2,kulu:null,seuraava:4}
+    ]
+  },
+
+  // 4 — PULTTI KATKEAA + NAAPURI
+  { id:'bolt_snaps', emoji:'😱', paiva:'LAUANTAI · PÄIVÄ · KLO 12:30', naapuri:NAAPURIT[1], puhelu:null,
+    tarina:`<p>Wigeon on lämmittänyt pultin. Räikkä käteen, kunnolla...</p>
+<p><em>Naksahtaa.</em></p>
+<p>Räikässä roikkuu puolikas pultti. Toinen puoli on kierreosiossa.</p>`,
+    valinnat:[
+      {teksti:"Otetaan pora ja kierretanko — porataan ulos.",tulos:"Wigeon kaivaa vanhan poranterän esille. Tylsä, mutta menee sisään. Tunnin työ.",hyva:true,hermot:-1,raha:0,aika:-1,kulu:{nimi:"Kierretanko",summa:8},seuraava:5},
+      {teksti:"Yritetään meiselillä ja vasaralla — kalkutetaan pultti pyörimään.",tulos:"Wigeon tekee meisselillä loven katkenneen pultin reunaan ja kalkuttaa vasaralla vastapäivään. Yksi osuma menee peukaloon. Puolen tunnin jälkeen pultti alkaa pyöriä. Aikaa meni, mutta ilmaista.",hyva:false,hermot:-2,raha:0,aika:-2,kulu:null,seuraava:5}
+    ]
+  },
+
+  // 5 — AKKU LOPPUU + NAAPURI TUIJOTTAA
+  { id:'battery', emoji:'🔋', paiva:'LAUANTAI · PÄIVÄ · KLO 13:45', naapuri:NAAPURIT[9], puhelu:null,
+    tarina:`<p>Wigeon haluaa katsoa YouTube-ohjeen seuraavasta työvaiheesta. Puhelin ei herää.</p>
+<p>Akku loppui. Laturi on sisällä. Pistorasia on sisällä. Wigeon on ulkona, kädet öljyssä.</p>`,
+    valinnat:[
+      {teksti:"Haetaan jatkojohto, vedetään ikkunasta ulos.",tulos:"Wigeon löytää 5 metrin jatkojohdon. Ikkuna ei mene täysin kiinni. Hyväksyttävä kompromissi.",hyva:true,hermot:0,raha:0,aika:-1,kulu:null,seuraava:6},
+      {teksti:"Jatketaan muistista. Ohjevideo katsottu kolmesti.",tulos:"Wigeon muistaa suurin piirtein. Kaksi pulttia menee väärässä järjestyksessä. Huomataan myöhemmin.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:6}
+    ]
+  },
+
+  // 6 — RÄLLÄKKÄ + ÄITI SOITTAA
+  { id:'grinder', emoji:'🔥', paiva:'LAUANTAI · PÄIVÄ · KLO 14:30', naapuri:null, puhelu:PUHELUT.aiti,
+    tarina:`<p>Toisen pultin mutterin kanta on pyöristynyt. Wigeon katsoo sitä hetken.</p>
+<p>Ottaa rälläkän esille. Suojalasit päähän. Käynnistää. <em>VRRRRRR.</em></p>
+<p>Kipinät lentävät parkkipaikan asfaltille.</p>`,
+    valinnat:[
+      {teksti:"Rälläkkä käy, homma etenee.",tulos:"Mutterin kanta poistuu siististi. Wigeon puhaltaa pölyn pois ja hymyilee. Tässä mennään.",hyva:true,hermot:1,raha:0,aika:-1,kulu:null,seuraava:7},
+      {teksti:"Rälläkkä lipsahtaa. Nyrkki osuu korin kylkeen.",vaara:true,tulos:"Pieni lovi. Wigeon katsoo sitä sekunnin. Ottaa askeleen taaksepäin. Katsoo uudestaan. Jatkaa töitä.",hyva:false,hermot:-2,raha:0,aika:-1,kulu:null,seuraava:7}
+    ]
+  },
+
+  // 7 — ÖLJY SILMÄÄN
+  { id:'oil', emoji:'😵', paiva:'LAUANTAI · ILTAPÄIVÄ · KLO 15:00', naapuri:null, puhelu:PUHELUT.ducks,
+    tarina:`<p>Wigeon avaa vetoakselin päässä olevan tulpan. Sisältä tippuu öljytippa — suoraan silmään.</p>
+<p>Silmä kirvelee. Hieroako sitä öljyisillä käsillä vai etsiäkö kangas?</p>`,
+    valinnat:[
+      {teksti:"Mennään sisälle, huuhdellaan silmä.",tulos:"Kahvinkeittimen vieressä on talouspaperia. Silmä huuhdotaan. Toinen silmä jää öljyiseksi 10 minuutiksi.",hyva:true,hermot:0,raha:0,aika:-1,kulu:null,seuraava:8},
+      {teksti:"Räpytellään, jatketaan töitä.",tulos:"Räpytys ei auta. Wigeon työskentelee toisen silmän varassa kaksikymmentä minuuttia. Mutterit alkavat näyttää kahdelta.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:8}
+    ]
+  },
+
+  // 8 — TUNKKI HAJOAA + NAAPURI
+  { id:'jack_breaks', emoji:'😤', paiva:'LAUANTAI · ILTAPÄIVÄ · KLO 15:45', naapuri:NAAPURIT[2], puhelu:null,
+    tarina:`<p>Wigeon pumppaa tunkkia. <em>Pssst.</em></p>
+<p>Hydrauliikkaöljyä valuu asfaltille. Auto laskeutuu hitaasti alas. Tunkki on hajonnut.</p>`,
+    valinnat:[
+      {teksti:"Haetaan naapurilta laina-autonostin.",tulos:"Naapurilla on pulpettitunkki. Hieman ruosteinen, mutta kantaa. Auto nousee ylös.",hyva:true,hermot:0,raha:0,aika:-1,kulu:null,seuraava:9},
+      {teksti:"Ostetaan uusi tunkki lähikaupasta.",tulos:"Lähikaupassa on vain yksi tunkki — halvin malli 39,90 €. Wigeon ostaa sen.",hyva:false,hermot:-1,raha:-2,aika:-1,kulu:{nimi:"Uusi tunkki",summa:40},seuraava:9}
+    ]
+  },
+
+  // 9 — HESBURGER + NAAPURIN DIESEL-TARINA
+  { id:'hungry', emoji:'🍔', paiva:'LAUANTAI · ILTAPÄIVÄ · KLO 16:30', naapuri:NAAPURIT[5], puhelu:null,
+    tarina:`<p>Wigeon makaa auton alla. Maha kurnii. Aamiaiseksi jäi kahvi ja puoli Digestive-keksiä.</p>
+<p>On pakko käydä syömässä. Hesburger on 800 metrin päässä.</p>`,
+    valinnat:[
+      {teksti:"Nopea käynti Hesburgerissa.",tulos:"Bacon Cheese -ateria + iso kahvi = 13,50 €. Wigeon istuu 20 minuuttia vain tuijottaen ulos ikkunasta.",hyva:true,hermot:1,raha:-1,aika:-1,kulu:{nimi:"Hesburger (ruoka)",summa:14},seuraava:10},
+      {teksti:"Syödään mitä jääkaapista löytyy.",tulos:"Kaksi vanhaa kananmunaa ja mustikkajogurtti. Riitti. Maistui pahemmalta kuin näytti.",hyva:false,hermot:0,raha:0,aika:0,kulu:null,seuraava:10}
+    ]
+  },
+
+  // 10 — POMO SOITTAA
+  { id:'boss_calls', emoji:'📞', paiva:'LAUANTAI · ILTAPÄIVÄ · KLO 17:00', naapuri:null, puhelu:PUHELUT.pomo,
+    tarina:`<p>Wigeon on juuri syönyt. Käsi on edelleen rasvainen, vaikka pesi.</p>
+<p>Hän kaivaa puhelimen povitaskusta ja jatkaa auton ääreen. Seuraavaksi pitää saada vetoakselin keskimutteri auki — se on napaan tiukasti kiinni.</p>`,
+    valinnat:[
+      {teksti:"Käytetään pitkää jatkovartta ja vivutaan rauhassa.",tulos:"Wigeon asettaa jatkovarren räikkään ja vivuttaa hitaasti, oikealla otteella. Keskimutteri liikahtaa. Hetken päästä se on auki.",hyva:true,hermot:0,raha:0,aika:-1,kulu:null,seuraava:11},
+      {teksti:"Yritetään ilman jatkovartta, nopeasti.",tulos:"Räikkä luiskahtaa kahdesti. Mutteri ei aukea ennen kuin Wigeon lopulta hakee jatkovarren — josta olisi pitänyt aloittaa.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:11}
+    ]
+  },
+
+  // 11 — MOMENTTIAVAIN PUUTTUU
+  { id:'torque', emoji:'🔧', paiva:'LAUANTAI · ILTA · KLO 17:30', naapuri:null, puhelu:null,
+    tarina:`<p>Pyörän napa irti. Mutta vetoakselin pulttien kiristysmomentti on 70 Nm — ja Wigeonilla ei ole momenttiavainta.</p>
+<p>Se oli isällä viime joulupäivänä lainassa eikä ole palautunut.</p>`,
+    valinnat:[
+      {teksti:"Käydään Motonetissä — siellä on isoja valikoimia.",tulos:"Motonetissä keskitason momenttiavain 39 €. Hyvä hinta, kunnon laatu. Wigeon ostaa sen ja palaa virkistyneenä.",hyva:true,hermot:1,raha:-2,aika:-2,kulu:{nimi:"Momenttiavain (Motonet)",summa:39},seuraava:12},
+      {teksti:"Ostetaan halvin lähikaupasta.",tulos:"Lähikaupasta löytyy halvin malli 49 €. Toimii. Hieman tönkkö, mutta menee perille.",hyva:true,hermot:0,raha:-2,aika:-1,kulu:{nimi:"Momenttiavain (lähikauppa)",summa:49},seuraava:12},
+      {teksti:"Kiristetään fiilispohjalta. Käytännössä tarpeeksi tiukalle.",vaara:true,tulos:"Wigeon kiristää tuntumalla. \"Kyllä tämä riittää.\" Auto kestää — mutta epäilys jää nakuttamaan.",hyva:false,hermot:-1,raha:0,aika:0,kulu:null,seuraava:12},
+      {teksti:"Soitetaan isälle, pyydetään palauttamaan se.",tulos:"Isä lupaa tuoda sen huomenna. Wigeon ei voi jatkaa tänään. Päivä keskeytyy.",hyva:false,hermot:-1,raha:0,aika:-2,kulu:null,seuraava:12}
+    ]
+  },
+
+  // 12 — ENERGIAJUOMA + NAAPURIN KOIRA
+  { id:'energy_spill', emoji:'🥤', paiva:'LAUANTAI · ILTA · KLO 18:00', naapuri:NAAPURIT[12], puhelu:null,
+    tarina:`<p>Wigeon avaa Megis-energiajuoman — viimeisen. Asettaa tölkin renkaan viereen, ryömii auton alle.</p>
+<p>Kyynärpää osuu tölkkiin. <em>Kaatumisen ääni.</em> Megis valuu viemäriin.</p>`,
+    valinnat:[
+      {teksti:"Otetaan rauhallisesti. Haetaan vettä.",tulos:"Vesi maistuu oudon hyvältä. Wigeon huomaa juoneensa tänään liian vähän. Pää alkaa selvitä.",hyva:true,hermot:1,raha:0,aika:-1,kulu:null,seuraava:13},
+      {teksti:"Ottaa viimeisenkin huikan ennen kuin tölkki tyhjenee.",tulos:"Wigeon reagoi salamannopeasti. Pelastaa ehkä kolmasosan tölkistä. Makee. Hermot tasaantuvat.",hyva:true,hermot:2,raha:0,aika:0,kulu:null,seuraava:13},
+      {teksti:"Heitetään tyhjä tölkki ärsytyksestä sivuun.",tulos:"Tölkki pomppaa takaisin ja osuu Wigeonia otsaan. Ei satuta, mutta nolottaa. Kukaan ei onneksi nähnyt.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:13}
+    ]
+  },
+
+  // 12 — ALKAA SATAA + NAAPURI
+  { id:'rain', emoji:'🌧️', paiva:'LAUANTAI · ILTA · KLO 18:30', naapuri:NAAPURIT[6], puhelu:null,
+    tarina:`<p>Wigeon on saanut vanhan akselin irti. Edistystä! Uusi akseli tulee maanantaina.</p>
+<p>Taivaalta tippuu ensimmäinen pisara. Sitten toinen.</p>
+<p>Wigeon katsoo ylös. Pilvet ovat tummia. Kaikki tavarat ovat parkkipaikalla — työkalut, mutterit, purkuosat.</p>`,
+    valinnat:[
+      {teksti:"Kiireellä kaikki autoon ja rappukäytävän suojaan.",tulos:"Wigeon juoksee edestakaisin. Kastuu hieman. Kaikki oleellinen saadaan suojaan ennen sademuuria. Yksi 10 mm hylsy kuitenkin jää asfaltille — ja katoaa sateeseen. Sitä ei löydy enää.",hyva:true,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:14},
+      {teksti:"Laitetaan peite päälle, kyllä se pitää.",tulos:"Peite lentää tuulessa naapurin Skodalle. Kolme kierrosta hakemassa sitä pois. Skoda saa pienen naarmun.",hyva:false,hermot:-1,raha:-1,aika:-1,kulu:{nimi:"Naapurin auton naarmu (sovittu)",summa:20},seuraava:14}
+    ]
+  },
+
+  // 13 — KUOPIO SETUP (Meri tulee ulos)
+  { id:'kuopio_setup', emoji:'😬', paiva:'LAUANTAI · ILTA · KLO 19:00', naapuri:null, puhelu:null,
+    tarina:`<p>Meri tulee rappukäytävän ovelle pukeutuneena, laukku kädessä.</p>
+<p>"Hei. Muistithan että mulla on naistenilta tänään Sirpalla? <em>Rauhalassa.</em> Mä ajattelin ottaa meijän auton."</p>
+<p>Kello on seitsemän. Auto on parkkipaikalla, vetoakseli puuttuu. Naistenilta alkaa kahdeksalta.</p>
+<p><em>Miksi se on aina meijän auto?</em></p>`,
+    valinnat:[
+      {teksti:"\"Kuule... mä unohdin kertoa että auto ei oo ajokunnossa.\"",tulos:"Meri katsoo Wigeonia pitkään. \"Niinkö.\" Ei korota ääntään. Se on huonompi merkki.",hyva:true,hermot:-1,raha:0,aika:0,kulu:null,seuraava:15},
+      {teksti:"\"No mites... lähde sä, mä keksin jotain.\"",tulos:"Meri laittaa laukun lattialle. \"Sano nyt suoraan mitä on.\" Tämä menee huonosti.",hyva:false,hermot:-2,raha:0,aika:0,kulu:null,seuraava:15}
+    ]
+  },
+
+  // 14 — KUOPIO RATKAISU
+  { id:'kuopio_solve', emoji:'🚕', paiva:'LAUANTAI · ILTA · KLO 19:15', naapuri:null, puhelu:null,
+    tarina:`<p>Nyt pitää keksiä ratkaisu. Meri seisoo edessä laukku jalkojen vieressä.</p>`,
+    valinnat:[
+      {teksti:"Tilataan taksi Rauhalaan.",tulos:"Taksi Rauhalaan 38 €. Paluumatka onnistuu kaverin kyydillä — Meri lupaa kustantaa bensat, noin 10 €. Wigeon hengittää helpotuksesta.",hyva:true,hermot:0,raha:-2,aika:0,kulu:{nimi:"Taksi Rauhalaan + paluukyydin bensat",summa:48},seuraava:16},
+      {teksti:"Lainataan naapurin auto.",tulos:"Naapuri Erkki lainaa Astransa. \"Pidä huoli ettei kolahda mitää.\" Meri menee. Wigeon lupaa, että \"tämä ei toistu\". Ei usko sitä itsekään.",hyva:true,hermot:-1,raha:0,aika:0,kulu:null,seuraava:16},
+      {teksti:"Pyydetään Sirpaa hakemaan Merin.",tulos:"Sirpa hakee. Joutui pukeutumaan etukäteen ja ajamaan puoli tuntia. \"Olipa kiusaa.\" Meri kuulee sen.",hyva:false,hermot:-1,raha:0,aika:0,kulu:null,seuraava:16}
+    ]
+  },
+
+  // 15 — LAUANTAI ILTA
+  { id:'lauvalmis', emoji:'🌙', paiva:'LAUANTAI · ILTA · KLO 21:00', naapuri:null, puhelu:null,
+    tarina:`<p>Sade lyö parkkipaikan asfaltille. Auto seisoo purettuna, keula huonosti peiteltynä.</p>
+<p>Wigeon istuu rappukäytävän portailla, kaakao kädessä. Katsoo autoa.</p>
+<p>Vanha akseli on irti. Uusi saapuu maanantaina. Asennus jää ensi viikolle.</p>
+<p>Paljon on tapahtunut. Vähän on edistytty. Mutta homma ei ole kesken — se on <em>tauolla.</em></p>`,
+    valinnat:[
+      {teksti:"Laitetaan kaikki järjestykseen ennen sisälle menoa.",tulos:"Työkalut kerätty, asfaltti siivottu, auto peitetty kunnolla. Wigeon astuu sisälle klo 21:45. Hyvän työn tunne.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:17},
+      {teksti:"Huomenna on huominen. Mennään sisälle.",tulos:"Wigeon sammuttaa taskulampun ja kävelee sisälle. Työkalut jäävät pressun alle. Ehkä kaikki, ehkä ei.",hyva:false,hermot:0,raha:0,aika:0,kulu:null,seuraava:17}
+    ]
+  },
+
+  // 16 — SUNNUNTAI KALENTERI
+  { id:'sunnuntai', emoji:'📅', paiva:'SUNNUNTAI · AAMUPÄIVÄ · KLO 11:00', naapuri:NAAPURIT[10], puhelu:null,
+    tarina:`<p>Sunnuntai aamupäivä. Meri tuli yöllä Sirpalta. Wigeon katsoo kalenteria.</p>
+<p>Akseli saapuu <strong>maanantaina</strong>. Meri tarvitsee auton <strong>tiistai-aamuna</strong> — Sirpan kanssa sovittu kirppiskierros. Suunniteltu kuukausi sitten. Wigeon tiesi tästä.</p>
+<p>Maanantai-ilta on ainoa hyvä ikkuna. Kolme tuntia työtä väsyneenä, otsalampun valossa. Tai aamuyö tiistaina. Tai jaettu kahteen erään.</p>`,
+    valinnat:[
+      {teksti:"Tehdään se maanantai-iltana itse.",tulos:"Suunnitelma valmis. Meri katsoo sivusilmällä. \"Okei.\" Tuo \"okei\" sisältää paljon.",hyva:false,hermot:-1,raha:0,aika:0,kulu:null,seuraava:18},
+      {teksti:"Jaetaan työ: pultit illalla, asennus aamuyöllä klo 4.",tulos:"Työ jaetaan kahteen erään. Vähemmän väsymystä kerralla, mutta katkonainen yöuni. Meri herää aamuyöllä kun Wigeon menee ulos. \"Mihin sä menet.\" \"Autolle.\" Meri palaa peittojen alle.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:18},
+      {teksti:"Tehdään tiistai-aamuna klo 5:00. Ehtii.",tulos:"Wigeon asettaa herätyksen. Meri ei kommentoi. Tarkoittaa että kommentit tulevat myöhemmin.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:18}
+    ]
+  },
+
+  // 17 — MAANANTAI MOTONET-PUHELU
+  { id:'maanantai_osa', emoji:'📦', paiva:'MAANANTAI · ILTAPÄIVÄ · KLO 16:30', naapuri:null, puhelu:PUHELUT.motonet,
+    tarina:`<p>Maanantai-iltapäivä. Wigeon on töissä mutta ajattelee jo autoa.</p>
+<p>Akseli pitäisi saapua tänään Motonetiin. Hän on odottanut puhelua koko päivän.</p>`,
+    valinnat:[
+      {teksti:"Töiden jälkeen suoraan Motonetiin.",tulos:"Wigeon hakee paketin klo 17:30. Repii pahvin auki parkkihallissa. Vetoakseli, vasen puoli. Tällä kertaa oikein.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:19},
+      {teksti:"Vasta huomenna, tänään ei jaksa.",tulos:"Lykkäys vie tiistain aamun ratkaisuvaihtoehdoista yhden pois. Eikä Meri ole tyytyväinen.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:null,seuraava:19}
+    ]
+  },
+
+  // 18 — MAANANTAI-ILTA ASENNUS + KAHVIMUMMO
+  { id:'asennus_ilta', emoji:'🔧', paiva:'MAANANTAI · ILTA · KLO 19:30', naapuri:NAAPURIT[11], puhelu:null,
+    tarina:`<p>Otsalamppu päässä. Auto on takaisin tunkilla. Uusi akseli sopii — pultit kierteille tasaisesti.</p>
+<p>Naapurin mummo ilmestyy kahvikupin kanssa.</p>`,
+    valinnat:[
+      {teksti:"\"Kiitos paljon.\" Ottaa kahvin.",tulos:"Mummo hymyilee. Kahvi on liian väkevää, mutta lämmittää. Naapurisopu pelastuu kerralla. Mummo kävelee takaisin.",hyva:true,hermot:2,raha:0,aika:0,kulu:null,seuraava:20},
+      {teksti:"\"Ei nyt ehdi, anteeks.\"",tulos:"Mummo nyökkää. Ottaa kupin mukaan. Naapurisopu laskee — yllättävän paljon yhdestä kahvista.",hyva:false,hermot:-1,raha:0,aika:0,kulu:null,seuraava:20}
+    ]
+  },
+
+  // 19 — TIISTAI AAMU TESTI
+  { id:'tiistai_test', emoji:'🌅', paiva:'TIISTAI · AAMU · KLO 6:30', naapuri:null, puhelu:null,
+    tarina:`<p>Tiistai-aamu on kylmä. Wigeon kääntää avaimen. Moottori käynnistyy. Ajaa korttelin ympäri.</p>
+<p>Ei naputusta. Pelkkä V70:n tasainen käyntiääni.</p>`,
+    valinnat:[
+      {teksti:"Ajetaan vielä lyhyt koeajolenkki varmuuden vuoksi.",tulos:"Viisi kilometriä. Kaikki tuntuu hyvältä. Wigeon palaa parkkipaikalle ja sammuttaa moottorin. Hymyilee.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:21},
+      {teksti:"Mennään herättämään Meri — autohan käy.",tulos:"Meri herää: \"Olipa pitkä projekti. Kahvit?\" Wigeon nyökkää. Meri laittaa pannun tulille. Heille tulee hetki yhdessä ennen kuin päivä alkaa.",hyva:true,hermot:2,raha:0,aika:0,kulu:null,seuraava:21}
+    ]
+  },
+
+  // 20 — SOHVA + JÄÄTELÖ
+  { id:'jaatelo', emoji:'🍦', paiva:'TIISTAI · ILTA · KLO 21:30', naapuri:null, puhelu:null,
+    tarina:`<p>Auto käy. Akseli toimii. Pitkä päivä takana — herätys puoli viideltä, töihin, koti, illallinen, lapset nukkumaan.</p>
+<p>Wigeon lysähtää sohvalle. Avaa pakastimesta otetun jäätelörasian. Otsalla on edelleen hieman moottoriöljyä — ei viitsinyt pestä kunnolla.</p>
+<p>Lusikka rasiaan. Vanilja sulaa juuri sopivasti reunoiltaan.</p>`,
+    valinnat:[
+      {teksti:"Suljetaan rasia ja viedään pakkaseen ennen kuin nukahdan.",tulos:"Wigeon sulkee rasian. Vie sen jääkaappiin. Palaa sohvalle ja nukahtaa kahdeksassa sekunnissa.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:'end'},
+      {teksti:"Vielä yksi lusikallinen...",tulos:"Wigeon nukahtaa rasia mahan päällä, lusikka kädessä. Yöllä rasia kallistuu ja lämmin jäätelö valuu vaatteita pitkin lattialle. Aamulla tunti siivousta.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:{nimi:"Pesuaine + lattiapaperit + likainen paita pesulaan",summa:8},seuraava:'end'}
+    ]
+  },
+];
+
+// ============================================================
+// LUCKY ROUTE
+// ============================================================
+const LUCKY_SCENES = [
+  { id:'lucky_0', emoji:'🌞', paiva:'LAUANTAI · AAMU · KLO 9:00', naapuri:null, puhelu:null,
+    tarina:`<p>Wigeon astuu ulos. Aurinko paistaa. Kahvi on hyvää. Puhelin on ladattu. Paketti odottaa.</p>
+<p>Wigeon avaa Motonetin paketin. Vasen puoli — niin kuin tilauksessa luki. Hän hymyilee.</p>
+<p>10 mm hylsy on siellä missä sen pitää olla.</p>`,
+    valinnat:[
+      {teksti:"Aloitetaan suoraan. Ei viivytellä.",tulos:"Tunkki ylös, pyörä irti, akseliin käsiksi. Homma etenee kuin öljytty.",hyva:true,hermot:0,raha:0,aika:0,kulu:null,seuraava:1},
+      {teksti:"Katsotaan ohjevideo vielä kerran varmuuden vuoksi.",tulos:"Video on täsmälleen oikea. 12 minuuttia. Kaikki selkeää.",hyva:true,hermot:0,raha:0,aika:0,kulu:null,seuraava:1}
+    ]
+  },
+  { id:'lucky_1', emoji:'🔩', paiva:'LAUANTAI · AAMU · KLO 10:15', naapuri:NAAPURIT[7], puhelu:null,
+    tarina:`<p>Ensimmäinen pultti irtoaa kuin itsestään. Toinen samoin.</p>
+<p>Kolmas on hieman tiukalla. Räikkä vetää tasaisesti. <em>Naksahtaa — auki.</em></p>
+<p>Propaanikaasupoltin on käsillä. Kaasupullossa on kaasua. Wigeon ei tarvitse sitä.</p>`,
+    valinnat:[
+      {teksti:"Jatketaan rytmissä.",tulos:"Vanha akseli irtoaa puhtaasti. Pyyhitään pöly ja vanha rasva pois. Kaikki valmista uutta varten.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:2},
+      {teksti:"Pidetään kahvitauko — ansaittu.",tulos:"Kahvi maistuu hyvältä. Wigeon on rauhallinen. Jatketaan.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:2}
+    ]
+  },
+  { id:'lucky_2', emoji:'🔧', paiva:'LAUANTAI · AAMUPÄIVÄ · KLO 11:30', naapuri:null, puhelu:null,
+    tarina:`<p>Uusi akseli paikalleen. Vanha rasva pyyhitty pois, uutta levitetty ohuesti. Akseli liukuu paikalleen ensiyrittämällä.</p>
+<p>Wigeon kuuntelee radiota auton alta. Tasaisesti mukava sää, lehdet liikkuvat tuulessa.</p>`,
+    valinnat:[
+      {teksti:"Jatketaan keskittyneesti.",tulos:"Pultit kierteille. Momenttiavain on aiemmin lainattu naapurilta — kiristys osuu juuri 70 Nm.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:3},
+      {teksti:"Pidetään lounastauko.",tulos:"Lyhyt tauko. Voileipä ja kahvi. Wigeon palaa virkistyneenä.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:3}
+    ]
+  },
+  { id:'lucky_3', emoji:'✅', paiva:'LAUANTAI · PÄIVÄ · KLO 13:00', naapuri:NAAPURIT[7], puhelu:null,
+    tarina:`<p>Kaikki pultit kiristetty. Pyörä takaisin. Mutterit momenttiavaimella — naksahtaa oikein joka kerta.</p>
+<p>Wigeon laskee auton alas tunkista. Moottori käyntiin.</p>
+<p>Peruuttaa parkkipaikalta. Ajaa korttelin ympäri. Kuuntelee. <em>Hiljaista.</em></p>
+<p>Ei naputusta. Pelkkä V70:n tasainen käyntiääni.</p>`,
+    valinnat:[
+      {teksti:"Ajetaan lyhyt koeajolenkki varmuuden vuoksi.",tulos:"Viisi kilometriä. Kaikki tuntuu hyvältä. Wigeon palaa parkkipaikalle ja sammuttaa moottorin. Hymyilee.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:4},
+      {teksti:"Siivotaan työkalut ja ilmoitetaan Merille.",tulos:"Wigeon korjaa tavarat, pyyhkii kädet ja menee sisälle. \"Auto on valmis.\" Meri: \"Oikeasti?\" Wigeon: \"Oikeasti.\"",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:4}
+    ]
+  },
+
+  { id:'lucky_4', emoji:'🍦', paiva:'LAUANTAI · ILTA · KLO 21:30', naapuri:null, puhelu:null,
+    tarina:`<p>Wigeon lysähtää sohvalle illalla, jäätelörasia kädessä. Auto on valmis. Päivä on ollut hyvä.</p>
+<p>Lusikka rasiaan. Vanilja sulaa juuri sopivasti reunoiltaan.</p>`,
+    valinnat:[
+      {teksti:"Suljetaan rasia ja viedään pakkaseen ennen kuin nukahdan.",tulos:"Wigeon sulkee rasian. Vie sen jääkaappiin. Palaa sohvalle ja nukahtaa kahdeksassa sekunnissa.",hyva:true,hermot:1,raha:0,aika:0,kulu:null,seuraava:'end'},
+      {teksti:"Vielä yksi lusikallinen...",tulos:"Wigeon nukahtaa rasia mahan päällä, lusikka kädessä. Yöllä rasia kallistuu ja lämmin jäätelö valuu vaatteita pitkin lattialle. Aamulla tunti siivousta.",hyva:false,hermot:-1,raha:0,aika:-1,kulu:{nimi:"Pesuaine + lattiapaperit",summa:8},seuraava:'end'}
+    ]
+  },
+];
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderKohtaus(idx) {
+  const skenaariot = tila.reitti==='lucky' ? LUCKY_SCENES : KOHTAUKSET;
+  const k = skenaariot[idx];
+  if(!k){ naytaLoppu(); return; }
+
+  document.getElementById('scene-emoji').textContent=k.emoji;
+  k.id==='rain' ? naytaSade() : piilotaSade();
+  document.getElementById('story-box').innerHTML=k.tarina;
+  tila.lukittu=false;
+
+  const napos=document.getElementById('naapuri-section');
+  napos.style.display='none'; napos.style.opacity='1'; napos.style.pointerEvents='auto';
+  delete napos.dataset.vastattu;
+
+  renderNaapuri(k.naapuri);
+
+  const choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  k.valinnat.forEach((v,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn'+(tila.lukittu?' locked':'');
+    btn.innerHTML=`<span class="choice-letter">${['A','B','C','D'][i]}</span>${v.teksti}`;
+    btn.onclick=()=>teeValinta(v);
+    choicesEl.appendChild(btn);
+  });
+
+  document.getElementById('locked-hint').style.display=tila.lukittu?'block':'none';
+  document.getElementById('result-screen').style.display='none';
+  choicesEl.style.display='flex';
+  document.getElementById('scene').classList.remove('fade-in');
+  void document.getElementById('scene').offsetWidth;
+  document.getElementById('scene').classList.add('fade-in');
+  paivitaPalkit();
+
+  // Trigger phone with delay so player can read scene first
+  if(k.puhelu) {
+    const delay = 1500 + Math.random() * 1500;
+    setTimeout(() => {
+      triggerPhone(k.puhelu);
+    }, delay);
+  }
+}
+
+function teeValinta(v) {
+  // Check for accident: vaara-flagged choices have 35% chance of injury
+  let accidentNarrative = null;
+  let accidentResult = null;
+  if(v.vaara && !tila.loukkaantuminen && Math.random() < 0.35) {
+    const tapaukset = [
+      { tyyppi:'sormi', teksti:'💥 SORMI JÄÄ VÄLIIN. Räikkä luiskahtaa ja Wigeonin etusormi osuu pelti­kanttiin. Verta. Wigeon istuu hetken, katsoo sormea — ei ehkä murtunut, mutta päivä on pilalla. Hommat keskeytyvät. Käynti terveyskeskuksessa.', vrk:1 },
+      { tyyppi:'paa', teksti:'💥 PÄÄ OSUU KORIIN. Wigeon nousee liian nopeasti, kallo osuu peltiin. Mustaa silmissä viisi sekuntia. Hänen täytyy istahtaa. Hommat keskeytyvät illaksi.', vrk:1 },
+      { tyyppi:'selka', teksti:'💥 SELKÄ MENI. Liian kova veto väärässä asennossa. Wigeon ei pysty nousemaan vähään aikaan. Hommat siirtyvät — selkä ei toimi viiteen päivään.', vrk:3 }
+    ];
+    const t = tapaukset[Math.floor(Math.random()*tapaukset.length)];
+    tila.loukkaantuminen = t.tyyppi;
+    tila.loukkaantumisVrk = t.vrk;
+    accidentNarrative = t.teksti;
+  }
+
+  if(v.kulu) lisaaKulu(v.kulu.nimi,v.kulu.summa);
+  tila.hermot=rajaa(tila.hermot+(v.hermot||0));
+  tila.raha=rajaa(tila.raha+(v.raha||0));
+  tila.aika=rajaa(tila.aika+(v.aika||0));
+  if(v.hyva) tila.hyvatValinnat++;
+  else { tila.huonotValinnat++; document.getElementById('scene').classList.add('shake'); setTimeout(()=>document.getElementById('scene').classList.remove('shake'),400); }
+  tila.seuraava=v.seuraava;
+  document.getElementById('choices').style.display='none';
+  document.getElementById('locked-hint').style.display='none';
+
+  // If accident, extra penalty & narrative
+  if(accidentNarrative) {
+    tila.hermot = rajaa(tila.hermot - 2);
+    tila.aika = rajaa(tila.aika - 2);
+    document.getElementById('result-text').innerHTML = v.tulos + '<br><br><strong style="color:#e08080;">' + accidentNarrative + '</strong>';
+    document.getElementById('scene').classList.add('shake');
+    setTimeout(()=>document.getElementById('scene').classList.remove('shake'),600);
+  } else {
+    document.getElementById('result-text').textContent=v.tulos;
+  }
+  naytaDelta(v.hermot,v.raha,v.aika);
+  document.getElementById('result-screen').style.display='block';
+  paivitaPalkit();
+}
+
+function nextScene() {
+  if(tila.seuraava==='end'){ naytaLoppu(); return; }
+  tila.kohtausIdx=tila.seuraava;
+  renderKohtaus(tila.kohtausIdx);
+}
+
+// ============================================================
+// END
+// ============================================================
+function loukkaantumisTeksti(tyyppi) {
+  if(tyyppi==='sormi')   return 'Sormi (+1 vrk)';
+  if(tyyppi==='paa')     return 'Pää (+1 vrk)';
+  if(tyyppi==='selka')   return 'Selkä (+3 vrk)';
+  if(tyyppi==='jakkari') return 'Koiran puremaa käsivarteen (+4 vrk)';
+  return '-';
+}
+
+function naapuriSopuTeksti(s) {
+  if(s>=5) return 'Erinomainen 👍';
+  if(s>=4) return 'Hyvä';
+  if(s>=3) return 'Kohtalainen';
+  if(s>=2) return 'Huonontunut';
+  return 'Heikko';
+}
+
+function naapuriSopuSelitys(s) {
+  if(s>=5) return 'Kahvit on tarjottu vastavuoroisesti, naapuri nyökkää aamuisin pidempään kuin tarvitsisi.';
+  if(s>=4) return 'Sujuvat välit. Sopu kestää, mutta ei ole varaa juurikaan venyttää.';
+  if(s>=3) return 'Naapuri tuntee, että keskustelu on lyhyttä. Ei riitaa, mutta ei lämpöäkään.';
+  if(s>=2) return 'Naapuri muistaa ohitukset. Kevättalkoissa hommia jaetaan vähän epätasaisemmin — Wigeon saa raivata pensaita kun muut hakevat kahvia.';
+  return 'Sopu on rakoillut. Kevättalkoissa Wigeon joutuu raataamaan ahkerimmin — se on hiljainen tapa hyvitellä ohituksia ja äkäisiä rälläköintejä. Kukaan ei sano siitä mitään, mutta kaikki tietävät miksi.';
+}
+
+function naytaLoppu() {
+  piilotaSade();
+  document.getElementById('game-screen').style.display='none';
+  document.getElementById('end-screen').style.display='block';
+
+  const hyva=tila.hyvatValinnat, huono=tila.huonotValinnat, yht=hyva+huono||1;
+  const pct=Math.round(hyva/yht*100);
+  const lucky=tila.reitti==='lucky';
+
+  let otsikko,alaotsikko,emoji;
+  if(lucky)         { otsikko='IHMEEN KAUPALLA'; alaotsikko='Tänään oli se hyvä päivä.'; emoji='🏆'; }
+  else if(pct>=75)  { otsikko='MESTARI NESTORI'; alaotsikko='Kaikki meni suunnilleen hyvin. Lähes.'; emoji='🔧'; }
+  else if(pct>=50)  { otsikko='SELVITTIIN'; alaotsikko='Meni niin kuin meni. Voisi olla pahemminkin.'; emoji='😤'; }
+  else              { otsikko='KLASSINEN TILANNE'; alaotsikko='Wigeon ottaa viisaammin ensi kerralla.'; emoji='😮‍💨'; }
+
+  document.getElementById('end-emoji').textContent=emoji;
+  document.getElementById('end-title').textContent=otsikko;
+  document.getElementById('end-subtitle').textContent=alaotsikko;
+
+  const KORJAAMO=250;
+  const vrk_laskuri = lucky ? 1 : Math.min(7, 2 + Math.floor(tila.huonotValinnat/3) + (tila.loukkaantumisVrk||0));
+  const tunnit = lucky ? 4 : Math.max(10, vrk_laskuri*6 - tila.hyvatValinnat);
+
+  const fixedKulut=[{nimi:'Bensat (Biltema, Prisma, Motonet x2, Hese)',summa:24}];
+  const kaikkiKulut=[...fixedKulut,...kulut];
+  const kokonaisKulu=kaikkiKulut.reduce((s,k)=>s+k.summa,0);
+  const saasto = KORJAAMO - kokonaisKulu;
+  const tuntipalkka = saasto>0 ? Math.round(saasto/tunnit) : 0;
+
+  let costHTML='';
+  kaikkiKulut.forEach(k=>{ costHTML+=`<div class="kulu-line"><span>${k.nimi}</span><span>${k.summa} €</span></div>`; });
+  costHTML+=`<div class="kulu-line total"><span>OMA YHTEENSÄ</span><span>${kokonaisKulu} €</span></div>`;
+  if(!lucky){
+    costHTML+=`<div class="kulu-line total korjaamo"><span>KORJAAMO (arvio)</span><span>${KORJAAMO} €</span></div>`;
+    if(saasto>0){
+      costHTML+=`<div class="kulu-line total saasto"><span>✅ SÄÄSTIT</span><span>${saasto} €</span></div>`;
+      costHTML+=`<div class="kulu-line tuntipalkka"><span>⏱ Käytetty aika</span><span>noin ${tunnit} h</span></div>`;
+      costHTML+=`<div class="kulu-line tuntipalkka"><span>💰 "Tuntipalkka"</span><span>${tuntipalkka} €/h</span></div>`;
+    } else {
+      costHTML+=`<div class="kulu-line total korjaamo"><span>❌ Ylitit korjaamon hinnan</span><span>${Math.abs(saasto)} €</span></div>`;
+    }
+  } else {
+    costHTML+=`<div class="kulu-line tuntipalkka"><span>⏱ Käytetty aika</span><span>noin ${tunnit} h</span></div>`;
+  }
+  document.getElementById('cost-lines').innerHTML=costHTML;
+
+  document.getElementById('end-summary').innerHTML=`
+    <div class="kulu-line"><span>✅ Hyviä päätöksiä</span><span>${hyva}/${yht}</span></div>
+    <div class="kulu-line"><span>👴 Naapuri keskeytti</span><span>${tila.naapuriLkm} kertaa</span></div>
+    <div class="kulu-line"><span>📱 Puheluita</span><span>${tila.puhelinLkm} (${tila.puhelutHylatty} hylätty)</span></div>
+    <div class="kulu-line"><span>🤝 Naapurisopu</span><span>${naapuriSopuTeksti(tila.naapurisopu)}</span></div>
+    <div style="font-size:12px;color:var(--concrete);font-style:italic;padding:4px 0 8px;line-height:1.5;">${naapuriSopuSelitys(tila.naapurisopu)}</div>
+    <div class="kulu-line"><span>🚗 Auto valmis</span><span>${lucky?'Lauantaina!':`${vrk_laskuri + (tila.loukkaantumisVrk||0)} vrk myöhemmin`}</span></div>
+    ${tila.loukkaantuminen ? `<div class="kulu-line"><span>🩹 Loukkaantuminen</span><span>${loukkaantumisTeksti(tila.loukkaantuminen)}</span></div>` : ''}
+    ${puhelujenJalkikaiut()}
+    <div style="margin-top:12px;font-style:italic;color:var(--concrete);font-size:14px;line-height:1.5;">
+      ${lucky
+        ? '"Joskus homma menee just niin kuin pitää.<br>Juuri tällaisena muistaa sen aina."<br>— Wigeon'
+        : '"Ei se pultti se ongelma ollut — minä olin se ongelma."<br>— Wigeon'}
+    </div>
+  `;
+}
+
+function puhelujenJalkikaiut() {
+  if(tila.hylatytPuhelut.length === 0) return '';
+  const seuraukset = {
+    "ÄITI ❤️": "💔 Koska jätit vastaamatta äidille — etkä muistanut soittaa myöhemminkään vaikka lupasit — äidille on hieman paha mieli. Hän kertoo siitä siskolle.",
+    "MERI ❤️": "💔 Meri lähetti kolme viestiä joihin et vastannut. Hän osti leivän itse ja söi sen yksin.",
+    "MOTONET": "📦 Et vastannut Motonetiin. Tieto akselin saapumisesta tuli sähköpostiin tuntia myöhemmin.",
+    "MIKKO": "🤷 Mikko ei pahastunut. Lähti kavereiden kanssa terassille ilmankin.",
+    "TUNTEMATON": "✅ Hylkäsit myyntipuhelun. Säästit kaksi minuuttia ja yhden hanskan öljyltä.",
+    "PEKKA (TYÖ)": "💼 Et vastannut pomolle lauantaina. Hän ei pahastunut — itse asiassa kunnioitti rajojasi."
+  };
+  let html = '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #3a2a10;"><div style="font-family:Oswald,sans-serif;font-size:12px;letter-spacing:2px;color:var(--concrete);margin-bottom:6px;">📵 HYLÄTTYJEN PUHELUIDEN JÄLKIKAIUT</div>';
+  // unique rejected names
+  const uniq = [...new Set(tila.hylatytPuhelut)];
+  uniq.forEach(nimi => {
+    if(seuraukset[nimi]) {
+      html += `<div style="font-size:13px;line-height:1.5;color:var(--cream);margin-bottom:6px;">${seuraukset[nimi]}</div>`;
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+// ============================================================
+// START
+// ============================================================
+function startGame(reitti) {
+  tila.reitti=reitti;
+  if(reitti==='lucky') { kulut=[]; }
+  document.getElementById('title-screen').style.display='none';
+  document.getElementById('game-screen').style.display='flex';
+  paivitaKuluStrip();
+  renderKohtaus(0);
+}
+</script>
 </body>
 </html>
