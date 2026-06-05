@@ -1,0 +1,156 @@
+<!-- ============================================================
+     OUTLAW DUCKS — WIGEON-PELIN LIITTÄMINEN SIVULLE
+     ============================================================
+
+Peli on tiedostossa: wigeon-peli.html
+Laita se samaan kansioon kuin index.html (eli outlawducks.com/wigeon-peli.html).
+
+Alla kolme pätkää. Liitä ne index.html:ään merkittyihin kohtiin.
+============================================================ -->
+
+
+<!-- ============================================================
+     PÄTKÄ 1 — NAVI-LINKKI (työpöytä)
+     Etsi index.html:stä tämä kohta (n. rivi 1264–1269):
+
+       <li><a href="#kauppa">Kauppa</a></li>
+
+     Lisää SEN JÄLKEEN uusi rivi:
+     ============================================================ -->
+
+    <li><a href="#peli">Peli</a></li>
+
+
+<!-- ============================================================
+     PÄTKÄ 2 — NAVI-LINKKI (mobiilivalikko)
+     Etsi index.html:stä tämä kohta (n. rivi 1250):
+
+       <a href="#kauppa" onclick="closeMobileMenu()">Kauppa</a>
+
+     Lisää SEN JÄLKEEN:
+     ============================================================ -->
+
+  <a href="#peli" onclick="closeMobileMenu()">Peli</a>
+
+
+<!-- ============================================================
+     PÄTKÄ 3 — PELIOSIO
+     Etsi index.html:stä Kauppa-osion loppu:
+
+       <section id="kauppa">
+         ...
+       </section>
+
+     Liitä tämä KOKO LOHKO heti </section>:n JÄLKEEN
+     (siis ennen footeria):
+     ============================================================ -->
+
+<!-- WIGEON GAME SECTION -->
+<section id="peli" style="background:var(--offblack); border-top:1px solid rgba(201,168,76,0.1); border-bottom:1px solid rgba(201,168,76,0.1);">
+  <div class="section-inner">
+    <div class="section-label"
+      data-fi="Pelimökki"
+      data-en="Game"
+      data-kvaak="Kvaak">Pelimökki</div>
+    <h2 class="section-title"
+      data-fi="Wigeon &amp; V70"
+      data-en="Wigeon &amp; V70"
+      data-kvaak="Kvaak Kvaak">Wigeon &amp; V70</h2>
+    <div class="section-divider"></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center;" class="peli-grid">
+      <div>
+        <p class="translatable" style="color:var(--bone); margin-bottom:1.2rem; font-size:1rem; line-height:1.8;"
+          data-fi="Wigeon — yksi luontokappaleista — on päättänyt vaihtaa V70:nsä nakuttavan vetoakselin itse. Rivitalon parkkipaikalla. Mitä voisikaan mennä pieleen?"
+          data-en="Wigeon — one of nature's creatures — has decided to replace the knocking drive shaft on his V70 himself. In the housing-estate parking lot. What could possibly go wrong?"
+          data-kvaak="Wigeon — kvaak kvaak kvaak — kvaak kvaak kvaak kvaak V70:kvaak kvaak kvaak kvaak kvaak. Kvaak kvaak kvaak. Kvaak kvaak kvaak kvaak?">
+          Wigeon — yksi luontokappaleista — on päättänyt vaihtaa V70:nsä nakuttavan vetoakselin itse. Rivitalon parkkipaikalla. Mitä voisikaan mennä pieleen?
+        </p>
+        <p class="translatable" style="color:var(--lightgray); margin-bottom:2rem; font-size:0.9rem; line-height:1.7; font-style:italic;"
+          data-fi="Tarinapohjainen valintapeli. Naapurit, puhelut, sade, kaasupullot ja Hesburger. Pelattavissa puhelimella ja koneella."
+          data-en="A choice-driven story game. Neighbours, phone calls, rain, gas bottles and burgers. Playable on phone and desktop."
+          data-kvaak="Kvaak kvaak kvaak. Kvaak, kvaak, kvaak, kvaak kvaak kvaak. Kvaak kvaak kvaak.">
+          Tarinapohjainen valintapeli. Naapurit, puhelut, sade, kaasupullot ja Hesburger. Pelattavissa puhelimella ja koneella.
+        </p>
+        <a href="wigeon-peli.html" class="peli-cta">
+          <span style="font-size:1.2rem;">🔧</span>
+          <span class="translatable" data-fi="Pelaa nyt" data-en="Play now" data-kvaak="Kvaak">Pelaa nyt</span>
+        </a>
+      </div>
+
+      <div class="peli-card">
+        <div class="peli-card-screen">
+          <div style="font-size:3.5rem; margin-bottom:0.5rem;">🚗</div>
+          <div style="font-family:var(--font-display); font-size:1.6rem; color:var(--cream); letter-spacing:2px; line-height:1;">WIGEON</div>
+          <div style="font-family:var(--font-body); font-size:0.7rem; color:var(--gold); letter-spacing:3px; text-transform:uppercase; margin-top:4px;">&amp; Volvo V70</div>
+          <div style="margin-top:1rem; font-family:var(--font-text); font-style:italic; color:var(--lightgray); font-size:0.85rem;">"Vetoakseli nakuttaa..."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* WIGEON GAME SECTION STYLES */
+  .peli-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 3px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .peli-cta:hover { background: var(--gold-dark); }
+  .peli-cta:active { transform: scale(0.97); }
+
+  .peli-card {
+    background: linear-gradient(160deg, #141414, #1c1c1c);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  .peli-card-screen {
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 6px;
+    padding: 2rem 1rem;
+    background: rgba(0,0,0,0.3);
+  }
+
+  @media (max-width: 760px) {
+    .peli-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+    .peli-card { order: -1; }
+  }
+</style>
+
+
+<!-- ============================================================
+     PÄTKÄ 4 (VALINNAINEN) — FOOTER-LINKKI
+     Etsi footerin linkit (n. rivi 1992–1997):
+
+       <a href="#kauppa">Kauppa</a>
+
+     Lisää SEN JÄLKEEN:
+     ============================================================ -->
+
+    <a href="#peli">Peli</a>
+
+
+<!-- ============================================================
+     VALMISTA. Peli avautuu samalla välilehdellä; siellä on
+     "← Outlaw Ducks" -paluulinkki vasemmassa yläkulmassa joka
+     palaa index.html:ään.
+
+     Jos haluat pelin avautuvan UUTEEN välilehteen, lisää
+     PÄTKÄ 3:n <a href="wigeon-peli.html" ...> -linkkiin:
+        target="_blank" rel="noopener"
+     ============================================================ -->
