@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peli – Outlaw Ducks TC</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prosto+One&family=Oswald:wght@300;400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0d0d0d; --offblack: #141414; --darkgray: #1c1c1c;
+    --midgray: #2e2e2e; --lightgray: #888; --bone: #d4c9a8;
+    --gold: #c9a84c; --white: #f5f0e8;
+    --font-display: 'Prosto One', serif;
+    --font-body: 'Oswald', sans-serif;
+    --font-text: 'Barlow', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--black); color: var(--white); font-family: var(--font-text); min-height: 100vh; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(13,13,13,0.95); border-bottom: 1px solid rgba(45,90,61,0.4);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 64px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .nav-logo img { height: 44px; width: 44px; object-fit: contain; }
+  .nav-brand { font-family: var(--font-display); font-size: 1.1rem; color: var(--gold); }
+  .nav-brand span { display: block; font-family: var(--font-body); font-size: 0.65rem; font-weight: 300; color: var(--lightgray); letter-spacing: 0.2em; text-transform: uppercase; }
+  .nav-back { font-family: var(--font-body); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bone); text-decoration: none; transition: color 0.2s; }
+  .nav-back:hover { color: var(--gold); }
+
+  main {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px 2rem 4rem; text-align: center;
+  }
+
+  .game-container {
+    width: 100%; max-width: 800px;
+    background: var(--darkgray);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .game-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+
+  .game-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem; color: var(--gold);
+  }
+
+  .game-frame {
+    width: 100%;
+    background: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 400px;
+    padding: 2rem;
+  }
+
+  .coming-soon {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: var(--white); line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .coming-sub {
+    font-family: var(--font-body);
+    font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--lightgray); margin-bottom: 2rem;
+  }
+
+  .game-emoji { font-size: 4rem; animation: float 3s ease-in-out infinite; display: block; margin-bottom: 1rem; }
+
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="pyoreä.png" alt="Outlaw Ducks">
+    <div class="nav-brand">Outlaw Ducks<span>Tuning Crew · Oulu</span></div>
+  </a>
+  <a href="index.html" class="nav-back">← Takaisin</a>
+</nav>
+
+<main>
+  <div class="game-container">
+    <div class="game-header">
+      <div class="game-title">🎮 Outlaw Ducks – Peli</div>
+    </div>
+    <div class="game-frame">
+      <div>
+        <span class="game-emoji">🦆</span>
+        <div class="coming-soon">Peli tulossa</div>
+        <div class="coming-sub">Rakennetaan parhaillaan</div>
+        <p style="color:var(--bone); font-size:0.9rem; max-width:400px; margin:0 auto;">
+          Tähän tulee Outlaw Ducks -peli. Sitä odotellessa voit yrittää napata sivun alareunasta juoksevan sorsan.
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>
