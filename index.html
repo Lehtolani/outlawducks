@@ -346,36 +346,51 @@
   }
 
   /* Legend spans full width at top */
-  /* Legend card — full width, horizontal layout */
+  /* Legend card — full width */
   .member-card.legend {
     grid-column: 1 / -1;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
   }
 
   .member-card.legend .member-avatar {
-    width: 240px; min-width: 240px; flex-shrink: 0; aspect-ratio: 1;
+    width: 120px; min-width: 120px; height: 120px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
 
-  /* Normal cards: stacked (image on top, text below) */
+  /* Normal cards: horizontal with round photo */
   .member-card {
     background: var(--darkgray);
     border: 1px solid rgba(201,168,76,0.15);
     border-radius: 4px; overflow: hidden;
     transition: border-color 0.3s, transform 0.3s;
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem;
   }
 
   .member-card:hover {
     border-color: rgba(201,168,76,0.5);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
   }
 
   .member-avatar {
-    width: 100%; aspect-ratio: 1;
+    width: 90px; min-width: 90px; height: 90px;
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    background: var(--midgray); font-size: 5rem;
-    overflow: hidden;
+    background: var(--midgray); font-size: 2.5rem;
+    overflow: hidden; flex-shrink: 0;
+    border: 2px solid rgba(201,168,76,0.2);
+  }
+
+  .member-card.legend .member-avatar {
+    border: 2px solid rgba(201,168,76,0.4);
   }
 
   .member-avatar img {
@@ -384,9 +399,9 @@
     display: block;
   }
 
-  .member-info { padding: 1.25rem; display: flex; flex-direction: column; justify-content: center; min-width: 0; overflow: hidden; }
+  .member-info { display: flex; flex-direction: column; justify-content: center; min-width: 0; overflow: hidden; padding: 0; }
 
-  .member-card.legend .member-info { padding: 1.75rem; min-width: 0; }
+  .member-card.legend .member-info { min-width: 0; padding: 0; }
 
   .member-callsign {
     font-family: var(--font-display);
@@ -1085,9 +1100,10 @@
 
     .story-grid { grid-template-columns: 1fr; gap: 2rem; }
     .members-grid { grid-template-columns: 1fr; }
-    .member-card.legend { flex-direction: column; }
-    .member-card.legend .member-avatar { width: 100%; min-width: unset; aspect-ratio: 16/9; }
-    .member-card.legend .member-info { padding: 1.25rem; }
+    .member-card { gap: 1rem; padding: 1rem; }
+    .member-avatar { width: 70px; min-width: 70px; height: 70px; font-size: 2rem; }
+    .member-card.legend { flex-direction: row; gap: 1rem; padding: 1rem; }
+    .member-card.legend .member-avatar { width: 80px; min-width: 80px; height: 80px; }
     .cars-grid { grid-template-columns: 1fr; }
     .car-carousel { height: 220px; }
     .sold-overlay { height: 220px; }
