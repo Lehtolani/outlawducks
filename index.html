@@ -2058,24 +2058,10 @@ function setLang(lang, btn) {
   // Duck mode easter egg
   if (lang === 'kvaak') {
     document.title = 'Kvaak Kvaak TC – Kvaak';
-  } else if (lang === 'en') {
-    document.title = 'Outlaw Ducks TC – Oulu';
   } else {
     document.title = 'Outlaw Ducks TC – Oulu';
   }
-
-  // Store preference
-  localStorage.setItem('odLang', lang);
 }
-
-// Restore language on load
-document.addEventListener('DOMContentLoaded', function() {
-  const saved = localStorage.getItem('odLang');
-  if (saved && saved !== 'fi') {
-    const btn = document.querySelector('.lang-btn[onclick*="' + saved + '"]');
-    setLang(saved, btn);
-  }
-});
 </script>
 
 <!-- HAMBURGER JS -->
