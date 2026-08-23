@@ -15,7 +15,9 @@
   "use strict";
 
   var PELI = "dnf.html";          // pelin polku sivustolla
-  var LOGO = ".logo, #logo, .brand img, header img";  // mitä napautetaan
+  /* Napautettavat kohteet. Jos sivustollasi logo on jokin muu, lisää valitsin tähän. */
+var LOGO = ".logo, #logo, .brand, .brand img, header img, header h1, " +
+           "nav img, .navbar-brand, a[href='/'] img, h1";
 
   /* ---------- pikku vihje konsoliin ---------- */
   try {
@@ -113,7 +115,14 @@
   /* ---------- 3. logon napautus 5 kertaa ---------- */
   function sidoLogo() {
     var kohteet = document.querySelectorAll(LOGO);
-    if (!kohteet.length) return;
+    /* varmuuden vuoksi: jos mitään ei löydy, käytetään sivun ylintä otsikkoa
+       tai vasenta ylänurkkaa, jotta napautus toimii aina */
+    if (!kohteet.length) {
+      var apu = document.createElement("div");
+      apu.style.cssText = "position:fixed;left:0;top:0;width:64px;height:64px;z-index:9998";
+      document.body.appendChild(apu);
+      kohteet = [apu];
+    }
     var kpl = 0, ajastin = null;
     Array.prototype.forEach.call(kohteet, function (el) {
       el.style.webkitTapHighlightColor = "transparent";
