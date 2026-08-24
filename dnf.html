@@ -398,16 +398,21 @@ h2 .pikku{font-size:14px;font-weight:600;color:var(--himmea)}
   font-size:15px;font-weight:800;margin-top:8px}
 .btn.hinta:disabled{background:#3a4557;color:#7d8ba1}
 /* osaruudukot kahteen sarakkeeseen */
-.naytto .kortit.osat{grid-template-columns:repeat(2,1fr)!important;gap:9px}
-.naytto .kortit.osat .kortti{padding:11px 12px}
-.osakuva{width:100%;aspect-ratio:4/3;background:#0f1219;border-radius:9px;overflow:hidden;margin-bottom:7px}
+.kortit.osat{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-auto-rows:auto!important;gap:9px!important}
+.kortit.osat .kortti{padding:11px 12px;min-width:0;height:auto}
+/* kiinteä korkeus: kuva ei voi paisua vaikka sarakkeita olisi yksi */
+.osakuva{width:100%;height:104px;background:#0f1219;border-radius:9px;overflow:hidden;
+  margin-bottom:7px;flex:0 0 auto}
 .osakuva img{width:100%;height:100%;object-fit:cover;display:block}
-.naytto .kortit.osat .nimi{font-size:13.5px;line-height:1.25}
-.naytto .kortit.osat .tiedot,.naytto .kortit.osat .ds{font-size:11.5px;line-height:1.4}
-.naytto .kortit.osat .lappu{font-size:10px;padding:1px 6px}
-.naytto .kortit.osat .btn.wide{font-size:12.5px;min-height:38px;padding:0 8px}
-@media (max-width:400px){.naytto .kortit.osat{grid-template-columns:1fr!important}}
-@media (min-width:820px){.naytto .kortit.osat{grid-template-columns:repeat(3,1fr)!important}}
+.kortit.osat .nimi{font-size:13.5px;line-height:1.25;overflow-wrap:anywhere}
+.kortit.osat .tiedot,.kortit.osat .ds{font-size:11.5px;line-height:1.4;overflow-wrap:anywhere}
+.kortit.osat .lappu{font-size:10px;padding:1px 6px}
+.kortit.osat .btn.wide{font-size:12.5px;min-height:38px;padding:0 8px}
+.kortit.osat .btn.hinta{font-size:14px;min-height:34px;padding:0 12px}
+@media (max-width:380px){.kortit.osat{grid-template-columns:minmax(0,1fr)!important}
+  .osakuva{height:130px}}
+@media (min-width:860px){.kortit.osat{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 .naytto .kortti .btn{font-weight:700}
 .lappu{font-size:12px;font-weight:800;border:2px solid var(--reuna2);border-radius:99px;padding:1px 9px;
   color:var(--himmea);white-space:nowrap}
@@ -480,7 +485,7 @@ h2 .pikku{font-size:14px;font-weight:600;color:var(--himmea)}
 
 .kortit.tori{grid-template-columns:1fr}
 .tori-ilmo{display:flex;gap:14px;background:#fff;color:#1a1d24;border-radius:10px;padding:12px;border:2px solid #d7dbe2}
-.tori-kuva{width:104px;height:104px;flex:0 0 104px;background:#eef1f6;border-radius:8px;display:grid;place-items:center;font-size:52px;overflow:hidden}
+.tori-kuva{width:104px;height:104px;min-width:104px;flex:0 0 104px;background:#eef1f6;border-radius:8px;display:grid;place-items:center;font-size:52px;overflow:hidden}
 .tori-kuva img{width:100%;height:100%;object-fit:cover;display:block}
 .tori-sisalto{flex:1;min-width:0}
 .tori-otsikko{font-weight:800;font-size:17px;color:#0d5eb0;line-height:1.2}
@@ -737,6 +742,13 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 @media (max-width:400px){.tallikortti .tk-kuva{width:84px;flex:0 0 84px}}
 .kauppaerik{background:var(--paneeli2);border-left:4px solid var(--keltainen);border-radius:8px;
   padding:9px 12px;font-size:12.5px;line-height:1.5;color:var(--himmea);margin:0 0 11px}
+.vastausrivi{display:flex;gap:7px;margin-top:9px}
+.vastauskentta{flex:1;min-width:0;background:#0f1219;border:2px solid var(--reuna);
+  border-radius:9px;padding:8px 11px;color:var(--teksti);font-family:inherit;font-size:13px}
+.vastauskentta:focus{outline:none;border-color:var(--keltainen)}
+.vastausrivi .btn{min-height:38px;padding:0 14px;font-size:13px}
+.oma-vastaus{background:#1c3a2a;border-left:3px solid var(--vihrea);border-radius:8px;
+  padding:7px 10px;font-size:12.5px;margin-top:8px;color:#cfe9da}
 .wiki-teksti{background:var(--paneeli2);border:2px solid var(--reuna);border-radius:12px;
   padding:12px 13px;font-size:13.5px;line-height:1.55;color:var(--teksti);margin-bottom:4px}
 .rengastila{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
@@ -786,7 +798,11 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .pk-nimi{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;margin-bottom:4px}
 .pk-ds{font-size:13px;color:var(--himmea);line-height:1.45;margin-bottom:4px}
 .karttaselite{display:flex;gap:11px;flex-wrap:wrap;font-size:11.5px;color:var(--himmea);margin-top:9px}
-.naytto .kartta{aspect-ratio:1/1;cursor:default;margin-bottom:0}
+.naytto .kartta{aspect-ratio:1/1;cursor:default;margin-bottom:0;position:relative}
+.karttasuurenna{position:absolute;right:6px;bottom:6px;z-index:4;width:32px;height:32px;
+  border-radius:9px;background:rgba(18,22,30,.9);border:2px solid var(--reuna2);
+  color:var(--teksti);font-size:15px;cursor:pointer;line-height:1}
+.karttasuurenna:hover{border-color:var(--keltainen);color:var(--keltainen)}
 .naytto .kartta .pallo{width:28px;height:28px;background:none;border:0;padding:0}
 .naytto .kartta .pmerkki{width:26px;height:26px;font-size:10px;border-radius:50%;
   box-shadow:0 2px 6px rgba(0,0,0,.6),inset 0 -2px 0 rgba(0,0,0,.25)}
@@ -1190,6 +1206,7 @@ function rahaSponssi(){
 }
 const JASENET=["Mallard","Wigeon","Goosander","Duckling","Gadwall"];
 const ODAUTOT=Object.keys(AUTOMALLIT).filter(k=>!!AUTOMALLIT[k].od);
+function eiSalainen(k){ return typeof SALAAUTOT==="undefined"||!SALAAUTOT[k] }
 
 /* ============ OMAT TALLIHOMMAT ============ */
 // [avain, nimi, iltoja, kuvaus, vaikutus]
@@ -2124,7 +2141,7 @@ function myyntiHinta(a){
   return Math.max(50,Math.round(hinta/10)*10);
 }
 function arvoNettiauto(){
-  const avaimet=Object.keys(AUTOMALLIT).filter(k=>k!=="supra"||Math.random()<0.15);
+  const avaimet=Object.keys(AUTOMALLIT).filter(eiSalainen).filter(k=>k!=="supra"||Math.random()<0.15);
   S.nettiauto=[];
   for(let i=0;i<6;i++){
     const malli=avaimet[Math.floor(Math.random()*avaimet.length)];
@@ -2145,7 +2162,7 @@ const HUUTOVIHJEET=[
  ["Sisällä haisee bensalle.",0.8]
 ];
 function arvoHuutokauppa(){
-  const avaimet=Object.keys(AUTOMALLIT);
+  const avaimet=Object.keys(AUTOMALLIT).filter(eiSalainen);
   const malli=avaimet[Math.floor(Math.random()*avaimet.length)];
   const m=AUTOMALLIT[malli];
   const vihje=HUUTOVIHJEET[Math.floor(Math.random()*HUUTOVIHJEET.length)];
@@ -2287,15 +2304,42 @@ function pTalliAutot(p){
 }
 
 
+function ostaAutoNetista(x){
+  const i=S.nettiauto.indexOf(x);
+  if(i<0)return;
+  if(S.raha<x.hinta){naytaTulos("EI RAHAA","Auto maksaa "+raha(x.hinta)+".","var(--punainen)");return}
+  S.raha-=x.hinta; rahaPop(-x.hinta,"auton osto");
+  S.autot.push(uusiAuto(x.malli,x.kunto,x.km,x.hinta));
+  S.nettiauto.splice(i,1);
+  aani("osto");
+  kirjaa("Ostit Nettiautosta: <b>"+AUTOMALLIT[x.malli].nimi+"</b> hintaan "+raha(x.hinta)+".","g");
+  naytaTulos("🚗 AUTO OSTETTU",AUTOMALLIT[x.malli].nimi+" on nyt tallissa. "+
+    "Ota se ajoon Autot-apista.","var(--vihrea)");
+  piirra();
+}
+function naytaNettiauto(x){
+  const m=AUTOMALLIT[x.malli];
+  naytaValinta("💻 "+m.nimi,
+    "<div style='text-align:left'>"+
+    m.vuosi+" · "+m.hv+" hv · "+m.nm+" Nm · "+m.paino+" kg · "+m.veto+"veto<br>"+
+    m.vaihteet+"-vaihteinen · kierrosraja "+m.puna+"<br>"+
+    x.km.toLocaleString("fi-FI")+" km · kunto "+Math.round(x.kunto)+" %"+
+    (m.od?"<br><span style='color:#e8c14a'>🦆 Sama malli kuin "+m.od+"illa</span>":"")+
+    "<br><br><b style='font-size:20px'>"+raha(x.hinta)+"</b></div>",
+    "var(--neon)",
+    [{teksti:"Osta",lk:"vihrea",toiminto:function(){ ostaAutoNetista(x) }},
+     {teksti:"Takaisin",lk:"kelt",toiminto:null}]);
+}
 function pNettiauto(p){
   p.insertAdjacentHTML("beforeend","<h2>💻 Nettiauto</h2>"+
     "<p style='color:var(--himmea);margin:4px 0 10px'>Ilmoitukset vaihtuvat joka ilta. Kaikki tiedot näkyvissä, hinta sen mukainen.</p>");
-  const na=document.createElement("div"); na.className="kortit";
+  const na=document.createElement("div"); na.className="kortit osat";
   S.nettiauto.forEach((x,i)=>{
     const m=AUTOMALLIT[x.malli];
     const kv=x.kunto<25?"var(--punainen)":x.kunto<50?"#ff8a3d":x.kunto<75?"var(--keltainen)":"var(--vihrea)";
-    const el=document.createElement("div"); el.className="kortti";
-    el.innerHTML=kuvapaikka("auto_"+x.malli,"auton kuva")+
+    const el=document.createElement("div"); el.className="kortti klik";
+    el.onclick=function(ev){ if(!ev.target.closest("button"))naytaNettiauto(x) };
+    el.innerHTML=kuvapaikka("auto_"+x.malli,"")+
       '<div class="nimi">'+m.nimi+'</div>'+
       '<div class="tiedot">'+m.vuosi+' · '+m.hv+' hv · '+m.nm+' Nm · '+m.paino+' kg · '+m.veto+'veto'+
       (m.turbo?' · turbo':'')+'<br>'+x.km.toLocaleString("fi-FI")+' km · kunto <b style="color:'+kv+'">'+
@@ -2991,6 +3035,64 @@ function pKaupat(p){
   });
 }
 
+/* ============ SALAISET AUTOT ============ */
+const SALAKOODIT={
+ "IDDQD":{nimi:"meemikokoelma",autot:["charger69","streetka","reliantrobin","trabant","multipla"],
+   viesti:"Ruutu välkähtää. Pihalle ilmestyy viisi autoa joita ei pitäisi olla olemassa."},
+ "OD52":{nimi:"poliisikalusto",autot:["poliisiv70","poliisisprinter","poliisipassat"],
+   viesti:"Radiopuhelin rätisee. Kolme sinivalkoista ajaa pihaan ja kuskit kävelevät pois."}
+};
+const SALAAUTOT={
+ charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
+   pera:3.23,puna:5800,vaihteet:4,arvo:42000,vari:"oranssi",
+   ds:"Ovet eivät aukea. Sisään mennään ikkunasta."},
+ streetka:{nimi:"Ford StreetKa",vuosi:2004,hv:95,nm:135,paino:1080,veto:"etu",
+   pera:4.06,puna:6200,vaihteet:5,arvo:2200,vari:"hopea",
+   ds:"Avoauto Suomeen. Kaksi viikkoa vuodessa täydellinen."},
+ reliantrobin:{nimi:"Reliant Robin",vuosi:1980,hv:40,nm:69,paino:450,veto:"taka",
+   pera:3.90,puna:5500,vaihteet:4,arvo:3400,vari:"keltainen",
+   ds:"Kolme pyörää. Mutkat otetaan varovasti tai kyljellään."},
+ trabant:{nimi:"Trabant 601",vuosi:1985,hv:26,nm:54,paino:615,veto:"etu",
+   pera:4.08,puna:4200,vaihteet:4,arvo:2800,vari:"vaaleansininen",
+   ds:"Kaksitahtinen ja kori pahvia. Savuaa kuin nuotio."},
+ multipla:{nimi:"Fiat Multipla 1.6",vuosi:2001,hv:103,nm:145,paino:1350,veto:"etu",
+   pera:3.94,puna:6000,vaihteet:5,arvo:1900,vari:"beige",
+   ds:"Kuusi paikkaa ja kasvot joita ei unohda."},
+ poliisiv70:{nimi:"Volvo V70 — poliisi",vuosi:2005,hv:180,nm:280,paino:1580,veto:"etu",
+   pera:3.77,puna:6200,vaihteet:5,arvo:9800,vari:"sinivalkoinen",poliisi:true,
+   ds:"Partioauto jossa on vielä majakat katolla."},
+ poliisisprinter:{nimi:"Mercedes Sprinter — poliisi",vuosi:2008,hv:150,nm:330,paino:2600,veto:"taka",
+   pera:4.18,puna:4600,vaihteet:6,arvo:12000,vari:"sinivalkoinen",poliisi:true,
+   ds:"Miehistönkuljetusauto. Hidas mutta tekee vaikutuksen."},
+ poliisipassat:{nimi:"VW Passat — poliisi",vuosi:2012,hv:170,nm:350,paino:1490,veto:"etu",
+   pera:3.65,puna:5200,vaihteet:6,arvo:11500,vari:"sinivalkoinen",poliisi:true,
+   ds:"Siviilipartio jonka tunnistaa vasta liian myöhään."}
+};
+Object.keys(SALAAUTOT).forEach(function(k){ AUTOMALLIT[k]=SALAAUTOT[k] });
+
+function kokeileKoodi(teksti){
+  const koodi=(teksti||"").trim().toUpperCase();
+  const s=SALAKOODIT[koodi];
+  if(!s)return false;
+  S.koodit=S.koodit||[];
+  if(S.koodit.indexOf(koodi)>=0){
+    naytaTulos("JO KÄYTETTY","Tämä koodi on jo lunastettu.","var(--keltainen)");
+    return true;
+  }
+  S.koodit.push(koodi);
+  s.autot.forEach(function(malli){
+    S.autot.push(uusiAuto(malli,92,Math.round(40000+Math.random()*90000),0));
+  });
+  NOPEUSINDEKSI=null;
+  aani("taso");
+  kirjaa("<b class='v'>🔓 Salainen koodi "+koodi+"</b> — "+s.autot.length+" autoa talliin.","v");
+  naytaTulos("🔓 "+koodi, s.viesti+"<br><br><b>"+
+    s.autot.map(function(m){return AUTOMALLIT[m].nimi}).join("<br>")+
+    "</b><br><br>Löydät ne Autot-apista.","var(--violetti)");
+  piirra();
+  return true;
+}
+
 /* ---------- VIESTIT JA PUHELUT ---------- */
 const SOITTAJAT=[
  {nm:"Mallard",tieto:"Outlaw Ducks",ico:"🦆",lk:"vinkki",aihe:"huutokauppa"},
@@ -3042,13 +3144,44 @@ function soi(i){
 }
 function pViestit(p){
   VIESTIT.forEach(function(v){v.luettu=true});
-  p.innerHTML=(VIESTIT.length?VIESTIT.map(function(v){
-    return '<div class="viesti '+(v.lk||"")+'">'+
-      '<div class="yla"><div class="kuva">'+v.ico+'</div>'+
-      '<div class="nm">'+v.nm+'</div><div class="aika">'+v.aika+'</div></div>'+
-      '<div class="sis">'+v.teksti+'</div></div>';
-  }).join(""):'<div class="kortti"><div class="ds">Ei viestejä. Puhelin soi silloin tällöin.</div></div>');
+  p.insertAdjacentHTML("beforeend", VIESTIT.length?"":
+    "<div class='kortti'><div class='ds'>Ei viestejä. Puhelin soi silloin tällöin.</div></div>");
+  VIESTIT.forEach(function(v,i){
+    const el=document.createElement("div");
+    el.className="viesti "+(v.lk||"");
+    let html="<div class='yla'><div class='kuva'>"+v.ico+"</div>"+
+      "<div class='nm'>"+v.nm+"</div><div class='aika'>"+v.aika+"</div></div>"+
+      "<div class='sis'>"+v.teksti+"</div>";
+    if(v.vastaus)html+="<div class='oma-vastaus'>"+v.vastaus+"</div>";
+    html+="<div class='vastausrivi'>"+
+      "<input class='vastauskentta' type='text' placeholder='Vastaa…' data-kentta='"+i+"'>"+
+      "<button class='btn' data-laheta='"+i+"'>Lähetä</button></div>";
+    el.innerHTML=html;
+    p.appendChild(el);
+  });
+  p.querySelectorAll("[data-laheta]").forEach(function(b){
+    b.onclick=function(){
+      const i=parseInt(b.dataset.laheta,10);
+      const kentta=p.querySelector("[data-kentta='"+i+"']");
+      const teksti=(kentta.value||"").trim();
+      if(!teksti)return;
+      kentta.value="";
+      if(kokeileKoodi(teksti))return;
+      VIESTIT[i].vastaus="Sinä: "+teksti;
+      const v=VIESTIT[i];
+      const kuittaus=v.lk==="vinkki"
+        ? ["Jep.","Nähdään viivalla.","Käyhän kattoo.","Mä sanoin sulle."]
+        : ["...","Selvä.","Joo joo.","Soitellaan."];
+      setTimeout(function(){
+        VIESTIT[i].teksti+="<br><br><i>"+v.nm+": "+
+          kuittaus[Math.floor(Math.random()*kuittaus.length)]+"</i>";
+        if(VL==="viestit")avaaAppi("viestit",true);
+      },900);
+      avaaAppi("viestit",true);
+    };
+  });
 }
+
 function pLoki(p){
   p.innerHTML='<div class="loki" style="max-height:none">'+LOKI.map(function(l){
     return '<div class="'+(l.lk||"")+'">'+l.t+'</div>'}).join("")+'</div>';
@@ -3543,6 +3676,31 @@ function piirraPaikkalista(p){
     p.appendChild(g);
   });
 }
+function avaaIsoKartta(){
+  const el=$("isokartta");
+  const sis=el.querySelector(".ik-sisalto")||el;
+  sis.innerHTML="";
+  const k=document.createElement("div");
+  k.className="kartta iso";
+  k.innerHTML=KARTTAPOHJA;
+  PAIKAT.forEach(function(pk){
+    const b=document.createElement("button");
+    const tassa=pk.avain===S.paikka;
+    b.className="piste"+(tassa?" tassa":"");
+    b.style.left=pk.x+"%"; b.style.top=pk.y+"%";
+    b.innerHTML='<span class="pallo">'+paikkaMerkki(pk.avain,pk.tyyppi)+'</span>'+
+      '<span class="nimi">'+pk.nimi+'</span>';
+    if(!tassa)b.onclick=function(){ aja(pk.avain); el.classList.remove("on"); avaaAppi("kartta",true) };
+    k.appendChild(b);
+  });
+  sis.appendChild(k);
+  const sulje=document.createElement("button");
+  sulje.className="btn haamu wide"; sulje.textContent="Sulje kartta";
+  sulje.style.marginTop="10px";
+  sulje.onclick=function(){ el.classList.remove("on") };
+  sis.appendChild(sulje);
+  el.classList.add("on");
+}
 function piirraPelikartta(p){
   const kartta=document.createElement("div");
   kartta.className="kartta";
@@ -3570,6 +3728,14 @@ function pKartta(p){
   ylaosa.className="karttaylaosa";
   p.appendChild(ylaosa);
   piirraPelikartta(ylaosa);
+  const kw=ylaosa.querySelector(".kartta");
+  if(kw){
+    const suurenna=document.createElement("button");
+    suurenna.className="karttasuurenna"; suurenna.innerHTML="⤢";
+    suurenna.title="Suurenna kartta";
+    suurenna.onclick=function(e){ e.stopPropagation(); avaaIsoKartta() };
+    kw.appendChild(suurenna);
+  }
   const kortti=document.createElement("div");
   kortti.className="paikkakortti";
   kortti.innerHTML=kuvapaikka("paikka_"+nyt.avain,"paikan kuva")+
