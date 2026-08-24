@@ -75,6 +75,15 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .pk-ala b{color:var(--teksti)}
 .pk-sleeper{color:var(--violetti);font-weight:800}
 .pk-ala .btn{margin-left:auto;min-height:34px;font-size:13px;padding:0 12px}
+.autokehys{position:relative}
+.autonuoli{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:38px;height:38px;
+  border-radius:50%;background:rgba(18,22,30,.92);border:2px solid var(--reuna2);color:var(--teksti);
+  font-size:22px;font-weight:800;cursor:pointer;display:grid;place-items:center;line-height:1}
+.autonuoli:hover{border-color:var(--keltainen);color:var(--keltainen)}
+.autonuoli.vas{left:-4px}
+.autonuoli.oik{right:-4px}
+@media (max-width:640px){.autonuoli{display:none}}
+.autorata.raahaa{cursor:grabbing;scroll-behavior:auto}
 .autorata{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 0 10px;margin:0 -4px;scrollbar-width:none}
 .autorata::-webkit-scrollbar{display:none}
 .autokortti{flex:0 0 82%;scroll-snap-align:center;background:linear-gradient(180deg,var(--tyyppi) 0%,var(--tyyppi) 3px,var(--paneeli2) 3px);border:3px solid var(--tyyppi);border-radius:16px;padding:12px 13px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
@@ -606,6 +615,10 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .mp-ura{flex:1;height:8px;background:#0f1219;border-radius:5px;overflow:hidden;min-width:40px}
 .mp-ura i{display:block;height:100%;background:var(--violetti)}
 .mp-luku{font-size:12px;color:var(--himmea);font-weight:700;flex:0 0 auto}
+.ongnappi{background:#2b2540;border:2px solid var(--violetti);border-radius:10px;
+  color:var(--violetti);font-family:inherit;font-weight:800;font-size:12.5px;padding:6px 10px;
+  cursor:pointer;flex:0 0 auto;white-space:nowrap}
+.ongnappi:hover{background:var(--violetti);color:#fff}
 .nukunappi{background:var(--paneeli2);border:2px solid var(--reuna2);border-radius:10px;
   color:var(--teksti);font-family:inherit;font-weight:800;font-size:13px;padding:6px 12px;
   cursor:pointer;flex:0 0 auto}
@@ -641,6 +654,8 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
   color:var(--teksti);display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;
   cursor:pointer;font-family:inherit}
 .appi:hover{border-color:var(--keltainen);transform:translateY(-2px)}
+.appi.haamuappi{opacity:.14;border-style:dashed}
+.appi.haamuappi:hover{opacity:.5}
 .appi .ico{font-size:31px}
 .appi .nm{font-size:11.5px;font-weight:700;text-align:center;line-height:1.2}
 .pallukka{position:absolute;top:5px;right:7px;background:var(--punainen);color:#fff;min-width:20px;
@@ -704,8 +719,41 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
   font-family:inherit;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap}
 .pteko.duck{background:var(--violetti);color:#fff}
 .pteko:hover{filter:brightness(1.1)}
-.paikkarivi .pn{background:transparent;border:0;color:var(--keltainen);font-weight:800;
-  font-size:12.5px;cursor:pointer;font-family:inherit;padding:4px 2px}
+.paikkarivi.klik{cursor:pointer}
+.plaput{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:0 0 auto}
+.ptyyppi{font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;letter-spacing:.02em;
+  white-space:nowrap;color:#0d1017}
+.ptyyppi.kisa{background:#4fc3f7}
+.ptyyppi.kauppa{background:#3fd07a}
+.ptyyppi.parkki{background:#b083f0}
+.pkm{font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pkm.ok{background:var(--vihrea);color:#08210f}
+.pkm.ei{background:#39424f;color:#8b97a8}
+.pkm.tassa{background:var(--keltainen);color:#161a22}
+.rengastila{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.rt-osa{background:var(--paneeli2);border:2px solid var(--reuna);border-radius:11px;padding:8px 10px;
+  display:flex;flex-direction:column;gap:1px;min-width:0}
+.rt-osa span{font-size:10px;color:var(--himmea);font-weight:800;letter-spacing:.03em}
+.rt-osa b{font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rt-osa i{font-style:normal;font-size:11px;color:var(--himmea)}
+.rvaroitus{background:#3a1a18;border:2px solid var(--punainen);border-radius:10px;
+  padding:8px 11px;font-size:12.5px;color:#ffb4ad;margin-bottom:9px}
+.valintalista{display:flex;flex-direction:column;gap:7px}
+.valintarivi{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  background:var(--paneeli2);border:2px solid var(--reuna);border-radius:12px;padding:9px 11px;
+  color:var(--teksti);font-family:inherit;cursor:pointer}
+.valintarivi:hover{border-color:var(--keltainen)}
+.valintarivi.on{border-color:var(--vihrea);background:#16261c;cursor:default}
+.vr-nimi{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.vr-nimi b{font-size:13.5px}
+.vr-nimi small{font-size:11px;color:var(--himmea);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vr-arvot{display:flex;gap:7px;flex:0 0 auto}
+.vr-luku{font-size:10.5px;font-weight:800;background:#131821;border-radius:6px;padding:2px 6px;
+  white-space:nowrap}
+.vr-hinta{font-weight:800;font-size:12.5px;color:var(--keltainen);flex:0 0 auto;min-width:56px;
+  text-align:right}
+.valintarivi.on .vr-hinta{color:var(--vihrea)}
+@media (max-width:520px){.vr-arvot{display:none}.rengastila{grid-template-columns:1fr}}
 .huoltolista{display:flex;flex-direction:column;gap:7px;margin-top:10px}
 .huoltorivi{display:flex;align-items:center;gap:11px;width:100%;text-align:left;
   background:var(--paneeli2);border:2px solid var(--reuna);border-radius:12px;padding:9px 12px;
@@ -932,6 +980,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
       <span class="mp-ura"><i id="mp-tayte"></i></span>
       <span class="mp-luku" id="mp-luku">0</span>
     </div>
+    <button class="ongnappi" id="ong">🦆 ONG</button>
     <button class="nukunappi" id="nuku">🛏️ Nuku</button>
   </div>
   <div class="ilmoituspino" id="pino"></div>
@@ -1277,6 +1326,38 @@ function etaisyys(a,b){
   const p=paikka(a),q=paikka(b);
   return Math.sqrt(Math.pow(p.x-q.x,2)+Math.pow(p.y-q.y,2));
 }
+/* ============ RENKAAT JA VANTEET ============ */
+const RENGASTYYPIT=[
+ {avain:"kesa",nimi:"Kesärenkaat",hinta:280,kesa:1.00,talvi:0.50,kulu:1.0,tyyli:0,melu:0,laillinen:true,
+  ds:"Perusrengas. Kesällä hyvä, talvella vaarallinen."},
+ {avain:"nasta",nimi:"Nastarenkaat",hinta:430,kesa:0.82,talvi:1.00,kulu:1.15,tyyli:0,melu:4,laillinen:true,
+  talvirengas:true,ds:"Pitää jäällä. Kesällä meluaa ja kuluu turhaan."},
+ {avain:"kitka",nimi:"Kitkarenkaat",hinta:395,kesa:0.86,talvi:0.92,kulu:0.95,tyyli:2,melu:0,laillinen:true,
+  talvirengas:true,ds:"Hiljaisempi kuin nastat, hieman heikompi jäällä."},
+ {avain:"allseason",nimi:"All season",hinta:460,kesa:0.92,talvi:0.78,kulu:0.90,tyyli:0,melu:0,laillinen:true,
+  talvirengas:true,ds:"Kompromissi joka ei loista kummassakaan."},
+ {avain:"semislick",nimi:"Semislickit",hinta:780,kesa:1.22,talvi:0.28,kulu:1.9,tyyli:11,melu:2,laillinen:true,
+  ds:"Kuivalla huippupito. Kuluu nopeasti, märällä ja talvella kelvoton."},
+ {avain:"slick",nimi:"Radan slickit",hinta:1250,kesa:1.35,talvi:0.15,kulu:2.6,tyyli:14,melu:0,laillinen:false,
+  ds:"Ei kuviota lainkaan. Ei katsastuskelpoinen — poliisi puuttuu asiaan."}
+];
+const VANNETYYPIT=[
+ {avain:"vakio",nimi:"Vakiovanteet",hinta:0,paino:0,tyyli:0,pito:1.00,
+  ds:"Ne jotka tulivat auton mukana."},
+ {avain:"teras",nimi:"Teräsvanteet",hinta:130,paino:14,tyyli:-4,pito:0.99,
+  ds:"Halvat ja kestävät. Painavat ja näyttävät siltä."},
+ {avain:"kevyt",nimi:"Kevytmetallivanteet",hinta:760,paino:-14,tyyli:9,pito:1.02,
+  ds:"Pyörimismassa pienenee, kiihtyvyys paranee."},
+ {avain:"syvakuppi",nimi:"Syväkuppivanteet",hinta:1150,paino:-6,tyyli:17,pito:1.03,
+  ds:"Leveät ja näyttävät. Eivät erityisen kevyet."},
+ {avain:"kilpa",nimi:"Kilpavanteet",hinta:1950,paino:-24,tyyli:13,pito:1.05,
+  ds:"Kevein mitä rahalla saa. Naarmuuntuvat jos katsot väärin."}
+];
+const rengasTyyppi=function(){ return RENGASTYYPIT.find(function(r){
+  return r.avain===(nyk().rengas||"kesa")})||RENGASTYYPIT[0] };
+const vanneTyyppi=function(){ return VANNETYYPIT.find(function(v){
+  return v.avain===(nyk().vanne||"vakio")})||VANNETYYPIT[0] };
+
 /* ============ VUODENAJAT ============ */
 // peli alkaa 1. kesäkuuta, kuukaudet 30 päivää
 const KUUKAUDET=["tammikuu","helmikuu","maaliskuu","huhtikuu","toukokuu","kesäkuu",
@@ -1291,10 +1372,10 @@ function keli(){
   return {nimi:"pakkaskeli",pito:0.62,ico:"❄️",ds:"Jäinen asfaltti ja pakkasta."};
 }
 function rengasKerroin(){
-  const n=nyk(), t=n.renkaatTyyppi||"kesa";
-  if(talvi())return t==="talvi"?1.0:0.52;      // kesärenkaat jäällä ovat vaarallisia
-  return t==="talvi"?0.86:1.0;                 // talvirenkaat kesällä pehmenevät
+  const r=rengasTyyppi(), v=vanneTyyppi();
+  return (talvi()?r.talvi:r.kesa)*v.pito;
 }
+function talvirengasOk(){ return !!rengasTyyppi().talvirengas }
 const VIIKONPAIVAT=["maanantai","tiistai","keskiviikko","torstai","perjantai","lauantai","sunnuntai"];
 const vpNro=()=>(S.paiva-1)%7;
 const arki=()=>vpNro()<5;
@@ -1646,8 +1727,36 @@ const PUZZLET=[
   vaiht:["Momenttiavaimella keskeltä ulospäin, useassa vaiheessa",
          "Mutteripyssyllä tasaisesti reunoilta","Käsivoimin kunnes tuntuu tiukalta"],oikea:0},
  {kys:"Vaihteisto rahisee kakkoselle vaihtaessa. Mitä epäilet ensimmäisenä?",
-  vaiht:["Kytkin ei irtoa kokonaan","Vaihteistoöljy on väärää","Vaihdekeppi on löysä"],oikea:0}
-];
+  vaiht:["Kytkin ei irtoa kokonaan","Vaihteistoöljy on väärää","Vaihdekeppi on löysä"],oikea:0},
+ {kys:"Auto käy tasaisesti mutta kuluttaa selvästi liikaa. Mitä mittaat ensin?",
+  vaiht:["Lambda-anturin toiminnan","Renkaiden ilmanpaineet","Sytytystulppien kärkivälin"],oikea:0},
+ {kys:"Vaihteisto ei mene päälle moottorin käydessä, mutta menee sammutettuna. Mikä?",
+  vaiht:["Kytkin ei irtoa — hydrauliikka tai vaijeri","Vaihteistoöljy on vähissä",
+         "Synkronirenkaat ovat loppu"],oikea:0},
+ {kys:"Ohjauspyörä tärisee vain 90–110 km/h vauhdissa. Todennäköisin syy?",
+  vaiht:["Etupyörät ovat epätasapainossa","Jarrulevyt ovat vääntyneet",
+         "Pyöränsuuntaus on pielessä"],oikea:0},
+ {kys:"Uusi turbo asennettu. Mitä teet ennen ensimmäistä käynnistystä?",
+  vaiht:["Esivoitelet turbon ja pyörität moottoria ilman sytytystä",
+         "Käynnistät ja annat käydä tyhjäkäynnillä","Ajat heti kevyesti lämpimäksi"],oikea:0},
+ {kys:"Jäähdytinnesteen pinta laskee, mutta vuotoa ei näy. Mitä epäilet?",
+  vaiht:["Kannentiiviste päästää nestettä palotilaan","Neste haihtuu normaalisti",
+         "Lämpömittari on rikki"],oikea:0},
+ {kys:"Pakoputkesta tulee sinistä savua kiihdytyksessä. Mitä se kertoo?",
+  vaiht:["Öljyä palaa — venttiilinvarsitiivisteet tai renkaat",
+         "Seos on liian rikas","Jäähdytinnestettä palaa"],oikea:0},
+ {kys:"Akku tyhjenee yön yli vaikka akku on uusi. Mitä teet?",
+  vaiht:["Mittaat lepovirran ja etsit vuotavan piirin","Vaihdat laturin",
+         "Lataat akun ja toivot parasta"],oikea:0},
+ {kys:"Etupää kolisee hidasta epätasaisella. Mistä aloitat?",
+  vaiht:["Tarkistat tukivarren puslat ja päät","Vaihdat iskarit",
+         "Kiristät pyöränpultit"],oikea:0},
+ {kys:"Nokka-akselit vaihdettu. Mitä pitää ehdottomasti tarkistaa?",
+  vaiht:["Jakomerkit ja venttiilien välykset","Öljynpaine tyhjäkäynnillä",
+         "Sytytystulppien lämpöarvo"],oikea:0},
+ {kys:"Jarrupoljin painuu hitaasti pohjaan pitkässä jarrutuksessa. Mikä?",
+  vaiht:["Pääsylinteri vuotaa sisäisesti","Palat ovat loppu",
+         "Jarruneste on liian uutta"],oikea:0}];
 var PUZZLE=null;
 function aloitaKorjausPuzzle(perushinta){
   const pakka=PUZZLET.slice(); const valitut=[];
@@ -1831,7 +1940,7 @@ function tankki(malli){
 }
 function uusiAuto(malli,kunto,km,ostohinta){
   return {malli:malli,osat:{},toriLaatu:{},kunto:kunto===undefined?100:kunto,renkaat:100,
-          km:km===undefined?185000:km,bensa:tankki(malli)*0.6,ajokielto:false,renkaatTyyppi:"kesa",
+          km:km===undefined?185000:km,bensa:tankki(malli)*0.6,ajokielto:false,rengas:"kesa",vanne:"vakio",
           ostohinta:ostohinta||0,modeihin:0};
 }
 let S={raha:400,epailys:0,voitot:0,tappiot:0,
@@ -1943,6 +2052,9 @@ function auto(){
   });
   const n2=nyk();
   if(n2.hommaPaino)a.paino+=n2.hommaPaino;
+  a.paino+=vanneTyyppi().paino;
+  a.tyyli+=vanneTyyppi().tyyli+rengasTyyppi().tyyli;
+  a.melu+=rengasTyyppi().melu;
   if(n2.stage){ const st=STAGET[n2.stage-1]; a.nm*=1+st.nm; a.luotto+=st.luotto; }
   if(n2.hommaNm)a.nm*=1+n2.hommaNm;
   a.melu+=n2.hommaMelu||0;
@@ -2095,7 +2207,37 @@ function pTalliAutot(p){
         '<button class="btn haamu" data-nettiin="'+i+'" style="flex:1">Nettiautoon</button></div>'));
     rata.appendChild(el);
   });
-  p.appendChild(rata);
+  const kehys=document.createElement("div");
+  kehys.className="autokehys";
+  const vas=document.createElement("button"); vas.className="autonuoli vas"; vas.innerHTML="‹";
+  const oik=document.createElement("button"); oik.className="autonuoli oik"; oik.innerHTML="›";
+  kehys.appendChild(vas); kehys.appendChild(rata); kehys.appendChild(oik);
+  p.appendChild(kehys);
+  function siirra(suunta){
+    const k=rata.children[0];
+    if(!k)return;
+    const askel=k.offsetWidth+12;
+    rata.scrollBy({left:suunta*askel,behavior:"smooth"});
+  }
+  vas.onclick=function(){ siirra(-1) };
+  oik.onclick=function(){ siirra(1) };
+  // hiirellä raahaus
+  let raahaa=false,alkuX=0,alkuScroll=0;
+  rata.addEventListener("mousedown",function(e){
+    if(e.target.closest("button"))return;
+    raahaa=true; alkuX=e.pageX; alkuScroll=rata.scrollLeft;
+    rata.classList.add("raahaa");
+  });
+  window.addEventListener("mousemove",function(e){
+    if(!raahaa)return;
+    e.preventDefault();
+    rata.scrollLeft=alkuScroll-(e.pageX-alkuX);
+  });
+  window.addEventListener("mouseup",function(){ raahaa=false; rata.classList.remove("raahaa") });
+  // rullahiiri sivuttain
+  rata.addEventListener("wheel",function(e){
+    if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ e.preventDefault(); rata.scrollLeft+=e.deltaY }
+  },{passive:false});
   p.insertAdjacentHTML("beforeend",
     '<div class="autopisteet">'+S.autot.map(function(a,i){
       return '<span class="ap'+(i===S.auto?" on":"")+'"></span>';
@@ -2304,6 +2446,18 @@ function odKelpoisuus(){
       Object.keys(n.osat).length+")"}
   ];
   return vaatimukset;
+}
+function naytaONG(){
+  const cd=S.seuraavaCruising-S.paiva;
+  naytaTulos("🦆 OULU NIGHT CRUISING",
+    "Kolmen viikon välein Oulussa ajetaan letka. Kokoontuminen on <b>Kempeleen Biltemalla</b>, "+
+    "ja sieltä lähdetään kiertämään kaupunkia: Limingantulli, Raksila, Nallikari.<br><br>"+
+    "Letkassa ajaminen ei ole kisa vaan näytös. Palkkiona on <b>katu-uskottavuutta</b> ja pieni "+
+    "kolehti — ja matkalla ehtii sattua kaikenlaista.<br><br>"+
+    (cd<=0?"<b style='color:var(--violetti)'>Letka lähtee tänään.</b> Aja Biltemalle ennen kuin ilta loppuu."
+          :"Seuraava lähtee <b>"+cd+" päivän</b> päästä.")+
+    (S.odJasen?"<br><br>Klubin jäsenenä ajat letkan kärjessä ja saat puolitoistakertaisen maineen.":""),
+    "var(--violetti)");
 }
 function pMaine(p){  const t=credTaso(), seur=seuraavaTaso();
   const alku=t.raja, loppu=seur?seur.raja:t.raja;
@@ -2530,7 +2684,7 @@ function hahmoKuva(avain,koodi){
 
 const APPIT=[
   {id:"kartta",ico:"🗺️",nm:"Kartta",fn:function(){return pKartta}},
-  {id:"kisat",ico:"🏁",nm:"Kisat",fn:function(){return pKisat}},
+  {id:"kisat",ico:"👻",nm:"Kisat",haamu:true,fn:function(){return pKisat}},
   {id:"talli",ico:"🔧",nm:"Talli",fn:function(){return pTalli}},
   {id:"kaupat",ico:"🛒",nm:"Kaupat",fn:function(){return pKaupat}},
   {id:"netti",ico:"🌐",nm:"Internet",fn:function(){return pNetti}},
@@ -2558,16 +2712,12 @@ function koti(){
   VL=null; KAUPPANAKYMA=null;
   $("naytto").innerHTML='<div class="appit">'+APPIT.map(function(a){
     const m=merkki(a.id);
-    return '<button class="appi" data-app="'+a.id+'">'+
+    return '<button class="appi'+(a.haamu?" haamuappi":"")+'" data-app="'+a.id+'">'+
       (m?'<span class="pallukka">'+m+'</span>':'')+
       '<span class="ico">'+a.ico+'</span><span class="nm">'+a.nm+'</span></button>';
   }).join("")+'</div>'+
 
-  '<div class="kortti" style="margin-top:12px"><div class="rivi">'+
-  '<span style="font-size:26px">🦆</span><div><div class="nm">Oulu Night Cruising</div>'+
-  '<div class="ds">'+(cruisingTanaan()?"<b style=\"color:var(--violetti)\">Tänään!</b> Lähtö Kempeleen Biltemalta.":
-    "Seuraava <b style=\"color:var(--violetti)\">"+(S.seuraavaCruising-S.paiva)+" päivän</b> päästä Biltemalta.")+
-  '</div></div></div>';
+  '';
   $("naytto").querySelectorAll("[data-app]").forEach(function(b){
     b.onclick=function(){ avaaAppi(b.dataset.app) };
   });
@@ -2649,6 +2799,10 @@ function paivitaTila(){
   $("mp-tayte").style.width=(s2?Math.round((S.cred-alku2)/(loppu2-alku2)*100):100)+"%";
   $("mp-luku").textContent=Math.round(S.cred).toLocaleString("fi-FI")+(s2?" / "+s2.raja.toLocaleString("fi-FI"):"");
   $("mainepalkki").title="Taso "+t2.taso+" — "+t2.nimi;
+  const cd2=S.seuraavaCruising-S.paiva;
+  $("ong").textContent="🦆 ONG "+(cd2<=0?"tänään":cd2+" vrk");
+  $("ong").style.background=cd2<=0?"var(--violetti)":"#2b2540";
+  $("ong").style.color=cd2<=0?"#fff":"var(--violetti)";
   const mp=$("maisema-paikka");
   if(mp)mp.textContent=paikka(S.paikka).nimi;
 }
@@ -3209,7 +3363,7 @@ function ehdotukset(){
     " asentamatonta osaa.",nappi:"Asenna Tallissa",toiminto:function(){VL="talli";piirraLehdet();piirra()}});
   if(S.tarjoukset.length)lista.push({ico:"📩",teksti:"Sinulle on tullut "+S.tarjoukset.length+
     " ostotarjousta.",nappi:"Katso tarjoukset",toiminto:function(){VL="myynti";piirraLehdet();piirra()}});
-  if(talvi()&&(n.renkaatTyyppi||"kesa")!=="talvi")lista.push({ico:"❄️",
+  if(talvi()&&!talvirengasOk())lista.push({ico:"❄️",
     teksti:"Talvi ja kesärenkaat. Pito on puolet ja poliisi sakottaa.",
     nappi:"Osta talvirenkaat",toiminto:function(){VL="talli";piirraLehdet();piirra()}});
   if(n.kunto<50&&!n.ajokielto)lista.push({ico:"🔧",teksti:"Kunto on "+Math.round(n.kunto)+
@@ -3261,22 +3415,31 @@ function piirraPaikkalista(p){
       const teot=paikkaToiminnot(pk);
       const el=document.createElement("div");
       el.className="paikkarivi"+(tassa?" tassa":"");
+      const n2=nyk();
+      const tarve=km*kulutus(n2.malli)/100*(talvi()?1.15:1);
+      const riittaa=n2.bensa>=tarve;
+      const tyyppinimi={kisa:"Kisapaikka",kauppa:"Kauppa",parkki:"Parkkipaikka"}[pk.tyyppi];
       let html=paikkaMerkki(pk.avain,pk.tyyppi)+
-        '<span class="pt"><b>'+pk.nimi+'</b><small>'+
-        (tassa?"olet täällä":km+" km · "+lyhyt)+'</small></span>';
+        '<span class="pt"><b>'+pk.nimi+'</b><small>'+lyhyt+'</small></span>'+
+        '<span class="plaput"><span class="ptyyppi '+pk.tyyppi+'">'+tyyppinimi+'</span>'+
+        (tassa?'<span class="pkm tassa">olet täällä</span>'
+              :'<span class="pkm '+(riittaa?"ok":"ei")+'">'+km+' km</span>')+'</span>';
       if(tassa){
         html+='<span class="pteot">'+teot.map(function(t,i){
           return '<button class="pteko '+(t.lk||"")+'" data-teko="'+i+'">'+t.ico+' '+t.nm+'</button>';
         }).join("")+'</span>';
-      }else{
-        html+='<button class="pn" data-aja="'+pk.avain+'">Aja ›</button>';
       }
       el.innerHTML=html;
       el.querySelectorAll("[data-teko]").forEach(function(b){
         b.onclick=function(){ teot[parseInt(b.dataset.teko,10)].toiminto() };
       });
-      const ab=el.querySelector("[data-aja]");
-      if(ab)ab.onclick=function(){ aja(pk.avain); avaaAppi("kartta",true) };
+      if(!tassa){
+        el.classList.add("klik");
+        el.onclick=function(ev){
+          if(ev.target.closest("[data-teko]"))return;
+          aja(pk.avain); avaaAppi("kartta",true);
+        };
+      }
       g.appendChild(el);
     });
     p.appendChild(g);
@@ -3762,6 +3925,73 @@ function pKisat(p){
 }
 
 /* ---------- TALLI ---------- */
+function pRenkaat(p){
+  const n=nyk(), r=rengasTyyppi(), v=vanneTyyppi();
+  const kelipito=Math.round(keli().pito*rengasKerroin()*100);
+  p.insertAdjacentHTML("beforeend",
+    "<div class='sep'></div><h2>🛞 Renkaat ja vanteet</h2>"+
+    "<div class='rengastila'>"+
+      "<div class='rt-osa'><span>Renkaat</span><b>"+r.nimi+"</b>"+
+        "<i style='color:"+(n.renkaat<25?"var(--punainen)":n.renkaat<50?"#ff8a3d":"var(--vihrea)")+
+        "'>kunto "+Math.round(n.renkaat)+" %</i></div>"+
+      "<div class='rt-osa'><span>Vanteet</span><b>"+v.nimi+"</b><i>"+
+        (v.paino>0?"+":"")+v.paino+" kg · tyyli "+(v.tyyli>0?"+":"")+v.tyyli+"</i></div>"+
+      "<div class='rt-osa'><span>"+keli().ico+" "+keli().nimi+"</span><b style='color:"+
+        (kelipito<70?"var(--punainen)":kelipito<90?"var(--keltainen)":"var(--vihrea)")+"'>"+
+        kelipito+" %</b><i>pito juuri nyt</i></div>"+
+    "</div>"+
+    (talvi()&&!talvirengasOk()?"<div class='rvaroitus'>❄️ Talvi ja kesärenkaat — poliisi sakottaa.</div>":"")+
+    (!r.laillinen?"<div class='rvaroitus'>🚔 "+r.nimi+" eivät ole katukelpoisia.</div>":""));
+
+  p.insertAdjacentHTML("beforeend","<div class='ryhmaotsikko'>Rengastyyppi</div>");
+  const gr=document.createElement("div"); gr.className="valintalista";
+  RENGASTYYPIT.forEach(function(x){
+    const on=x.avain===(n.rengas||"kesa");
+    const el=document.createElement("button");
+    el.className="valintarivi"+(on?" on":"");
+    el.innerHTML="<span class='vr-nimi'><b>"+x.nimi+"</b><small>"+x.ds+"</small></span>"+
+      "<span class='vr-arvot'>"+
+        "<span class='vr-luku' title='pito kesällä'>☀️ "+Math.round(x.kesa*100)+"%</span>"+
+        "<span class='vr-luku' title='pito talvella'>❄️ "+Math.round(x.talvi*100)+"%</span>"+
+        "<span class='vr-luku' title='kuluminen'>⏳ "+Math.round(x.kulu*100)+"%</span>"+
+      "</span>"+
+      "<span class='vr-hinta'>"+(on?"käytössä":raha(x.hinta))+"</span>";
+    if(!on)el.onclick=function(){
+      if(S.raha<x.hinta){naytaTulos("EI RAHAA",x.nimi+" maksaa "+raha(x.hinta)+".","var(--punainen)");return}
+      S.raha-=x.hinta; rahaPop(-x.hinta,"renkaat");
+      n.rengas=x.avain; n.renkaat=100;
+      kirjaa("Alle vaihtui <b>"+x.nimi+"</b>.","g");
+      avaaAppi("talli",true);
+    };
+    gr.appendChild(el);
+  });
+  p.appendChild(gr);
+
+  p.insertAdjacentHTML("beforeend","<div class='ryhmaotsikko'>Vannetyyppi</div>");
+  const gv=document.createElement("div"); gv.className="valintalista";
+  VANNETYYPIT.forEach(function(x){
+    const on=x.avain===(n.vanne||"vakio");
+    const el=document.createElement("button");
+    el.className="valintarivi"+(on?" on":"");
+    el.innerHTML="<span class='vr-nimi'><b>"+x.nimi+"</b><small>"+x.ds+"</small></span>"+
+      "<span class='vr-arvot'>"+
+        "<span class='vr-luku' title='paino'>⚖️ "+(x.paino>0?"+":"")+x.paino+" kg</span>"+
+        "<span class='vr-luku' title='tyyli'>😎 "+(x.tyyli>0?"+":"")+x.tyyli+"</span>"+
+        "<span class='vr-luku' title='pito'>🛞 "+Math.round(x.pito*100)+"%</span>"+
+      "</span>"+
+      "<span class='vr-hinta'>"+(on?"käytössä":raha(x.hinta))+"</span>";
+    if(!on)el.onclick=function(){
+      if(S.raha<x.hinta){naytaTulos("EI RAHAA",x.nimi+" maksaa "+raha(x.hinta)+".","var(--punainen)");return}
+      S.raha-=x.hinta; rahaPop(-x.hinta,"vanteet");
+      n.vanne=x.avain;
+      kirjaa("Vanteiksi vaihtui <b>"+x.nimi+"</b>.","g");
+      avaaAppi("talli",true);
+    };
+    gv.appendChild(el);
+  });
+  p.appendChild(gv);
+}
+
 function pTalli(p){
 
   const a=auto();
@@ -3812,15 +4042,7 @@ function pTalli(p){
       '<span class="hi">🏭</span><span class="ht"><b>Vie korjaamolle</b>'+
       '<small>Valmis huomenna · saat sijaisauton</small></span>'+
       '<span class="hh">'+raha(korjaamoHinta2)+'</span></button>'+
-    '<button class="huoltorivi" id="renkaat">'+
-      '<span class="hi">🛞</span><span class="ht"><b>Kesärenkaat</b>'+
-      '<small>Nyt '+((nyk().renkaatTyyppi||"kesa")==="talvi"?"talvirenkaat":"kesärenkaat")+
-      ' · kunto '+Math.round(nyk().renkaat)+' %</small></span>'+
-      '<span class="hh">'+raha(280)+'</span></button>'+
-    '<button class="huoltorivi" id="talvirenkaat">'+
-      '<span class="hi">❄️</span><span class="ht"><b>Talvirenkaat</b>'+
-      '<small>'+keli().ico+' '+keli().nimi+' · pito '+Math.round(keli().pito*rengasKerroin()*100)+' %</small></span>'+
-      '<span class="hh">'+raha(420)+'</span></button>';
+    '';
   p.appendChild(g);
   const kI=$("korjaaItse"), kP=$("korjaaPaja"), kR=$("renkaat");
   if(kI)kI.onclick=function(){
@@ -3944,6 +4166,7 @@ function pTalli(p){
   }
 
   // omat tallihommat
+  pRenkaat(p);
   p.insertAdjacentHTML("beforeend","<div class='sep'></div><h2>🔨 Omat hommat "+
     "<span class='pikku'>— tee itse, ilman osakauppaa"+(S.tuplaTyo?" · pekkanen: tuplavauhti":"")+"</span></h2>");
   const gh=document.createElement("div"); gh.className="kortit osat";
@@ -4580,7 +4803,7 @@ function kuluta(){
   kulu+=K.nitroKaytetty*5;
   kulu*= (200-a.luotto)/100;
   nyk().kunto=Math.max(0,nyk().kunto-kulu);
-  if(K.sutinut)nyk().renkaat=Math.max(0,nyk().renkaat-(talvi()&&nyk().renkaatTyyppi==="talvi"?9:6));
+  if(K.sutinut)nyk().renkaat=Math.max(0,nyk().renkaat-Math.round(6*rengasTyyppi().kulu));
   return kulu;
 }
 function katsastusEsteet(){
@@ -4592,6 +4815,8 @@ function katsastusEsteet(){
   if(n.osat.nitro)esteet.push({avain:"nitro",teksti:"Nitrojärjestelmä on purettava.",korjaa:"pura"});
   if(n.osat.isopullo)esteet.push({avain:"isopullo",teksti:"Toinen nitropullo on purettava.",korjaa:"pura"});
   if(n.osat.alusta)esteet.push({avain:"alusta",teksti:"Laikkamadalletut jouset eivät kelpaa.",korjaa:"jouset"});
+  if(!rengasTyyppi().laillinen)esteet.push({avain:"renkaat",
+    teksti:rengasTyyppi().nimi+" eivät ole katukelpoisia.",korjaa:"renkaat"});
   if(n.stage>=3)esteet.push({avain:"stage",teksti:"Stage 3 -lastutus ei mene läpi.",korjaa:"stage"});
   return esteet;
 }
@@ -4687,13 +4912,20 @@ function poliisiTarkastus(syy){
   aani("poliisi");
   const a=auto(), n=nyk();
   S.pysaytykset++;
-  const kesarenkaatTalvella = talvi()&&(n.renkaatTyyppi||"kesa")!=="talvi";
+  const kesarenkaatTalvella = talvi()&&!talvirengasOk();
   if(kesarenkaatTalvella){
     const sakko2=Math.round(180+S.epailys*2);
     S.raha-=sakko2; S.sakot+=sakko2; S.huomautukset++; rahaPop(-sakko2,"rengassakko");
     kirjaa("<b class='r'>Kesarenkaat talvella.</b> Sakko "+raha(sakko2)+".","r");
     naytaTulos("\ud83d\ude94 VÄÄRÄT RENKAAT","Partio katsoi renkaat ja kirjoitti sakon <b>"+raha(sakko2)+
       "</b>.<br>Talvirenkaat ovat pakolliset marraskuusta huhtikuulle.","var(--punainen)");
+    paivitaStatit(); return "rengassakko";
+  }
+  if(!rengasTyyppi().laillinen&&Math.random()<0.6){
+    const s3=Math.round(250+S.epailys*3);
+    S.raha-=s3; S.sakot+=s3; S.huomautukset++; rahaPop(-s3,"rengassakko");
+    naytaTulos("🚔 LAITTOMAT RENKAAT","Renkaissa ei ole kuviota lainkaan. Sakko <b>"+raha(s3)+
+      "</b> ja huomautus.","var(--punainen)");
     paivitaStatit(); return "rengassakko";
   }
   const paha = n.kunto<40 || a.melu>45 || S.huomautukset>=2;
@@ -5101,6 +5333,7 @@ $("s-hylkaa").onclick=function(){
 };
 $("koti-tanko").onclick=koti;
 $("nuku").onclick=function(){ if(!K&&!QTE&&!PAKO)iltaLoppu() };
+$("ong").onclick=function(){ naytaONG() };
 $("hl-korota").onclick=function(){ korotaHuuto() };
 $("hl-poistu").onclick=function(){ suljeHuutolava(); piirra() };
 $("b-ohjeet")&&($("b-ohjeet").onclick=function(){$("ohjeet").classList.add("on")});
