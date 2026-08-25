@@ -3212,7 +3212,9 @@ const SALAKOODIT={
  "IDDQD":{nimi:"meemikokoelma",autot:["charger69","streetka","reliantrobin","trabant","multipla"],
    viesti:"Ruutu välkähtää. Pihalle ilmestyy viisi autoa joita ei pitäisi olla olemassa."},
  "OD52":{nimi:"poliisikalusto",autot:["poliisiv70","poliisisprinter","poliisipassat"],
-   viesti:"Radiopuhelin rätisee. Kolme sinivalkoista ajaa pihaan ja kuskit kävelevät pois."}
+   viesti:"Radiopuhelin rätisee. Kolme sinivalkoista ajaa pihaan ja kuskit kävelevät pois."},
+ "MOTHERLODE":{nimi:"rahalasti",raha:50000,toistuva:true,
+   viesti:"Puhelin pirahtaa: tilillesi kilahti 50 000 €. Kukaan ei kysy mistä."}
 };
 const SALAAUTOT={
  charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
@@ -3247,11 +3249,22 @@ function kokeileKoodi(teksti){
   const s=SALAKOODIT[koodi];
   if(!s)return false;
   S.koodit=S.koodit||[];
-  if(S.koodit.indexOf(koodi)>=0){
+  if(!s.toistuva&&S.koodit.indexOf(koodi)>=0){
     naytaTulos("JO KÄYTETTY","Tämä koodi on jo lunastettu.","var(--keltainen)");
     return true;
   }
-  S.koodit.push(koodi);
+  if(!s.toistuva)S.koodit.push(koodi);
+  // pelkkä rahakoodi
+  if(s.raha){
+    S.raha+=s.raha;
+    rahaPop(s.raha,"motherlode");
+    aani("taso");
+    kirjaa("<b class='v'>🔓 "+koodi+"</b> — "+raha(s.raha)+" tilille.","v");
+    naytaTulos("🔓 "+koodi, s.viesti+"<br><br><b style='font-size:26px;color:var(--vihrea)'>+"+
+      raha(s.raha)+"</b>","var(--vihrea)");
+    piirra();
+    return true;
+  }
   s.autot.forEach(function(malli){
     S.autot.push(uusiAuto(malli,92,Math.round(40000+Math.random()*90000),0));
   });
