@@ -1,0 +1,33 @@
+<!-- ================================================================
+     OUTLAW DUCKS - PIILOLINKKI ENERGIAJUOMATESTEIHIN
+     Liita tama patka paasivusi loppuun, juuri ennen </body>.
+     5 klikkausta alimpaan "Outlaw Ducks TC" -tekstiin avaa testisivun.
+     Saada TARGET-polku vastaamaan kansiosi sijaintia.
+     ================================================================ -->
+<script>
+(function(){
+  var TARGET = "energiatestit/index.html";   // tai "/energiatestit/" jos kansio on juuressa
+  var NEEDED = 5, WINDOW_MS = 1500;
+  function findEl(){
+    var all = document.body.getElementsByTagName("*"), match = null;
+    for (var i=0;i<all.length;i++){
+      var e = all[i];
+      if (e.children.length === 0){
+        var t = (e.textContent||"").replace(/\s+/g," ").trim();
+        if (/outlaw ducks tc/i.test(t)) match = e;   // viimeinen osuma = alin
+      }
+    }
+    return match;
+  }
+  document.addEventListener("DOMContentLoaded", function(){
+    var el = findEl();
+    if (!el) return;
+    var n = 0, timer = null;
+    el.addEventListener("click", function(){
+      n++; clearTimeout(timer);
+      timer = setTimeout(function(){ n = 0; }, WINDOW_MS);
+      if (n >= NEEDED){ n = 0; window.location.href = TARGET; }
+    });
+  }, false);
+})();
+</script>

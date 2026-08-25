@@ -1,0 +1,6 @@
+KUVAT-KANSIO — testikertojen valokuvat
+========================================
+Pudota valokuvat tahan kansioon (nimea vapaasti, esim. 21-8-2026-1.jpg).
+Liita tiedostonimet sovelluksessa testin "Muokkaa" -lomakkeen
+"Testikuvat"-kenttaan (pilkulla eroteltuna).
+Ne nakyvat testin alla ja avautuvat isoksi klikkaamalla.

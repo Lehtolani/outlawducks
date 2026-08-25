@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Energialabra — Energiajuomatestit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#140b22;--bg2:#1a1030;--panel:#211641;--panel2:#2a1c52;--panel3:#352561;
+    --text:#f3eeff;--muted:#a99fc7;--line:rgba(255,255,255,.10);
+    --lime:#b6ff3a;--cyan:#3ae1ff;--pink:#ff3d8b;--amber:#ffb02e;--violet:#9b6bff;
+    --shadow:0 20px 50px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--text);font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(900px 500px at 88% -8%,rgba(58,225,255,.10),transparent 60%),
+      radial-gradient(800px 500px at -5% 8%,rgba(255,61,139,.10),transparent 58%),
+      radial-gradient(700px 600px at 50% 120%,rgba(182,255,58,.07),transparent 60%),var(--bg)}
+  ::selection{background:var(--cyan);color:#0a0a16}
+
+  header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(20,11,34,.97),rgba(20,11,34,.82));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar{max-width:1120px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+  .bolt{width:38px;height:38px;flex:0 0 auto;border-radius:11px;display:grid;place-items:center;
+    background:conic-gradient(from 200deg,var(--cyan),var(--lime),var(--amber),var(--pink),var(--violet),var(--cyan));box-shadow:0 6px 18px rgba(155,107,255,.4)}
+  .bolt svg{width:21px;height:21px;color:#140b22}
+  .brand h1{font-family:"Unbounded";font-weight:800;font-size:18px;letter-spacing:-.5px;margin:0;line-height:1;
+    background:linear-gradient(90deg,var(--cyan),var(--lime) 38%,var(--amber) 66%,var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .brand small{display:block;font-weight:500;letter-spacing:2px;font-size:9.5px;text-transform:uppercase;color:var(--muted);margin-top:5px}
+  .stats{display:flex;gap:16px}
+  .stat{text-align:right;line-height:1}
+  .stat .n{font-family:"Unbounded";font-weight:700;font-size:19px}
+  .stat:nth-child(1) .n{color:var(--cyan)}.stat:nth-child(2) .n{color:var(--lime)}.stat:nth-child(3) .n{color:var(--amber)}
+  .stat .l{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:5px}
+  button,.btn{font-family:"Space Grotesk";cursor:pointer;border:none;border-radius:10px;font-weight:600;font-size:12.5px;letter-spacing:.3px;padding:9px 13px;display:inline-flex;align-items:center;gap:7px;transition:.16s;color:var(--text)}
+  .tools{display:flex;gap:8px;flex-wrap:wrap}
+  .btn-ghost{background:var(--panel2);border:1px solid var(--line)}
+  .btn-ghost:hover{background:var(--panel3)}
+  .btn-dice{background:linear-gradient(95deg,var(--pink),var(--violet));color:#fff;font-weight:700}
+  .btn-dice:hover{transform:translateY(-1px);filter:brightness(1.06)}
+  .btn-go{background:linear-gradient(95deg,var(--cyan),var(--lime));color:#0c1206;font-weight:700;box-shadow:0 6px 16px rgba(58,225,255,.3)}
+  .btn-go:hover{transform:translateY(-1px);filter:brightness(1.06)}
+  .btn svg{width:15px;height:15px}
+
+  .tabs{max-width:1120px;margin:0 auto;padding:14px 18px 0;display:flex;gap:6px}
+  .tab{background:transparent;border-radius:11px 11px 0 0;color:var(--muted);font-weight:700;font-size:14px;padding:11px 18px;position:relative}
+  .tab.active{color:var(--text);background:var(--panel)}
+  .tab.active::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--lime),var(--amber),var(--pink))}
+
+  .controls{max-width:1120px;margin:0 auto;padding:16px 18px 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .search{flex:1;min-width:200px;position:relative}
+  .search input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);font-family:"Space Grotesk";font-size:15px;padding:11px 14px 11px 40px;outline:none}
+  .search input:focus{border-color:var(--violet)}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted)}
+  select{background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);font-family:"Space Grotesk";font-weight:500;font-size:13px;padding:11px 12px;outline:none}
+  .hide{display:none!important}
+
+  .chips{max-width:1120px;margin:0 auto;padding:8px 18px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:30px;font-weight:600;font-size:12px;padding:7px 13px;color:var(--muted)}
+  .chip:hover{color:var(--text)}
+  .chip.on{background:var(--violet);color:#fff;border-color:transparent}
+  .chip[data-f="__win__"].on{background:var(--amber);color:#241500}
+  .chip.clear{color:var(--pink);border-color:rgba(255,61,139,.4)}
+  .chips-label{font-weight:700;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);align-self:center;margin-right:2px}
+  .brand-chip b{font-weight:700;font-size:10.5px;margin-left:6px;background:rgba(255,255,255,.14);border-radius:30px;padding:1px 7px;color:var(--text)}
+  .brand-chip.on b{background:rgba(0,0,0,.22);color:#fff}
+  .chip.more{color:var(--cyan);border-color:rgba(58,225,255,.4)}
+
+  main{max-width:1120px;margin:0 auto;padding:14px 18px 80px}
+  .note-banner{background:linear-gradient(90deg,rgba(155,107,255,.14),rgba(58,225,255,.05));border:1px solid var(--line);border-left:3px solid var(--violet);border-radius:12px;padding:12px 15px;margin:10px 0 20px;font-size:13.5px;color:var(--muted)}
+  .note-banner b{color:var(--text)}
+
+  .session{background:var(--panel);border:1px solid var(--line);border-radius:18px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .s-head{padding:16px 18px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;background:linear-gradient(180deg,var(--panel2),transparent)}
+  .s-idx{font-family:"Unbounded";font-weight:700;font-size:13px;background:linear-gradient(180deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-top:3px;min-width:30px}
+  .s-main{flex:1;min-width:0}
+  .s-date{font-weight:600;letter-spacing:2px;font-size:10px;text-transform:uppercase;color:var(--muted)}
+  .s-title{font-family:"Unbounded";font-weight:700;font-size:17px;letter-spacing:-.4px;margin:4px 0 7px;line-height:1.15}
+  .s-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .pill{font-weight:600;font-size:10.5px;letter-spacing:.5px;padding:4px 9px;border-radius:30px;border:1px solid var(--line);color:var(--muted)}
+  .pill.win{border-color:var(--amber);color:var(--amber);background:rgba(255,176,46,.1)}
+  .pill.uncertain{border-color:var(--pink);color:#ff8ab5;background:rgba(255,61,139,.08)}
+  .s-toolbtns{display:flex;gap:5px;align-items:center}
+  .icon-btn{background:transparent;border-radius:9px;padding:7px;color:var(--muted)}
+  .icon-btn:hover{background:var(--panel3);color:var(--text)}
+  .chev{transition:transform .25s;color:var(--violet);width:20px;height:20px}
+  .session.open .chev{transform:rotate(180deg)}
+  .s-body{display:none;padding:6px 14px 14px;border-top:1px solid var(--line)}
+  .session.open .s-body{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+  .drink{display:grid;grid-template-columns:24px 1fr;gap:12px;padding:14px 4px;border-bottom:1px dashed rgba(255,255,255,.08)}
+  .drink:last-child{border-bottom:none}
+  .rank{font-family:"Unbounded";font-weight:700;font-size:14px;color:var(--muted);text-align:center;padding-top:2px}
+  .drink.win .rank{color:var(--amber)}
+
+  /* drink body */
+  .f-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:9px}
+  .thumb{border-radius:7px;flex:0 0 auto;display:grid;place-items:center;font-weight:800;color:#140b22;overflow:hidden;position:relative;line-height:1;font-family:"Space Grotesk";box-shadow:0 3px 10px rgba(0,0,0,.35)}
+  .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .thumb .mono{position:relative;z-index:0}
+  .thumb.hasimg{cursor:zoom-in}
+  .thumb.hasimg .mono{display:none}
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:90;padding:20px;cursor:zoom-out}
+  .lightbox.show{display:flex}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  .s-gallery{display:flex;gap:8px;flex-wrap:wrap;padding:8px 4px 2px}
+  .s-gallery img{width:70px;height:70px;object-fit:cover;border-radius:10px;cursor:zoom-in;border:1px solid var(--line)}
+  .info-toggle{background:var(--panel2);border:1px solid var(--line);border-radius:30px;color:var(--muted);font-weight:600;font-size:12.5px;padding:8px 14px;margin:8px 0 4px}
+  .info-toggle:hover{color:var(--text)}
+  .rescount{font-family:"Oswald","Space Grotesk";font-weight:600;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:2px 2px 12px}
+  .f-id{flex:1;min-width:0}
+  .f-brand{font-weight:700;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan)}
+  .f-name{font-family:"Unbounded";font-weight:700;font-size:16px;letter-spacing:-.4px;line-height:1.15;margin-top:3px}
+  .f-name .stamp{color:var(--amber)}
+  .f-score{font-family:"Unbounded";font-weight:700;font-size:20px;line-height:1;text-align:right;white-space:nowrap}
+  .f-score small{font-family:"Space Grotesk";font-weight:500;font-size:11px;color:var(--muted)}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 9px}
+  .tag{font-weight:600;font-size:10px;letter-spacing:.4px;padding:3px 9px;border-radius:30px;background:var(--panel3);color:var(--text)}
+  .texts{margin:0 0 10px;font-size:13.5px;color:var(--muted)}
+  .tx{margin-bottom:3px}
+  .tx span{font-weight:700;color:var(--text);text-transform:uppercase;font-size:10px;letter-spacing:1px;margin-right:6px}
+
+  table.score{border-collapse:collapse;margin:2px 0 11px;font-size:13px}
+  table.score th,table.score td{padding:3px 12px 3px 0;text-align:left}
+  table.score th{font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+  table.score th:nth-child(2){color:var(--cyan)}table.score th:nth-child(3){color:var(--pink)}
+  table.score td.c{font-weight:700;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+  table.score td.a{color:var(--lime);font-weight:700}
+  table.score td{font-variant-numeric:tabular-nums}
+
+  .gauge{display:flex;align-items:center;gap:10px;margin-top:2px}
+  .gtrack{flex:1;height:8px;background:var(--panel3);border-radius:30px;overflow:hidden}
+  .gfill{height:100%;border-radius:30px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .fcard.win{border-color:rgba(255,176,46,.4)}
+  .f-foot{margin-top:auto;padding-top:11px;border-top:1px solid var(--line);display:flex;align-items:center;gap:8px}
+  .f-from{flex:1;font-size:11px;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .empty{text-align:center;padding:70px 20px;color:var(--muted)}
+  .empty .bolt{width:62px;height:62px;margin:0 auto 16px;border-radius:18px}
+  .empty .bolt svg{width:32px;height:32px}
+  .empty h2{font-family:"Unbounded";color:var(--text);font-weight:700}
+
+  .overlay{position:fixed;inset:0;background:rgba(8,5,16,.72);backdrop-filter:blur(4px);z-index:60;display:none;align-items:flex-start;justify-content:center;padding:22px 14px;overflow:auto}
+  .overlay.show{display:flex}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:18px;width:100%;max-width:660px;box-shadow:var(--shadow);margin:auto}
+  .m-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px}
+  .m-head h2{font-family:"Unbounded";font-weight:700;font-size:17px;margin:0;flex:1}
+  .m-body{padding:18px 20px}
+  label{display:block;font-weight:600;letter-spacing:1px;font-size:10.5px;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  input[type=text],input[type=number],textarea,.m-body select{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:"Space Grotesk";font-size:14.5px;padding:10px 12px;outline:none}
+  input:focus,textarea:focus,.m-body select:focus{border-color:var(--violet)}
+  textarea{resize:vertical;min-height:44px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .row>div{flex:1;min-width:120px}
+  .de-row{margin-bottom:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .de-row .de-head{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .de-row .de-head input{flex:1}
+  .de-sub{font-size:11px;color:var(--muted);margin:8px 0 4px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .stbl{width:100%;border-collapse:collapse;margin-bottom:6px}
+  .stbl th{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:2px 4px;text-align:center}
+  .stbl th:nth-child(2){color:var(--cyan)}.stbl th:nth-child(3){color:var(--pink)}
+  .stbl td{padding:2px 4px}
+  .stbl td.lab{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  .stbl input{width:100%;text-align:center;padding:6px 2px;font-size:13px}
+  .de-tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+  .tchip{background:var(--panel3);border:1px solid var(--line);border-radius:30px;font-size:11px;font-weight:600;padding:5px 11px;color:var(--muted);cursor:pointer}
+  .tchip.on{background:var(--violet);color:#fff;border-color:transparent}
+  .imgrow{display:flex;gap:8px;align-items:center;margin-top:9px}
+  .imgrow .de-img{flex:1}
+  .imgrow .de-up{font-size:12px;padding:8px 11px;white-space:nowrap}
+  .de-foot{display:flex;gap:14px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .chk{display:flex;align-items:center;gap:7px;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--text);cursor:pointer;margin:0}
+  .chk input{width:16px;height:16px;accent-color:var(--amber)}
+  .de-rm{margin-left:auto;color:var(--pink)}
+  .small-add{background:transparent;border:1px dashed var(--violet);color:var(--violet);width:100%;justify-content:center;margin-top:4px}
+  .small-add:hover{background:rgba(155,107,255,.1)}
+  .m-foot{padding:16px 20px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel3);border:1px solid var(--violet);color:var(--text);font-weight:600;padding:12px 20px;border-radius:30px;box-shadow:var(--shadow);opacity:0;transition:.3s;z-index:80;pointer-events:none;font-size:13px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer{max-width:1120px;margin:0 auto;padding:0 18px 40px;color:var(--muted);font-size:12px;text-align:center;font-weight:500;letter-spacing:.5px}
+  .foot-actions{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+  @media(max-width:640px){
+    body{font-size:15px}
+    .bar{padding:11px 13px;gap:10px}
+    .brand h1{font-size:15px}.brand small{font-size:9px;letter-spacing:1.4px}
+    .bolt{width:34px;height:34px}
+    .stats{display:none}
+    .tools{gap:9px}
+    .tools button{width:47px;height:47px;padding:0;justify-content:center;border-radius:14px}
+    .tools button svg{width:21px;height:21px}
+    .tools .lbl{display:none}
+    .tabs{padding:12px 12px 0;gap:8px}
+    .tab{flex:1;text-align:center;font-size:15px;padding:14px 4px;border-radius:13px 13px 0 0}
+    .controls{padding:14px 13px 4px;gap:9px}
+    .search{min-width:100%}
+    .search input{font-size:16px;padding:14px 14px 14px 42px;border-radius:14px}
+    #sortSessions,#sortDrinks{flex:1;font-size:14px;padding:14px 12px}
+    .chips{padding:10px 13px 3px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .chips::-webkit-scrollbar{display:none}
+    .chip{flex:0 0 auto;font-size:13.5px;padding:10px 15px}
+    .chips-label{flex:0 0 auto}
+    main{padding:12px 13px 90px}
+    .note-banner{font-size:12.5px;padding:12px 13px;margin:8px 0 16px}
+    .session{border-radius:15px;margin-bottom:14px}
+    .s-head{padding:15px 14px;gap:11px}
+    .s-idx{min-width:24px}
+    .s-title{font-size:18px}
+    .pill{font-size:11px;padding:5px 10px}
+    .icon-btn{padding:10px}
+    .drink{grid-template-columns:22px 1fr;gap:10px;padding:17px 2px}
+    .f-name{font-size:17.5px}
+    .f-brand{font-size:11px;letter-spacing:1.2px}
+    .f-score{font-size:23px}
+    .f-score small{font-size:12px}
+    table.score{font-size:14.5px}
+    table.score th,table.score td{padding:5px 15px 5px 0}
+    .texts{font-size:14px}
+    .tag{font-size:11px;padding:4px 10px}
+    .gtrack{height:9px}
+    .grid{gap:13px}
+    .fcard{padding:16px;border-radius:16px}
+    .foot-actions button{flex:1;justify-content:center;height:46px}
+    /* full-screen modal on phones */
+    .overlay{padding:0;align-items:stretch}
+    .modal{max-width:100%;min-height:100dvh;border-radius:0;margin:0;display:flex;flex-direction:column}
+    .m-head{position:sticky;top:0;background:var(--panel);z-index:2;padding:16px 16px}
+    .m-body{flex:1;overflow:auto;padding:16px}
+    .m-foot{position:sticky;bottom:0;background:var(--panel);padding:14px 16px}
+    .m-foot button{flex:1;justify-content:center;height:50px;font-size:15px}
+    .de-row{padding:13px}
+    .stbl input{padding:10px 2px;font-size:16px}
+    .tchip{font-size:12.5px;padding:8px 13px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <div class="bolt"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
+      <div><h1>ENERGIALABRA</h1><small>Tipi · Tomi · Visa — ulkonäkö / haju / maku</small></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="stSessions">0</div><div class="l">Sessiota</div></div>
+      <div class="stat"><div class="n" id="stDrinks">0</div><div class="l">Juomaa</div></div>
+      <div class="stat"><div class="n" id="stTop">—</div><div class="l">Paras</div></div>
+    </div>
+    <div class="tools">
+      <button class="btn-dice" id="btnRandom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg><span class="lbl">Random</span></button>
+      <button class="btn-go" id="btnAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">Lisää testi</span></button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" id="tabSessions">Sessiot</button>
+    <button class="tab" id="tabDrinks">Kaikki juomat</button>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+    <input id="search" type="text" placeholder="Hae juomaa, brändiä tai makua…"></div>
+  <select id="sortSessions"><option value="date">Uusin ensin</option><option value="dateAsc">Vanhin ensin</option><option value="best">Paras juoma ensin</option></select>
+  <select id="sortDrinks" class="hide"><option value="score">Pisteet ylhäältä</option><option value="name">Nimi A–Ö</option><option value="brand">Brändi</option></select>
+</div>
+<div class="chips hide" id="chips"></div>
+<div class="chips hide" id="brandChips"></div>
+
+<main>
+  <button class="info-toggle" id="infoToggle">ⓘ Miten pisteet lasketaan?</button>
+  <div class="note-banner hide" id="banner">
+    <b>Pisteytys vihkotyyliin:</b> ulkonäkö, haju ja maku — jokainen 0–5 per testaaja. Kokonaispisteet = <b>summa</b> (2 testaajaa → /30, 3 testaajaa → /45).
+    Mittarin väri: <span style="color:var(--pink)">heikko</span> → <span style="color:var(--amber)">ok</span> → <span style="color:var(--lime)">hyvä</span> → <span style="color:var(--cyan)">huippu</span>. Epävarmat kohdat: <span class="pill uncertain" style="display:inline-block">tarkista</span>.
+  </div>
+  <div id="list"></div>
+  <div class="rescount hide" id="rescount"></div>
+  <div class="grid hide" id="gridList"></div>
+  <div class="empty hide" id="empty"><div class="bolt"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><h2>Ei osumia</h2><p>Kokeile toista hakua tai suodatinta.</p></div>
+</main>
+<footer>
+  <div class="foot-actions">
+    <button class="btn-ghost" id="btnImport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Tuo JSON</button>
+    <button class="btn-ghost" id="btnExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17V5m0 0l-4 4m4-4l4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Vie JSON</button>
+  </div>
+  ENERGIALABRA · maistelurekisteri
+</footer>
+
+<!-- edit modal -->
+<div class="overlay" id="overlay"><div class="modal">
+  <div class="m-head"><div class="bolt" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><h2 id="mTitle">Lisää testi</h2><button class="icon-btn" id="mClose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="m-body">
+    <div class="row"><div style="flex:2"><label>Session otsikko</label><input id="fTitle" type="text" placeholder="esim. Sokerittomien testi"></div><div><label>Päivä</label><input id="fDate" type="text" placeholder="5.7.2026"></div></div>
+    <div class="row"><div style="flex:2"><label>Voittaja / paras maku</label><input id="fWinner" type="text" placeholder="esim. Monster Ultra Peachy Keen"></div></div>
+    <div class="row"><div><label>Testikuvat (kuvat/-kansiosta, pilkulla)</label><input id="fKuvat" type="text" placeholder="21-8-2026-1.jpg, 21-8-2026-2.jpg"></div></div>
+    <label>Juomat</label><div id="drinksEdit"></div>
+    <button class="small-add" id="addDrink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Lisää juoma</button>
+  </div>
+  <div class="m-foot"><button class="btn-ghost" id="mCancel">Peruuta</button><button class="btn-go" id="mSave">Tallenna</button></div>
+</div></div>
+
+<!-- info / random modal -->
+<div class="overlay" id="infoOverlay"><div class="modal">
+  <div class="m-head"><div class="bolt" style="width:24px;height:24px;border-radius:7px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div><h2>Satunnainen juoma</h2><button class="icon-btn" id="iClose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="m-body" id="infoContent"></div>
+  <div class="m-foot"><button class="btn-dice" id="iAgain"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>Random uudelleen</button></div>
+</div></div>
+
+<input type="file" id="fileInput" accept="application/json" style="display:none">
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY="energialabra_v5";
+let memFallback=null;
+function canLS(){try{localStorage.setItem("__t","1");localStorage.removeItem("__t");return true}catch(e){return false}}
+const HAS_LS=canLS();
+function load(){try{const r=HAS_LS?localStorage.getItem(KEY):memFallback;if(r)return JSON.parse(r)}catch(e){}return null}
+function save(){const r=JSON.stringify(state.sessions);if(HAS_LS){try{localStorage.setItem(KEY,r)}catch(e){memFallback=r}}else memFallback=r}
+
+/* score object form: s={un:{tipi,tomi,visa},haju:{...},maku:{...}} ; legacy: total+note */
+const TK=["tipi","tomi","visa"],TLAB={tipi:"Tipi",tomi:"Tomi",visa:"Visa"};
+const CATS=[["un","Ulkonäkö"],["haju","Haju"],["maku","Maku"]];
+
+const SEED=[
+ /* ---------- newest sessions ---------- */
+ {date:"21.8.2026",title:"6 juomaa — Prisman parkkipaikka",winner:"",note:"Kesätauon jälkeen haasteita — juomat eivät päästäneet helpolla.",drinks:[
+   {name:"Toxic Waste Cherry",brand:"Toxic Waste",un:"Tummaa kirsikkaa",haju:"Haju vahva ja täysin aito",analyysi:"Nautiskelujuoma, juotava ehdottomasti kylmänä. Toimitti! Kirpeä mutta erittäin kirsikkainen, valitettavasti limaava. Erityismaininta tölkin kannen kuvioinnista. Tätä voi juoda vain kahdesti vuodessa.",tags:["Marjaisa","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:4.25,tomi:4.25}}},
+   {name:"Red Bull Gusto Dragonfruit",brand:"Red Bull",un:"",haju:"HETI lasten hammastahna, läheltä hajuvesi / käsienpesuaine ja lohikäärmehedelmä. Tainnuttava makeus hajussa.",analyysi:"Antilimaava. Maku lohikäärmehedelmäinen ja hedelmäinen yleensäkin. Ei tuntunut siltä että tätä pitäisi juoda — kuin käsissä olisi haissut Palmolive.",tags:["Hedelmäinen","Trooppinen","Makea"],s:{un:{tipi:5,tomi:5},haju:{tipi:3.25,tomi:3.75},maku:{tipi:3.5,tomi:4}}},
+   {name:"Sihi Energy",brand:"Sihi",un:"",haju:"Lähes hajuton, lievä perus ES",analyysi:"Limaava. Makean ja hapokkuuden tasapaino ja vaihtelu, hieman ehtoollisviinimäinen. Todella kirpeä joten raikas. Karpalo/punaherukka tässä järjestyksessä — mutta ei silti kumpikaan. (Keskisen kyläkauppa)",tags:["Marjaisa","Perusmaku"],s:{un:{tipi:4,tomi:4},haju:{tipi:2.5,tomi:2.5},maku:{tipi:4.25,tomi:4}}},
+   {name:"Playboy Lovely Melons",brand:"Playboy",un:"Kirkasta, ei ehkä sovi melonille. Jännän vaahtoavaa. Tätä ei ole syytä juoda.",haju:"Vesimelonipurkkamainen, mutta vaikea hahmottaa",analyysi:"Haemme vesimelonin makua, ilmoitamme kun löytyy. Makeutta jää ympäri suuta (makeutusaineet?). Limaava. Vesimelonia ei löydetty ahkerasta etsinnästä huolimatta. Tosi turha juoma.",tags:["Hedelmäinen","Makea"],s:{un:{tipi:3.5,tomi:4},haju:{tipi:4,tomi:4},maku:{tipi:2,tomi:2}}},
+   {name:"Playboy Razz Bunny",brand:"Playboy",un:"",haju:"Natsaa juuri vadelmaan kuten pitääkin! Raikas, pirskahteleva.",analyysi:"Vadelmainen, mutta toisaalta vain hapotettu sininen Trip-mehu. Jäätävän makea loppumaku, jättää vahvan sokerin suuhun (makeutusaineet?). Ylimakea — tuli melkein hiki. (Makupisteet jäi kirjaamatta.)",uncertain:true,tags:["Marjaisa","Makea"],s:{un:{tipi:3.5,tomi:4},haju:{tipi:4.5,tomi:5}}},
+   {name:"Bad Dog",brand:"Bad Dog",un:"",haju:"Ensin hunaja, sitten ylimakean hunajainen haju. Epäraikas, tunkkainen.",analyysi:"Vähän kuin vetinen, mutta ei. Hunaja maistuu, ei lyhytmakuinen. Limaava — kuin suota joisi kun happea ei saa limalta. Ruton makea.",tags:["Makea"],s:{un:{tipi:3,tomi:3},haju:{tipi:3,tomi:2.5},maku:{tipi:3,tomi:2.5}}},
+ ]},
+ {date:"",title:"5 juomaa — Teho-uutuudet ym.",winner:"",drinks:[
+   {name:"Teho Hullu Kallo",brand:"Teho",un:"Oikea väri (vadelma-lakupääkallo)",haju:"Hyvä, mietohko haju",analyysi:"Limaava, hyvää — mutta tarvitsisi lisää lakun makua.",tags:["Marjaisa","Makea"],s:{un:{tipi:5,tomi:5},haju:{tipi:4.5,tomi:4},maku:{tipi:4,tomi:4}}},
+   {name:"Teho Kostea Kesä",brand:"Teho",un:"Oikea väri",haju:"",analyysi:"Fun light.",tags:["Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:4.5,tomi:4.5},maku:{tipi:3,tomi:3}}},
+   {name:"Kabisa Original",brand:"Kabisa",un:"ES-väri",haju:"Makea ES, hunajainen",analyysi:"Tosi hyvä, aivan hyvä.",tags:["Perusmaku","Makea"],s:{un:{tipi:3,tomi:3},haju:{tipi:3.5,tomi:3.5},maku:{tipi:3,tomi:3}}},
+   {name:"Megawatt",brand:"Megawatt",un:"ES-väri",haju:"ES",analyysi:"ES, ruokajuoma, limaava.",tags:["Perusmaku"],s:{un:{tipi:3,tomi:3},haju:{tipi:3,tomi:3},maku:{tipi:2.5,tomi:2.5}}},
+   {name:"Monster Viking Berry (2. testi — HYLÄTTY)",brand:"Monster",un:"Vähän väärä väri",haju:"",analyysi:"TESTI HYLÄTTY. Tuotteen toinen testikerta — reseptiikkaa oli muutettu, joten tuote oli eri kuin viimeksi. Vakuutuimme asiasta ja jätimme arvostelun kesken.",uncertain:true,tags:["Marjaisa","Hedelmäinen"],s:{un:{tipi:4,tomi:3.5},haju:{tipi:5,tomi:5}}},
+ ]},
+ {date:"",title:"6 sokerillista + 2 sokeritonta",winner:"HELLo Black Cherry",note:"Voittaja 'Cherry Black' = HELLo Black Cherry.",drinks:[
+   {name:"HELLo Black Cherry",brand:"HELLo",un:"Oikea UN",haju:"Kirsikka",analyysi:"Maku todella hyvä, vahva kirsikka, ei-limaava, jälkimaku löytyy, nautiskelujuoma — iso tölkki kestää pitkään!",win:true,tags:["Marjaisa","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:4.5,tomi:5}}},
+   {name:"Red Bull Lilac Edition Wildflower & Pink Grapefruit",brand:"Red Bull",un:"",haju:"Greippi",analyysi:"Oma juttunsa, nautiskelujuoma, täyteläinen, poikkeuksellinen.",tags:["Sitrus","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:4.5,tomi:4.5},maku:{tipi:4.5,tomi:4.5}}},
+   {name:"ES Sugar Free Watermelon",brand:"ES",un:"Oikea väri",haju:"Vesimelonikarkki",analyysi:"Vesimelonikarkki, sokerittomuuden maistaa mutta vahva maku.",tags:["Sokeriton","Hedelmäinen","Ostaisin (O)"],s:{un:{tipi:5,tomi:5},haju:{tipi:4.5,tomi:4.5},maku:{tipi:4,tomi:4}}},
+   {name:"Red Bull White Peach",brand:"Red Bull",un:"Oikea väri = ei väriä",haju:"Oikea kai",analyysi:"Melkein sokerittoman makuista, limaava, raikas, lyhyt maku, persikkainen. Nautiskelujuoma.",tags:["Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:3.5,tomi:3.5}}},
+   {name:"ES Sugar Free Cactus-Lime",brand:"ES",un:"Oikea väri",haju:"Vähän lime, esanssinen",analyysi:"Maku tosi mauton, limeisä, limaava.",tags:["Sokeriton","Sitrus"],s:{un:{tipi:5,tomi:5},haju:{tipi:3.5,tomi:3.5},maku:{tipi:2,tomi:2.5}}},
+   {name:"HELLo Red Grape",brand:"HELLo",un:"UN oikea",haju:"Saapas / teollisuusmansikka",analyysi:"ES / hammastahna / liima / viini. Huono jälkimaku.",tags:["Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:2,tomi:2},maku:{tipi:3,tomi:3}}},
+   {name:"HELLo Peach-Lemon",brand:"HELLo",un:"Liian tumma UN",haju:"Tosi epäonnistunut — haisee ESsälle",analyysi:"Maistuu ESsälle, limaava, petti. Voisin ostaa ESsänä.",tags:["Hedelmäinen","Sitrus","Perusmaku"],s:{un:{tipi:4,tomi:4},haju:{tipi:2,tomi:2},maku:{tipi:3.5,tomi:3.5}}},
+   {name:"HELLo Strong Apple",brand:"HELLo",un:"Väri omena (ES)",haju:"ES-sukka",analyysi:"ES-omena.",tags:["Hedelmäinen","Perusmaku"],s:{un:{tipi:5,tomi:5},haju:{tipi:1.5,tomi:1.5},maku:{tipi:3,tomi:2.5}}},
+ ]},
+ {date:"",title:"6 energiajuomaa — voittaja Rockstar Mango",winner:"Rockstar Mango",drinks:[
+   {name:"Rockstar Mango",brand:"Rockstar",un:"Oikea väri",haju:"Mangosose, mansikkahillo",analyysi:"",win:true,tags:["Trooppinen","Hedelmäinen","Marjaisa"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:4.25,tomi:5}}},
+   {name:"Monster Super Dry Nitro",brand:"Monster",un:"Oikea väri",haju:"Mandariini, greippi — hyvä haju",analyysi:"",tags:["Sitrus","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:4,tomi:4}}},
+   {name:"Rockstar Tropical Guava",brand:"Rockstar",un:"Oikea väri",haju:"Hyvä haju",analyysi:"Maku ehkä guava, limaava.",tags:["Trooppinen","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:3.5,tomi:4}}},
+   {name:"Monster Cosmic Peach Nitro",brand:"Monster",un:"",haju:"",analyysi:"Limaava.",tags:["Hedelmäinen"],s:{un:{tipi:4.5,tomi:5},haju:{tipi:4.5,tomi:5},maku:{tipi:3,tomi:3.5}}},
+   {name:"X Energy Drink",brand:"X",un:"Perusväri",haju:"Hyvä perus ES-tuoksu",analyysi:"Ruokajuoma, tosi makea. Vähän turha ehkä.",tags:["Perusmaku","Makea"],s:{un:{tipi:2.5,tomi:2.5},haju:{tipi:3.5,tomi:3.5},maku:{tipi:2,tomi:2}}},
+   {name:"W Blueberry Charge",brand:"W",un:"Väritön",haju:"Feikki vanilja",analyysi:"Hapokas, vetinen, pillimehu, suu kuivuu.",tags:["Sokeriton","Marjaisa"],s:{un:{tipi:2.5,tomi:2.5},haju:{tipi:3,tomi:3},maku:{tipi:1.75,tomi:1.75}}},
+ ]},
+ {date:"5.7.2026 klo 01",title:"Sokeriton yötesti — Prisman parkkipaikka",winner:"",note:"Testattiin 7 juomaa (paluu Suviksesta); näistä 4 kirjattu.",drinks:[
+   {name:"Funky Monkey Green Apple",brand:"Funky Monkey",un:"Väri oikea",haju:"Kirpeä vihreä omena, lasten vihreä pillimehu. Haju ei ole vahva.",analyysi:"Semi lyhyt. Maistuu tosi oikealta, ei liian kirpeä mutta limaava. Sokerittomuus kuuluu (omena ei ole sokerinen). Alkumaku laimea, jälkimaku heittää omenan pintaan ja on parempi. Kesäpäivän juoma.",tags:["Sokeriton","Hedelmäinen","Ostaisin (O)"],s:{un:{tipi:5,tomi:5},haju:{tipi:3.5,tomi:4},maku:{tipi:3.75,tomi:4}}},
+   {name:"Funky Monkey Strawberry Guava",brand:"Funky Monkey",un:"Juuri sitä mitä pitää",haju:"Metsämansikan haju, mutta myös guavan. Haju ei ole vahva.",analyysi:"Maku aika olematon, guava erottuu enemmän kuin mansikka. Joku jännä jouluinen (kaneli, neilikka, pomeranssinkuori, inkivääri) maku vierailee silloin tällöin. Vähän teollinen. Joku päivä voi maistua paljon paremmalta tai pahemmalta.",tags:["Sokeriton","Marjaisa","Trooppinen","Hedelmäinen","Ostaisin (O)"],s:{un:{tipi:5,tomi:5},haju:{tipi:4.5,tomi:4},maku:{tipi:3.25,tomi:4}}},
+   {name:"Maradona 10 Zero Sugar",brand:"Maradona",un:"Tylsä ES, ei kiinnosta. Keltainen 'pissa', ei vastaa tölkin ulkonäköä.",haju:"Ei lääkemäinen, makea haju, ei haise sokerittomalta.",analyysi:"Vetinen, vetinen, vetinen — ei sano mitään. Ruton vetinen jälkimaku, ei jätä mitään, suuhun jää karvas viilinki. Yrittää aluksi mutta lässähtää. Tosi limaava vaikka pikku tölkki.",tags:["Sokeriton","Perusmaku"],s:{un:{tipi:3,tomi:3},haju:{tipi:3.5,tomi:3.5},maku:{tipi:1.75,tomi:1.5}}},
+   {name:"Funky Monkey Citrus Pops",brand:"Funky Monkey",un:"Hailakka väri mutta selkeästi värjättyä. Läpinäkyvä pullo värjäytynyt keltaiseksi.",haju:"Keksin välys, valkoinen sitrustäyte — kermainen, voinen sitruuna. Tismalleen Pullavan täytteen hajuinen! Feikkihajuste, mummolan juttu, ehkä teollinen.",analyysi:"Monstermainen sokerittoman makuinen, jälkimaku kananmunainen, limaava. Röyhtäisy maistui suolakurkulta, suussa outo kelmu.",tags:["Sokeriton","Sitrus"],s:{un:{tipi:4,tomi:4.5},haju:{tipi:1,tomi:0.5},maku:{tipi:1,tomi:1}}},
+ ]},
+ {date:"",title:"Testikerta — 3 juomaa",winner:"Monster Viking Berry",drinks:[
+   {name:"Monster Viking Berry",brand:"Monster",un:"Hyvä väri, punainen",haju:"Joku haju, ei tiedetty mikä — hyvä haju",analyysi:"Hyvä, ostaisin. Monipuolinen maku, hedelmäis-marjaisa. Limaava.",win:true,tags:["Marjaisa","Hedelmäinen","Ostaisin (O)"],s:{un:{tipi:5,tomi:5},haju:{tipi:4,tomi:4},maku:{tipi:4,tomi:4}}},
+   {name:"ED Hydrated Blue Raspberry",brand:"ED",un:"Oikea väri, sininen",haju:"Hyvä tuoksu, tuore vadelma",analyysi:"Liru, suolainen, poretablettijuoma.",tags:["Marjaisa"],s:{un:{tipi:5,tomi:5},haju:{tipi:4.5,tomi:4.5},maku:{tipi:2,tomi:2}}},
+   {name:"ED Raspberry",brand:"ED",un:"Kirkasta, väärä väri",haju:"Vadelmaisehko tuoksu",analyysi:"Hiilihapotettu halpa pillimehu, limaava.",tags:["Marjaisa"],s:{un:{tipi:2,tomi:2},haju:{tipi:3,tomi:3},maku:{tipi:2.5,tomi:2.5}}},
+ ]},
+ {date:"",title:"Testikerta — 5 juomaa",winner:"Bomba Cherry",drinks:[
+   {name:"Bomba Cherry",brand:"Bomba",un:"Mustaa",analyysi:"Nautiskelujuoma.",win:true,tags:["Marjaisa","Hedelmäinen"],s:{un:{tipi:4,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:5,tomi:5}}},
+   {name:"Burn Guava",brand:"Burn",un:"Oikea väri",analyysi:"Maku hammastahna. Tosi ylimakea.",tags:["Trooppinen","Hedelmäinen","Makea"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:2.5,tomi:3}}},
+   {name:"Juissi Energy Sitruuna-Lime Sokeriton",brand:"Juissi",un:"Oikea väri",analyysi:"Limaava, kirpsäkkä. Jälkimauton eli lyhyt.",tags:["Sokeriton","Sitrus"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:2,tomi:2.5}}},
+   {name:"Juissi Energy Sekamehu",brand:"Juissi",un:"Punasta, oikea väri",haju:"Vadelma",analyysi:"Laimea maku, turha!",tags:["Marjaisa"],s:{un:{tipi:5,tomi:5},haju:{tipi:3.5,tomi:4},maku:{tipi:2.5,tomi:2.5}}},
+   {name:"Juissi Energy Vesimeloni Sokeriton",brand:"Juissi",un:"Väri oikea",haju:"Järkyttävä haju, luutu — 0!",analyysi:"Paskin paska.",tags:["Sokeriton","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:0,tomi:0},maku:{tipi:0.5,tomi:0}}},
+ ]},
+ /* ---------- new rich sessions ---------- */
+ {date:"",title:"Sokerittomien testi — 6 sokeritonta",winner:"Monster Ultra Peachy Keen (paras maku)",note:"O-leima = 'ostaisin'. Kaikki sokerittomia.",drinks:[
+   {name:"Monster Ultra Peachy Keen",brand:"Monster",un:"Hailakka väri",haju:"Tosi persikkainen",analyysi:"O-leima!",win:true,tags:["Sokeriton","Hedelmäinen","Ostaisin (O)"],s:{un:{tipi:4,tomi:3,visa:3},haju:{tipi:5,tomi:5,visa:5},maku:{tipi:4,tomi:5,visa:4.5}}},
+   {name:"Red Bull Pink Edition Sugar Free",brand:"Red Bull",un:"Oikea väri",haju:"Hyvä tuoksu, vadelma!",analyysi:"Ei maistu vadelma päämaussa.",tags:["Sokeriton","Marjaisa"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:2.75,tomi:3.75}}},
+   {name:"ED Original No Sugar",brand:"ED",un:"Perus väri",haju:"Hedelmäinen ES",analyysi:"Makea, hyvää, maistuu vain hieman sokeriton, hedelmäinen. O-leima!",tags:["Sokeriton","Hedelmäinen","Perusmaku","Ostaisin (O)"],s:{un:{tipi:3,tomi:3},haju:{tipi:3.5,tomi:4},maku:{tipi:3,tomi:3}}},
+   {name:"Red Devil Sugar Free Original",brand:"Red Devil",un:"Hyvä",haju:"Kahvin haju",analyysi:"Niin limaava ettei sanotuksi saa (faze-referenssi). Häiritsevä kahvi, vetinen. Ei O-leimaa.",tags:["Sokeriton"],s:{un:{tipi:4.5,tomi:5},haju:{tipi:2,tomi:2},maku:{tipi:1.75,tomi:2}}},
+   {name:"Monster Ultra Strawberry",brand:"Monster",un:"Väärä väri",haju:"Ei haise mansikka",analyysi:"Tosi makea, ei maistu mansikka — maistuu Fanta Exotic. Ei O-leimaa.",tags:["Sokeriton","Marjaisa","Makea"],s:{un:{tipi:3.25,tomi:3.25},haju:{tipi:3.5,tomi:3.5},maku:{tipi:2,tomi:4}}},
+   {name:"Red Bull Sugar Free",brand:"Red Bull",un:"Keltaista",haju:"ES",analyysi:"Maku sokeritonta, kirpeää. O-leima!",tags:["Sokeriton","Perusmaku","Ostaisin (O)"],s:{un:{tipi:3,tomi:3},haju:{tipi:3,tomi:3},maku:{tipi:2.5,tomi:2}}},
+ ]},
+ {date:"29.5.2025",title:"Testikerta — 5 juomaa (Tipi/Tomi/Visa)",winner:"",drinks:[
+   {name:"Battery Juiced Raspberry Lemon",brand:"Battery",analyysi:"Pirskahteleva, vie limaisuuden, raikas.",tags:["Marjaisa","Sitrus"],s:{un:{tipi:3.25,tomi:3.25,visa:3.25},haju:{tipi:4.5,tomi:4.5,visa:4.5},maku:{tipi:3.75,tomi:3,visa:5}}},
+   {name:"Arizona Watermelon",brand:"Arizona",haju:"Vahva kirsikka, suklainen, vesimeloni-esanssinen, feikki, purkkamainen — oikea vesimeloni kaukana",analyysi:"Vaatii totuttelua, paranee koko ajan, hieman vesimelonihtava, tee taustalla, liian vähän vesimelonia, hunajaisehtava jälkimaku.",tags:["Hedelmäinen","Makea"],s:{un:{tipi:5,tomi:5,visa:5},haju:{tipi:2.25,tomi:2.25,visa:2.25},maku:{tipi:3.75,tomi:3.25,visa:4.75}}},
+   {name:"Megaforce Cosmic Berry",brand:"Megaforce",analyysi:"Aivan hirveä, raikas, limaava, oksennus.",tags:["Marjaisa"],s:{un:{tipi:5,tomi:5,visa:5},haju:{tipi:3.5,tomi:4,visa:4.25},maku:{tipi:2,tomi:2,visa:2}}},
+   {name:"Thunder Energy Original",brand:"Thunder",un:"Perus ES (arvio)",haju:"Makea, normi energiajuoma",analyysi:"Maku mitäänsanomaton ja vetinen — energiajuomien Vichy, turha.",uncertain:true,tags:["Perusmaku"],s:{un:{tipi:3,tomi:3,visa:3},haju:{tipi:2.75,tomi:2.75,visa:2.75},maku:{tipi:1.5,tomi:1.5,visa:1.5}}},
+   {name:"Battery Remix 22 Pearperry",brand:"Battery",un:"Kirkas — ei voi olla hyvä kun ei sovi mihinkään",haju:"Nestemäinen Panadol, banaani, etäinen tuttifrutti-päärynä, maali",analyysi:"Etäinen päärynä, lasten pillimehu, outo maalimainen, taustalla päärynän henkäys, kirpeä.",tags:["Hedelmäinen"],s:{un:{tipi:1,tomi:1,visa:1},haju:{tipi:1.25,tomi:1,visa:2},maku:{tipi:3.75,tomi:1.5,visa:3}}},
+ ]},
+ {date:"",title:"Uusi vihko — 6 energiajuomaa",winner:"Red Bull Blueberry (kokonais) · ED Blueberry (paras maku)",drinks:[
+   {name:"Red Bull Blueberry",brand:"Red Bull",haju:"Tosi mustikkainen",analyysi:"Maku mauton, sitruksinen.",win:true,tags:["Marjaisa"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:4,tomi:4}}},
+   {name:"Battery Pink Pine",brand:"Battery",un:"Hyvä väri",haju:"Hyvä — sais haista enemmän",analyysi:"Lyhyt maku, vetinen jälkimaku, hetken hurmos.",tags:["Hedelmäinen","Trooppinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:4.5,tomi:5},maku:{tipi:4,tomi:4}}},
+   {name:"ED Blueberry",brand:"ED",un:"Sinistä, ei violettia",haju:"Teollisuusmustikan haju",analyysi:"Teollinen maku. (paras maku)",tags:["Marjaisa"],s:{un:{tipi:4.5,tomi:5},haju:{tipi:4,tomi:4},maku:{tipi:4.5,tomi:4.5}}},
+   {name:"Rockstar Tropical Guava",brand:"Rockstar",un:"Oikea väri, guavan väri",haju:"Hyvä haju, onko guava?",analyysi:"Tosi teollinen, sokerittoman tuntoinen maku.",tags:["Trooppinen","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:2.5,tomi:3.5}}},
+   {name:"Red Bull Apricot Edition",brand:"Red Bull",un:"Oikea, hyvä väri",analyysi:"Maku ylimakea, liian esanssi, nestemäistä karkkia.",tags:["Hedelmäinen","Makea"],s:{un:{tipi:4.5,tomi:4.5},haju:{tipi:4,tomi:4},maku:{tipi:3.25,tomi:3}}},
+   {name:"Jaffa Booster Vihreä Mandariini",brand:"Jaffa Booster",un:"Oikea väri",haju:"(haisteltiin, ei tiedetty)",analyysi:"Maku ruton mieto, huono kokemus.",tags:["Sitrus","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:4,tomi:4},maku:{tipi:2.5,tomi:2.5}}},
+ ]},
+ {date:"",title:"Battery Whirl -kierros",winner:"Battery Whirl",drinks:[
+   {name:"Battery Whirl",brand:"Battery",un:"Sinistä",haju:"Vadelma",analyysi:"Tosi aito kirpsakkuus, maku kuin sininen trippi, vetinen jälkimaku.",win:true,tags:["Marjaisa","Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:5,tomi:5},maku:{tipi:4,tomi:4}}},
+   {name:"Red Bull Metsämarja",brand:"Red Bull",un:"Vahva punainen",haju:"Vahva, banaanihtava, raikas, marjaisa",analyysi:"Maku vahva, raikas, esanssi, marjaisa.",tags:["Marjaisa"],s:{un:{tipi:5,tomi:5},haju:{tipi:4,tomi:4},maku:{tipi:4,tomi:4}}},
+   {name:"Teho Kesäpommi",brand:"Teho",un:"Oranssi, kuten pitää",haju:"Hailakka",analyysi:"Maku poretabletti, laimea, limaava.",tags:["Hedelmäinen"],s:{un:{tipi:5,tomi:5},haju:{tipi:4,tomi:4},maku:{tipi:3,tomi:3}}},
+ ]},
+ {date:"",title:"Monster / Red Devil / Megaforce",winner:"",drinks:[
+   {name:"Red Devil Original",brand:"Red Devil",un:"Hyvä väri",haju:"Marjaisa, vadelmainen, sekamehu",analyysi:"Maku mehumainen, potkii, kirpeä, arktinen, ankara, paha, puolukkainen, hapan, vetinen jälkimaku. + haju & ulkonäkö, − paska maku.",tags:["Marjaisa"],s:{un:{tipi:4.5,tomi:4.5},haju:{tipi:4.5,tomi:4.5},maku:{tipi:2.5,tomi:2.5}}},
+   {name:"Monster Original",brand:"Monster",haju:"Hajuton, marjaisa",analyysi:"Maku ES:mäinen mutta latteampi. + pehmeä maku, hyvä yleisjuoma, lempeä.",tags:["Marjaisa","Perusmaku"],s:{un:{tipi:4,tomi:4},haju:{tipi:3,tomi:3},maku:{tipi:4.25,tomi:4}}},
+   {name:"Monster Absolutely Zero Sugar",brand:"Monster",haju:"Hedelmäinen, sokerinen, tuore maku",analyysi:"Maku yllättävän mieto, päärynäinen, jälkimaku heikko (tarkista). + janojuoma, maukas, tuore.",uncertain:true,tags:["Sokeriton","Hedelmäinen"],s:{un:{tipi:3,tomi:2.5},haju:{tipi:4,tomi:3.5},maku:{tipi:4,tomi:4.5}}},
+   {name:"Megaforce Original",brand:"Megaforce",un:"Tuttu",haju:"ES, sokeri, kirpeä karkki, pantterikarkki",analyysi:"Maku kahvinen jälkimaku, lavea, lupaava alku, ei petä, karkki. + luotto, halpa, karkki.",tags:["Perusmaku","Makea"],s:{un:{tipi:3,tomi:3},haju:{tipi:3.5,tomi:3.5},maku:{tipi:3.25,tomi:3.25}}},
+ ]},
+ /* ---------- legacy sessions (yhdistetty pisteytys, ei kategoriaerittelyä) ---------- */
+ {date:"10.8.2016",title:"Energiajuomatestaus #1",winner:"Energia Green Flavour",drinks:[
+   {name:"Energia Wild Strawberry",total:22,note:"Oikea väri, haju kuin esanssi/hammastahna. Maku vetinen, kirpeä."},
+   {name:"Energia Green Flavour",total:24.5,win:true,note:"Vaaleanvihreä, haju omena/yrtti. Maku on sitä mitä luvataan, hieman esanssia."},
+   {name:"Red Bull Ruby Spiced Pear",total:13,note:"UN kuin ES, ei rubya. Maistuu makealle, ei juuri päärynää, hapan & makea."},
+   {name:"Red Bull Peach Edition",total:17,note:"Kirkas, ei persikkaa ulkonäössä. Haju hyvä persikka, maku laiska."},
+ ]},
+ {date:"22.6.2016",title:"Energiajuomatestaus — minilomareissu",winner:"Volt Cola",drinks:[
+   {name:"Volt Cola",total:27.5,win:true,note:"UN mustaa, haju cola, hedelmäinen. Maku suht mauton."},
+   {name:"Teho Hullu Omena",total:25.75,note:"Omenan väri, omenakarkin haju, laimea maku."},
+   {name:"Dynamit",total:17,uncertain:true,note:"Perus, maku täyteläinen kuin lasten jälkkäri. Limainen."},
+   {name:"R20",total:null,uncertain:true,note:"Perusväri & haju, kotimainen, limaava, lempeä — hyvä janojuoma."},
+   {name:"Spam",total:15,note:"Limaava, kitkerä, maku huono."},
+   {name:"Powerking",total:null,uncertain:true,note:"Perusväri, hajokas, litkua, tosi mauton."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — 5 juomaa",winner:"Monster Assault (maku)",drinks:[
+   {name:"Monster Assault",total:27,win:true,note:"Ryhmikäs musta UN, haju laimea cola. Maistuu hyvälle/kirsikalle."},
+   {name:"Red Bull Kiivi",total:23.25,note:"Hyvä vihreä ulkonäkö, haju mansikka. Maku laimea mansikkamehu."},
+   {name:"Monster Ultra",total:21,note:"Värittömän hieno väri, ei haise miltään. Maku mauton."},
+   {name:"Burn OG",total:17,note:"Haju hedelmäisempi. Maku Tomille lääkkeinen, Tipille limaava."},
+   {name:"X-Ray",total:15.25,note:"Kaikki kuin ES, hieman laadukkaampi, limaava."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — 6 juomaa",winner:"Burn Passion",drinks:[
+   {name:"Burn Passion",total:29.5,win:true,note:"Punainen kiva väri. Maku tismalleen sitä mitä pitää — tosi hyvä."},
+   {name:"Burn Apple Kiwi",total:26.75,note:"Hyvä väri mutta sininen. Haju sitä mitä pitää."},
+   {name:"Dr Pepper Energy",total:24,note:"Musta väri. Haju kirsikka, limaava, ei jälkimakua."},
+   {name:"Wolverine",total:17.5,note:"Maku laadukas ES, lievä jälkimaku, täyteläinen."},
+   {name:"Hot Brain",total:13.75,note:"Vetinen kirpeä ES, karkkinen haju, mieto."},
+   {name:"DC Royal LE",total:null,uncertain:true,note:"Väri ES, haju paha — kahvinen, hapan. Maku heikko."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — 8 juomaa",winner:"Bomba Mojito",drinks:[
+   {name:"Bomba Mojito",total:14.62,win:true,uncertain:true,note:"Kaunis vihreä väri, vahva minttutuoksu, hieman lime. Jälkimaku minttu."},
+   {name:"RB Guruba",total:12.25,uncertain:true,note:"Tumma UN, vahva makea tuoksu. Maku kirpeä, maukas/makea."},
+   {name:"Obolon Energy Drink",total:null,uncertain:true,note:"Ei kirpeä, lempeä, parempi kuin perus ES."},
+   {name:"Monster Nitro Cosmic Peach",total:null,uncertain:true,note:"Oranssi UN, herkullinen haju, mehumainen maku."},
+   {name:"Kong Strong Guava",total:null,uncertain:true,note:"Sairaan hyvä raikas tuoksu. Maku metsämarjainen, liian sokerinen."},
+   {name:"Maxx Tropical",total:11.25,uncertain:true,note:"Keltainen UN, hedelmäinen haju. Maku liian mieto."},
+   {name:"Soul Mate Ginger Lemon",total:10.75,uncertain:true,note:"Haju sitruuna/Fairy, maku mieto, laiha."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — 6 juomaa (pisteranking)",winner:"Monster Juiced Ripper",drinks:[
+   {name:"Monster Juiced Ripper",total:25.5,win:true,note:"Oikea väri, tosi hyvä haju, maku laadukas mutta laiha."},
+   {name:"Sunbeam Energy",total:24.5,note:"Haju & UN kuin ES, todella hyvä ES."},
+   {name:"Teho Red",total:24,uncertain:true,note:"Oikea väri & haju, laiha maku."},
+   {name:"MC Juiced Orange",total:23,note:"Oikea ulkonäkö, maku liian kirpeä ja sokerinen."},
+   {name:"RD Tropical Storm",total:22.5,note:"Oikea väri, hyvä hedelmäinen haju, maku tosi laiha."},
+   {name:"Golden Eagle Red",total:12,note:"Väri kuin ketsuppi, haju liima/teippi. Laimea ES."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — Red Bull Mustikka",winner:"Red Bull Mustikka",drinks:[
+   {name:"Red Bull Mustikka",total:null,win:true,uncertain:true,note:"Huippu, maukas, ei petä. Haju mustikkainen, täyteläinen. Paras maku, haju & UN."},
+   {name:"Rodeo",total:24.25,note:"Marjaisaapi & jalostetumpi ES. Marjaisuus näkyy, parempi kuin ES."},
+   {name:"ES (Euroshopper)",total:18.5,note:"Perus, limaava, makea, teollinen, hapan mehu."},
+   {name:"ES-Juiced",total:16.75,uncertain:true,note:"Perus, limaava, teollinen. Haju hunaja/karkki, teollisuusmansikka."},
+   {name:"MC (Monster, jalostettu ES)",total:16,note:"UN kuin ES, maku ES mutta pehmeämpi."},
+   {name:"Red Bull (perus)",total:null,uncertain:true,note:"Hieman liian perus, pettävä."},
+ ]},
+ {date:"",title:"Rockstar-maistelu",winner:"Rockstar Blueberry-Pomegranate-Acai (maku)",drinks:[
+   {name:"Rockstar Tropical Orange",total:28.5,note:"Oikea väri, haju jaffa. Maku jaffa mutta hyvää."},
+   {name:"Rockstar Blueberry-Pomegranate-Acai",total:27.5,win:true,note:"Hyvä puna. Haju karkin omainen, teollinen. Maku hyvä, hieman teollinen."},
+   {name:"Burn Lemon Ice",total:25.75,note:"Kirkas, väritön. Haju sprite, makea sitruuna, mieto."},
+   {name:"Rockstar Blue Raspberry",total:24.5,note:"Kiva pinkki. Haju & maku hieman lääkemäinen, outo."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — 4 juomaa",winner:"Kalashnikov",drinks:[
+   {name:"Kalashnikov",total:20,win:true,note:"Paras ES — hyvä mutta aika perus. Hapan, lääkkeinen."},
+   {name:"Move",total:18,note:"Perus UN, haju hyvä sitruuna. Maku tosi laiha, mauton."},
+   {name:"Kick Energy Drink",total:16.75,note:"UN colamainen, haju karkki-cola. Maku ärtyvä, laiha cola-litku."},
+   {name:"9mm",total:14.75,note:"Haju lääkkeinen, hajuton ES. Maku hapan."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — voittaja Mixxd",winner:"Monster Punch Mixxd",drinks:[
+   {name:"Monster Punch Mixxd",total:26.5,win:true,note:"Kirsikka. Haju voimakas kirsikka, maku kirsikka, hyvää."},
+   {name:"Jolt Cola",total:21,note:"UN cola, haju rio-cola. Maku harmaa, mauton, vetistä."},
+   {name:"Motor Oil",total:14.5,note:"Aika ES. Maku parempi kuin ES, ei niin hyvä kuin MF."},
+   {name:"Reburn Reactive (Lemon)",total:14.5,note:"UN sitruunamehu. Haju kuin lääke. Ei yhtään sitruunaa."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — 4 juomaa (ED / Euroshopper)",winner:"ED (Euroshopper Energy Drink)",drinks:[
+   {name:"ED Redberry",total:24.5,note:"Hyvä UN, reipas puna, marjaisa, karpalo. Maku pettää hajun jälkeen."},
+   {name:"ED (Euroshopper)",total:20.25,win:true,note:"Huippu ES, paras ES maultaan. Haju karkkinen, keltainen."},
+   {name:"ED Green Light",total:null,uncertain:true,note:"Hieno vihreä väri, makea. Makuvettä / Fairy."},
+   {name:"ED Lemon Light",total:null,uncertain:true,note:"Kuin ED mutta laimea. Hajuton, lievä ES, loiva."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — cola & driver",winner:"",drinks:[
+   {name:"Monster (Poltor?)",total:25,uncertain:true,note:"Kiva keltainen väri, japra haju, maistui jaffalle."},
+   {name:"MC Cola",total:24.75,note:"Oikea cola-UN, lievä colan haju, vetinen maku."},
+   {name:"Driver's Energy",total:18,note:"Perusväri ja haju, hyvä maku, laiha jälkimaku."},
+ ]},
+ {date:"",title:"Energiajuomatestaus — sekalaiset",winner:"Rio Punch Exotic",drinks:[
+   {name:"Rio Punch Exotic",total:29,win:true,uncertain:true,note:"Voittaja. Esanssinen."},
+   {name:"Strong Juice",total:26.5,uncertain:true,note:"Haju esanssinen mutta ok. Maku mieto ja esanssi."},
+   {name:"Split",total:26,uncertain:true,note:"Haju 'bubba' mysteerimaku, bubblegum. Maku mieto."},
+   {name:"RB Sour / Trollinen",total:24,uncertain:true,note:"Trollinen ananas, maku esanssinen."},
+   {name:"RB (limaava)",total:23.5,uncertain:true,note:"Hyvä tuoksu, mieto maku, vähän hapokas."},
+   {name:"Red Grapes",total:18.5,uncertain:true,note:"Hyvä väri, hammastahnan haju ja maku, ruton limaava."},
+ ]},
+ {date:"",title:"Monster / Battery -maistelu (kynäsivu)",winner:"Battery Jungled",drinks:[
+   {name:"Battery Jungled",total:null,win:true,uncertain:true,note:"Karkkinen, limaava, 'jungled'. Jälkimaku ön, ulkonäkö repus."},
+   {name:"Battery Remix",total:null,uncertain:true,note:"Kiva punainen UN, haju aito mansikka. Maku mansikkainen mutta ei aito."},
+   {name:"Rockstar",total:null,uncertain:true,note:"Maku karkkinen, laadukas ES."},
+   {name:"Teho",total:null,uncertain:true,note:"Haju ES. Maku yllättävän sitruunainen, limaava."},
+   {name:"Battery",total:null,uncertain:true,note:"Haju karkkinen ES. Hinta-laatu paska, kirpeä."},
+   {name:"Vita Nova",total:null,uncertain:true,note:"Nosti sairasta — 'kahvepaskaa'."},
+ ]},
+];
+
+/* ---- brands (ED & ES erikseen) ---- */
+const BRAND_RULES=[
+ [/^red bull|^rb\b/i,"Red Bull"],[/^red devil|^rd\b/i,"Red Devil"],[/^red grapes/i,"Red Grapes"],
+ [/^rockstar/i,"Rockstar"],[/^monster punch/i,"Monster Punch"],[/^monster|^mc\b/i,"Monster"],
+ [/^megaforce/i,"Megaforce"],[/^thunder/i,"Thunder"],[/^arizona/i,"Arizona"],[/^jaffa/i,"Jaffa Booster"],
+ [/^maradona/i,"Maradona"],[/^funky monkey/i,"Funky Monkey"],[/^juissi/i,"Juissi"],[/^hello/i,"HELLo"],
+ [/^burn/i,"Burn"],[/^battery/i,"Battery"],[/^energia/i,"Energia"],[/^bomba/i,"Bomba"],[/^kong/i,"Kong"],
+ [/^obolon|^odolon/i,"Obolon"],[/^maxx/i,"Maxx"],[/^soul mate/i,"Soul Mate"],[/^golden eagle/i,"Golden Eagle"],
+ [/^sunbeam/i,"Sunbeam"],[/^euroshopper/i,"Euroshopper"],[/^ed\b/i,"ED"],[/^es[-\s]|^es$/i,"ES"],
+ [/^kalashnikov/i,"Kalashnikov"],[/^powerking/i,"Powerking"],[/^dynamit/i,"Dynamit"],[/^motor oil/i,"Motor Oil"],
+ [/^reburn/i,"Reburn"],[/^jolt/i,"Jolt"],[/^driver/i,"Driver's"],[/^rio punch/i,"Rio Punch"],[/^dr pepper/i,"Dr Pepper"],
+ [/^dc royal/i,"DC Royal"],[/^hot brain/i,"Hot Brain"],[/^x-ray/i,"X-Ray"],[/^vita nova/i,"Vita Nova"],
+ [/^teho/i,"Teho"],[/^volt/i,"Volt"],[/^spam/i,"Spam"],[/^move/i,"Move"],[/^kick/i,"Kick"],[/^9mm/i,"9mm"],
+ [/^split/i,"Split"],[/^strong/i,"Strong"],[/^r20/i,"R20"],[/^päärynä/i,"Muu"],
+];
+function brandFromName(name){for(const[re,b]of BRAND_RULES)if(re.test((name||"").trim()))return b;return (name||"?").split(/[\s(]/)[0]}
+function getBrand(d){return d.brand||brandFromName(d.name)}
+
+/* ---- tags ---- */
+const FLAVOR_TAGS=["Marjaisa","Hedelmäinen","Sitrus","Trooppinen","Cola","Perusmaku","Makea"];
+const PROP_TAGS=["Sokeriton","Ostaisin (O)"];
+const ALL_TAGS=[...FLAVOR_TAGS,...PROP_TAGS];
+function autoTags(d){
+  const t=new Set();
+  const hay=((d.name||"")+" "+(d.note||"")+" "+(d.analyysi||"")+" "+(d.haju||"")+" "+(d.un||"")).toLowerCase();
+  if(/sugar.?free|no sugar|sokeriton|sokton|absolutely zero|zero sugar|ultra/.test(hay))t.add("Sokeriton");
+  if(/\bcola\b/.test(hay))t.add("Cola");
+  if(/marj|mansikk|mustikk|vadelm|puolukk|karpalo|berry|blueberr|raspberr|metsämarj|pomegranate|acai|redberry|pearperry|strawberry/.test(hay))t.add("Marjaisa");
+  if(/hedelm|omena|apple|persik|peach|päärynä|pear|apricot|mango|guava|guruba|tropical|pineapple|banaani|banana|vesimelon|watermelon|kiivi|kiwi|orange|mandariini|jaffa|sitr|lemon|lime|citrus|passion|exotic/.test(hay))t.add("Hedelmäinen");
+  if(/lemon|sitr|citrus|orange|mandariini|jaffa|lime/.test(hay))t.add("Sitrus");
+  if(/tropical|guava|guruba|mango|pineapple|passion|exotic|kiivi|kiwi|watermelon|vesimelon/.test(hay))t.add("Trooppinen");
+  if(/perus|original|es-mäin|es:mäin|energiajuoma|energy drink|\bes\b/.test(hay))t.add("Perusmaku");
+  if(/ylimake|makea|sokerinen|hunaja/.test(hay))t.add("Makea");
+  return t;
+}
+function unionTags(d){const s=autoTags(d);(d.tags||[]).forEach(x=>s.add(x));return s}
+
+/* ---- scores ---- */
+function testersPresent(d){if(!d.s)return[];return TK.filter(tk=>CATS.some(([c])=>d.s[c]&&d.s[c][tk]!=null&&d.s[c][tk]!==""))}
+function totalOf(d){if(d.s){let s=0;CATS.forEach(([c])=>TK.forEach(tk=>{const v=d.s[c]&&d.s[c][tk];if(v!=null&&v!=="")s+=+v}));return s}return d.total!=null?d.total:null}
+function maxOf(d){if(d.s)return testersPresent(d).length*15;return 30}
+function pctOf(d){const t=totalOf(d);if(t==null)return null;const m=maxOf(d);return m?t/m:null}
+function catAvg(vals){const v=vals.filter(x=>x!=null&&x!=="");if(!v.length)return null;return v.reduce((a,b)=>a+ +b,0)/v.length}
+function round2(x){return Math.round(x*100)/100}
+function fmt(n){return n==null?"–":(Number.isInteger(+n)?""+ +n:(+n).toFixed(2).replace(/\.?0+$/,'').replace('.',','))}
+function scoreColor(p){if(p==null)return"var(--muted)";if(p<0.4)return"var(--pink)";if(p<0.6)return"var(--amber)";if(p<0.77)return"var(--lime)";return"var(--cyan)"}
+
+/* ---- avatar/thumb (can shape) ---- */
+const AV=['#3ae1ff','#b6ff3a','#ffb02e','#ff3d8b','#9b6bff','#56d8a6','#ff7a45','#7aa8ff'];
+function avColor(k){let h=0;for(const c of(k||'?'))h=(h*31+c.charCodeAt(0))>>>0;return AV[h%AV.length]}
+function initials(n){const w=(n||'?').replace(/[()?]/g,'').trim().split(/\s+/).filter(Boolean);let s=(w[0]&&w[0][0])||'?';if(w[1])s+=w[1][0];return s.toUpperCase().slice(0,2)}
+function slug(n){return (n||"").toLowerCase().replace(/[äå]/g,"a").replace(/ö/g,"o").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
+function iconCands(d){if(d.img)return [d.img];const s=slug(d.name);return [`ikonit/${s}.jpg`,`ikonit/${s}.png`]}
+function thumbHTML(d,w){const h=Math.round(w*1.32),f=Math.round(w*0.42);const c=iconCands(d);const first=c[0],alts=c.slice(1).join("|");
+  return `<span class="thumb" style="width:${w}px;height:${h}px;font-size:${f}px;background:${avColor(getBrand(d))}" onclick="thumbClick(this)"><span class="mono">${esc(initials(d.name))}</span><img src="${escA(first)}" alt="" loading="lazy" data-alts="${escA(alts)}" onload="this.parentNode.classList.add('hasimg')" onerror="iconErr(this)"></span>`}
+function iconErr(img){const a=(img.getAttribute("data-alts")||"").split("|").filter(Boolean);if(a.length){img.setAttribute("data-alts",a.slice(1).join("|"));img.src=a[0]}else{img.remove()}}
+function thumbClick(el){const img=el.querySelector("img");if(img&&img.complete&&img.naturalWidth>0)openLightbox(img.src)}
+function openLightbox(src){const lb=document.getElementById("lightbox");lb.querySelector("img").src=src;lb.classList.add("show")}
+
+let state={sessions:[]},editingId=null,view="sessions",selTags=[],selBrands=[],brandExpanded=false;
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+const $=s=>document.querySelector(s);
+function esc(s){return(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function escA(s){return(""+(s==null?"":s)).replace(/"/g,"&quot;")}
+
+function init(){
+  const st=load();
+  if(st&&Array.isArray(st)&&st.length)state.sessions=st;
+  else{state.sessions=SEED.map(s=>({id:uid(),...s,drinks:s.drinks.map(d=>({id:uid(),...d}))}));save()}
+  buildChips();render();
+}
+
+/* ---- drink body (shared) ---- */
+function scoreTable(d){
+  const testers=testersPresent(d);if(!testers.length)return"";
+  let h=`<table class="score"><tr><th></th>${testers.map(tk=>`<th>${TLAB[tk]}</th>`).join("")}<th>k.a.</th></tr>`;
+  CATS.forEach(([c,lab])=>{
+    const vals=testers.map(tk=>d.s[c]&&d.s[c][tk]);
+    const a=catAvg(vals);
+    h+=`<tr><td class="c">${lab}</td>${vals.map(v=>`<td>${v==null||v===""?"–":fmt(v)}</td>`).join("")}<td class="a">${a==null?"–":fmt(round2(a))}</td></tr>`;
+  });
+  return h+`</table>`;
+}
+function drinkBody(d){
+  const t=totalOf(d),mx=maxOf(d),p=pctOf(d),col=scoreColor(p),brand=getBrand(d);
+  const tags=[...unionTags(d)];
+  const texts=[];
+  if(d.un)texts.push(["Ulkonäkö",d.un]);
+  if(d.haju)texts.push(["Haju",d.haju]);
+  if(d.analyysi)texts.push(["Analyysi",d.analyysi]);
+  if(!d.s&&!d.analyysi&&d.note)texts.push(["Analyysi",d.note]);
+  let h=`<div class="f-head">${thumbHTML(d,42)}
+    <div class="f-id"><div class="f-brand">${esc(brand)}</div><div class="f-name">${esc(d.name)}${d.win?' <span class="stamp">★</span>':""}</div></div>
+    <div class="f-score" style="color:${col}">${t==null?"–":fmt(t)}<small>/${mx}</small></div></div>`;
+  if(tags.length||d.uncertain)h+=`<div class="tags">${tags.slice(0,7).map(x=>`<span class="tag">${esc(x)}</span>`).join("")}${d.uncertain?'<span class="pill uncertain">tarkista</span>':""}</div>`;
+  if(texts.length)h+=`<div class="texts">${texts.map(([l,v])=>`<div class="tx"><span>${l}</span>${esc(v)}</div>`).join("")}</div>`;
+  h+=scoreTable(d);
+  h+=`<div class="gauge"><div class="gtrack"><div class="gfill" style="width:${p==null?0:Math.max(4,p*100)}%;background:linear-gradient(90deg,var(--violet),${col})"></div></div></div>`;
+  return h;
+}
+
+function render(){view==="sessions"?renderSessions():renderDrinks();updateStats()}
+
+function renderSessions(){
+  const q=$("#search").value.trim().toLowerCase(),sort=$("#sortSessions").value;
+  let list=[...state.sessions];
+  const dnum=s=>{const m=(s.date||"").match(/(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);if(!m)return 0;let y=+m[3];if(y<100)y+=2000;return y*10000+(+m[2])*100+(+m[1])};
+  const best=s=>Math.max(0,...s.drinks.map(d=>pctOf(d)||0));
+  if(sort==="date")list.sort((a,b)=>dnum(b)-dnum(a));
+  if(sort==="dateAsc")list.sort((a,b)=>dnum(a)-dnum(b));
+  if(sort==="best")list.sort((a,b)=>best(b)-best(a));
+  if(q)list=list.filter(s=>(s.title+" "+s.winner+" "+s.date+" "+s.drinks.map(d=>d.name+" "+(d.note||"")+" "+(d.analyysi||"")).join(" ")).toLowerCase().includes(q));
+  const root=$("#list");root.innerHTML="";
+  $("#empty").classList.toggle("hide",list.length>0);
+  list.forEach((s,si)=>{
+    const drinks=[...s.drinks].sort((a,b)=>(pctOf(b)??-1)-(pctOf(a)??-1));
+    const card=document.createElement("div");card.className="session";
+    const unc=s.drinks.some(d=>d.uncertain);
+    card.innerHTML=`<div class="s-head"><div class="s-idx">${String(si+1).padStart(2,'0')}</div>
+      <div class="s-main"><div class="s-date">${s.date?esc(s.date):"päiväämätön"}</div>
+      <div class="s-title">${esc(s.title||"Testaussessio")}</div>
+      <div class="s-meta"><span class="pill">${s.drinks.length} juomaa</span>${s.winner?`<span class="pill win">★ ${esc(s.winner)}</span>`:""}${unc?'<span class="pill uncertain">tarkistettavaa</span>':""}</div></div>
+      <div class="s-toolbtns"><button class="icon-btn" data-edit="${s.id}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>
+      <button class="icon-btn" data-del="${s.id}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></div></div>
+      <div class="s-body">${(s.kuvat&&s.kuvat.length)?`<div class="s-gallery">${s.kuvat.map(f=>`<img src="kuvat/${escA((f||'').trim())}" loading="lazy" onclick="openLightbox(this.src)" onerror="this.remove()">`).join("")}</div>`:""}${drinks.map((d,di)=>`<div class="drink ${d.win?'win':''}"><div class="rank">${di+1}</div><div>${drinkBody(d)}</div></div>`).join("")}</div>`;
+    card.querySelector(".s-head").addEventListener("click",e=>{if(e.target.closest("[data-edit]")||e.target.closest("[data-del]"))return;card.classList.toggle("open")});
+    card.querySelector("[data-edit]").addEventListener("click",()=>openModal(s.id));
+    card.querySelector("[data-del]").addEventListener("click",()=>{if(confirm(`Poistetaanko sessio "${s.title}"?`)){state.sessions=state.sessions.filter(x=>x.id!==s.id);save();render();toast("Sessio poistettu")}});
+    if(si===0&&!q)card.classList.add("open");
+    root.appendChild(card);
+  });
+}
+
+function allDrinks(){const a=[];state.sessions.forEach(s=>s.drinks.forEach(d=>a.push({d,s})));return a}
+
+function renderDrinks(){
+  renderBrandChips();
+  const q=$("#search").value.trim().toLowerCase(),sort=$("#sortDrinks").value;
+  let all=allDrinks();
+  if(selTags.length)all=all.filter(({d})=>{const ut=unionTags(d);return selTags.every(t=>t==="__win__"?d.win:ut.has(t))});
+  if(selBrands.length)all=all.filter(x=>selBrands.includes(getBrand(x.d)));
+  if(q)all=all.filter(x=>(x.d.name+" "+(x.d.note||"")+" "+(x.d.analyysi||"")+" "+getBrand(x.d)+" "+x.s.title).toLowerCase().includes(q));
+  if(sort==="score")all.sort((a,b)=>(pctOf(b.d)??-1)-(pctOf(a.d)??-1));
+  else if(sort==="name")all.sort((a,b)=>a.d.name.localeCompare(b.d.name,'fi'));
+  else if(sort==="brand")all.sort((a,b)=>getBrand(a.d).localeCompare(getBrand(b.d),'fi')||(pctOf(b.d)??-1)-(pctOf(a.d)??-1));
+  const grid=$("#gridList");grid.innerHTML="";
+  $("#empty").classList.toggle("hide",all.length>0);
+  $("#rescount").textContent=all.length+(all.length===1?" juoma":" juomaa");
+  all.forEach(({d,s})=>{
+    const el=document.createElement("div");el.className="fcard"+(d.win?" win":"");
+    el.innerHTML=drinkBody(d)+`<div class="f-foot"><span class="f-from">${esc(s.title)}${s.date?" · "+esc(s.date):""}</span><button class="icon-btn" data-e="${s.id}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button></div>`;
+    el.querySelector("[data-e]").addEventListener("click",()=>openModal(s.id));
+    grid.appendChild(el);
+  });
+}
+
+function updateStats(){
+  $("#stSessions").textContent=state.sessions.length;
+  const all=state.sessions.flatMap(s=>s.drinks);
+  $("#stDrinks").textContent=all.length;
+  const top=Math.max(0,...all.map(d=>pctOf(d)||0));
+  $("#stTop").textContent=top?Math.round(top*100)+"%":"—";
+}
+
+/* ---- chips ---- */
+function buildChips(){
+  const c=$("#chips");c.innerHTML="";
+  const mk=(f,lab)=>{const b=document.createElement("button");b.className="chip";b.dataset.f=f;b.textContent=lab;
+    b.addEventListener("click",()=>{const i=selTags.indexOf(f);if(i>=0)selTags.splice(i,1);else selTags.push(f);syncChips();render()});return b};
+  c.appendChild(mk("__win__","★ Voittajat"));
+  PROP_TAGS.forEach(t=>c.appendChild(mk(t,t)));
+  FLAVOR_TAGS.forEach(t=>c.appendChild(mk(t,t)));
+  const clr=document.createElement("button");clr.className="chip clear";clr.textContent="Tyhjennä";
+  clr.addEventListener("click",()=>{selTags=[];syncChips();render()});
+  c.appendChild(clr);
+  syncChips();
+}
+function syncChips(){document.querySelectorAll("#chips .chip").forEach(b=>{if(b.classList.contains("clear"))return;b.classList.toggle("on",selTags.includes(b.dataset.f))})}
+
+const BRAND_SHOW=12;
+function renderBrandChips(){
+  const wrap=$("#brandChips");if(!wrap)return;
+  const counts={};allDrinks().forEach(({d})=>{const b=getBrand(d);counts[b]=(counts[b]||0)+1});
+  const brands=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b,'fi'));
+  const total=brands.length;
+  let visible;
+  if(brandExpanded)visible=brands;
+  else{const top=brands.slice(0,BRAND_SHOW);const extra=brands.filter(b=>selBrands.includes(b)&&!top.includes(b));visible=[...top,...extra]}
+  wrap.innerHTML="";
+  const lab=document.createElement("span");lab.className="chips-label";lab.textContent="Brändit:";wrap.appendChild(lab);
+  visible.forEach(b=>{
+    const btn=document.createElement("button");btn.className="chip brand-chip"+(selBrands.includes(b)?" on":"");
+    btn.innerHTML=`${esc(b)} <b>${counts[b]}</b>`;
+    btn.addEventListener("click",()=>{const i=selBrands.indexOf(b);if(i>=0)selBrands.splice(i,1);else selBrands.push(b);renderDrinks()});
+    wrap.appendChild(btn);
+  });
+  if(!brandExpanded&&total>visible.length){const m=document.createElement("button");m.className="chip more";m.textContent=`+${total-visible.length} lisää`;m.addEventListener("click",()=>{brandExpanded=true;renderBrandChips()});wrap.appendChild(m)}
+  else if(brandExpanded&&total>BRAND_SHOW){const m=document.createElement("button");m.className="chip more";m.textContent="Näytä vähemmän";m.addEventListener("click",()=>{brandExpanded=false;renderBrandChips()});wrap.appendChild(m)}
+  if(selBrands.length){const c=document.createElement("button");c.className="chip clear";c.textContent="Tyhjennä brändit";c.addEventListener("click",()=>{selBrands=[];renderDrinks()});wrap.appendChild(c)}
+}
+
+function setView(v){
+  view=v;
+  $("#tabSessions").classList.toggle("active",v==="sessions");
+  $("#tabDrinks").classList.toggle("active",v==="drinks");
+  $("#sortSessions").classList.toggle("hide",v!=="sessions");
+  $("#sortDrinks").classList.toggle("hide",v!=="drinks");
+  $("#brandChips").classList.toggle("hide",v!=="drinks");
+  $("#chips").classList.toggle("hide",v!=="drinks");
+  $("#list").classList.toggle("hide",v!=="sessions");
+  $("#gridList").classList.toggle("hide",v!=="drinks");
+  $("#rescount").classList.toggle("hide",v!=="drinks");
+  render();
+}
+
+/* ---- random ---- */
+function showRandom(){
+  const a=allDrinks();if(!a.length)return;
+  const p=a[Math.floor(Math.random()*a.length)];
+  $("#infoContent").innerHTML=`<div class="fcard" style="box-shadow:none;border:none;padding:0">${drinkBody(p.d)}<div class="f-foot"><span class="f-from">${esc(p.s.title)}${p.s.date?" · "+esc(p.s.date):""}</span></div></div>`;
+  $("#infoOverlay").classList.add("show");
+}
+
+/* ---- edit modal ---- */
+function blankDrink(){return{id:uid(),name:"",brand:"",un:"",haju:"",analyysi:"",win:false,img:"",tags:[],s:{un:{},haju:{},maku:{}}}}
+function openModal(id){
+  editingId=id||null;
+  const s=id?state.sessions.find(x=>x.id===id):null;
+  $("#mTitle").textContent=id?"Muokkaa testiä":"Lisää testi";
+  $("#fTitle").value=s?s.title:"";$("#fDate").value=s?s.date:"";$("#fWinner").value=s?s.winner:"";$("#fKuvat").value=s&&s.kuvat?s.kuvat.join(", "):"";
+  const wrap=$("#drinksEdit");wrap.innerHTML="";
+  const drinks=s?s.drinks:[blankDrink()];
+  drinks.forEach(d=>wrap.appendChild(drinkEditRow(d)));
+  $("#overlay").classList.add("show");
+}
+function scInput(cls,val){return `<input class="${cls}" type="number" min="0" max="5" step="0.25" placeholder="–" value="${val==null||val===""?"":val}">`}
+function drinkEditRow(d){
+  const analyysi=d.analyysi||(!d.s&&d.note?d.note:"")||d.note||"";
+  const s=d.s||{un:{},haju:{},maku:{}};
+  const g=(c,tk)=>s[c]&&s[c][tk];
+  const row=document.createElement("div");row.className="de-row";
+  row.innerHTML=`
+    <div class="de-head"><input type="text" class="de-name" placeholder="Juoman nimi" value="${escA(d.name)}"></div>
+    <div class="row" style="margin-bottom:8px"><div><label>Brändi</label><input type="text" class="de-brand" placeholder="esim. Monster" value="${escA(d.brand||brandFromName(d.name))}"></div></div>
+    <div class="row" style="margin-bottom:6px">
+      <div><label>Ulkonäkö</label><textarea class="de-un" placeholder="väri…">${esc(d.un||"")}</textarea></div>
+      <div><label>Haju</label><textarea class="de-haju" placeholder="tuoksu…">${esc(d.haju||"")}</textarea></div>
+    </div>
+    <label>Analyysi / maku</label><textarea class="de-analyysi" placeholder="maku, jälkimaku…">${esc(analyysi)}</textarea>
+    <div class="de-sub">Pisteet (0–5)</div>
+    <table class="stbl"><tr><th></th><th>Tipi</th><th>Tomi</th><th>Visa</th></tr>
+      <tr><td class="lab">Ulkonäkö</td><td>${scInput("un-t",g("un","tipi"))}</td><td>${scInput("un-o",g("un","tomi"))}</td><td>${scInput("un-v",g("un","visa"))}</td></tr>
+      <tr><td class="lab">Haju</td><td>${scInput("ha-t",g("haju","tipi"))}</td><td>${scInput("ha-o",g("haju","tomi"))}</td><td>${scInput("ha-v",g("haju","visa"))}</td></tr>
+      <tr><td class="lab">Maku</td><td>${scInput("ma-t",g("maku","tipi"))}</td><td>${scInput("ma-o",g("maku","tomi"))}</td><td>${scInput("ma-v",g("maku","visa"))}</td></tr>
+    </table>
+    <div class="de-sub">Tagit</div>
+    <div class="de-tags">${ALL_TAGS.map(t=>`<span class="tchip${(d.tags||[]).includes(t)?" on":""}" data-t="${escA(t)}">${esc(t)}</span>`).join("")}</div>
+    <div class="imgrow"><span class="thumb avt-prev" style="width:34px;height:45px;font-size:14px"></span>
+      <input type="text" class="de-img" placeholder="Kuvan URL — tai lataa →" value="${escA(d.img||"")}">
+      <button type="button" class="btn-ghost de-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>Lataa</button>
+      <input type="file" class="de-file" accept="image/*" hidden></div>
+    <div class="de-hint" style="font-size:11px;color:var(--muted);margin-top:7px">Autom. kuvake: <code class="de-iconpath"></code> — nimeä kuva näin <b>ikonit/</b>-kansioon</div>
+    <div class="de-foot"><label class="chk"><input type="checkbox" class="de-win" ${d.win?"checked":""}> Voittaja</label>
+      <label class="chk"><input type="checkbox" class="de-unc" ${d.uncertain?"checked":""}> Tarkista</label>
+      <button class="icon-btn de-rm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button></div>`;
+  row.querySelectorAll(".tchip").forEach(ch=>ch.addEventListener("click",()=>ch.classList.toggle("on")));
+  row.querySelector(".de-rm").addEventListener("click",()=>row.remove());
+  const up=row.querySelector(".de-up"),file=row.querySelector(".de-file"),imgIn=row.querySelector(".de-img"),nameIn=row.querySelector(".de-name"),brIn=row.querySelector(".de-brand");
+  up.addEventListener("click",()=>file.click());
+  file.addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;cropSquare(f,160,url=>{if(url){imgIn.value=url;rowPrev(row);toast("Kuva lisätty")}else toast("Kuvaa ei voitu lukea")});e.target.value=""});
+  imgIn.addEventListener("input",()=>rowPrev(row));
+  nameIn.addEventListener("input",()=>{if(!brIn.value.trim())brIn.value=brandFromName(nameIn.value);rowPrev(row)});
+  brIn.addEventListener("input",()=>rowPrev(row));
+  rowPrev(row);
+  return row;
+}
+function rowPrev(row){const img=row.querySelector(".de-img").value.trim();const nm=row.querySelector(".de-name").value.trim();const br=row.querySelector(".de-brand").value.trim();
+  const p=row.querySelector(".avt-prev");p.style.background=avColor(br||brandFromName(nm));p.innerHTML=esc(initials(nm))+(img?`<img src="${escA(img)}" alt="" onerror="this.remove()">`:'');
+  const ip=row.querySelector(".de-iconpath");if(ip)ip.textContent="ikonit/"+slug(nm||"")+".jpg";}
+function cropSquare(file,size,cb){const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(im.width,im.height);const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');x.drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,size,size);cb(c.toDataURL('image/jpeg',0.82))};im.onerror=()=>cb(null);im.src=fr.result};fr.readAsDataURL(file)}
+
+function readModal(){
+  const rows=[...$("#drinksEdit").querySelectorAll(".de-row")];
+  const drinks=rows.map(r=>{
+    const num=sel=>{let v=r.querySelector(sel).value.trim();return v===""?undefined:parseFloat(v.replace(',','.'))};
+    const cell=(c,map)=>{const o={};TK.forEach((tk,i)=>{const v=num(map[i]);if(v!==undefined&&!isNaN(v))o[tk]=v});return o};
+    const s={un:cell("un",[".un-t",".un-o",".un-v"]),haju:cell("haju",[".ha-t",".ha-o",".ha-v"]),maku:cell("maku",[".ma-t",".ma-o",".ma-v"])};
+    const hasS=CATS.some(([c])=>Object.keys(s[c]).length);
+    const tags=[...r.querySelectorAll(".tchip.on")].map(x=>x.dataset.t);
+    const obj={id:uid(),name:r.querySelector(".de-name").value.trim(),brand:r.querySelector(".de-brand").value.trim(),
+      un:r.querySelector(".de-un").value.trim(),haju:r.querySelector(".de-haju").value.trim(),analyysi:r.querySelector(".de-analyysi").value.trim(),
+      win:r.querySelector(".de-win").checked,uncertain:r.querySelector(".de-unc").checked,tags};
+    const img=r.querySelector(".de-img").value.trim();if(img)obj.img=img;
+    if(hasS)obj.s=s;
+    return obj;
+  }).filter(d=>d.name);
+  return{title:$("#fTitle").value.trim()||"Testaussessio",date:$("#fDate").value.trim(),winner:$("#fWinner").value.trim(),kuvat:$("#fKuvat").value.split(",").map(x=>x.trim()).filter(Boolean),drinks};
+}
+function saveModal(){
+  const data=readModal();
+  if(!data.drinks.length){toast("Lisää vähintään yksi juoma");return}
+  if(editingId)Object.assign(state.sessions.find(x=>x.id===editingId),data);
+  else state.sessions.unshift({id:uid(),...data});
+  save();closeModal();render();toast(editingId?"Tallennettu":"Testi lisätty");
+}
+function closeModal(){$("#overlay").classList.remove("show");editingId=null}
+
+function exportJSON(){const blob=new Blob([JSON.stringify(state.sessions,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="energialabra-data.json";a.click();URL.revokeObjectURL(url);toast("JSON ladattu")}
+function importJSON(file){const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(!Array.isArray(data))throw 0;
+  const norm=data.map(s=>({id:s.id||uid(),title:s.title||"Testaussessio",date:s.date||"",winner:s.winner||"",note:s.note||"",kuvat:s.kuvat||[],drinks:(s.drinks||[]).map(d=>({id:d.id||uid(),...d}))}));
+  state.sessions=confirm("Korvataanko nykyinen data tuodulla? (Peruuta = yhdistä loppuun)")?norm:state.sessions.concat(norm);
+  save();render();toast("Tuonti onnistui")}catch(e){toast("Virhe: tiedosto ei kelpaa")}};r.readAsText(file)}
+let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200)}
+
+$("#search").addEventListener("input",render);
+$("#sortSessions").addEventListener("change",render);
+$("#sortDrinks").addEventListener("change",render);
+$("#tabSessions").addEventListener("click",()=>setView("sessions"));
+$("#tabDrinks").addEventListener("click",()=>setView("drinks"));
+$("#btnRandom").addEventListener("click",showRandom);
+$("#iAgain").addEventListener("click",showRandom);
+$("#iClose").addEventListener("click",()=>$("#infoOverlay").classList.remove("show"));
+$("#infoOverlay").addEventListener("click",e=>{if(e.target.id==="infoOverlay")$("#infoOverlay").classList.remove("show")});
+$("#btnAdd").addEventListener("click",()=>openModal(null));
+$("#mClose").addEventListener("click",closeModal);$("#mCancel").addEventListener("click",closeModal);
+$("#mSave").addEventListener("click",saveModal);
+$("#addDrink").addEventListener("click",()=>$("#drinksEdit").appendChild(drinkEditRow(blankDrink())));
+$("#overlay").addEventListener("click",e=>{if(e.target.id==="overlay")closeModal()});
+$("#btnExport").addEventListener("click",exportJSON);
+$("#btnImport").addEventListener("click",()=>$("#fileInput").click());
+$("#fileInput").addEventListener("change",e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value=""});
+$("#infoToggle").addEventListener("click",()=>$("#banner").classList.toggle("hide"));
+$("#lightbox").addEventListener("click",()=>$("#lightbox").classList.remove("show"));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();$("#infoOverlay").classList.remove("show");$("#lightbox").classList.remove("show")}});
+
+init();
+</script>
+</body>
+</html>
