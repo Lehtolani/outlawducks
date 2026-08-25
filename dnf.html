@@ -410,7 +410,7 @@ h2 .pikku{font-size:14px;font-weight:600;color:var(--himmea)}
 .ruudukko.iso .r-alle{font-size:10.5px}
 .ruudukko.iso .r-hinta{font-size:12.5px;padding:3px 9px}
 .ruudukko.iso .r-ikoni{font-size:38px}
-@media (min-width:820px){.ruudukko.iso{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
 .ruutu{position:relative;aspect-ratio:1/1;border:2px solid var(--reuna);border-radius:13px;
   background:#141922;overflow:hidden;cursor:pointer;padding:0;font-family:inherit;
   display:block;color:var(--teksti);min-width:0}
@@ -423,17 +423,17 @@ h2 .pikku{font-size:14px;font-weight:600;color:var(--himmea)}
   opacity:.5;z-index:0}
 .ruutu.kuvallinen .r-ikoni{display:none}
 .r-kuva{z-index:1}
-.r-alue{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 6px;text-align:left;
+.r-alue{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 6px;text-align:left;z-index:2;
   background:linear-gradient(180deg,rgba(10,13,18,0),rgba(10,13,18,.93) 55%);
   display:flex;flex-direction:column;gap:1px}
 .r-nimi{font-size:11px;font-weight:800;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;
   -webkit-box-orient:vertical;overflow:hidden}
 .r-alle{font-size:9.5px;color:#9aa6bb;line-height:1.2;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis}
-.r-hinta{position:absolute;right:5px;top:5px;background:var(--keltainen);color:#161a22;
+.r-hinta{position:absolute;right:5px;top:5px;z-index:3;background:var(--keltainen);color:#161a22;
   font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;white-space:nowrap}
 .r-hinta.ei{background:#39424f;color:#8b97a8}
-.r-merkki{position:absolute;left:5px;top:5px;font-size:9.5px;font-weight:800;padding:2px 6px;
+.r-merkki{position:absolute;left:5px;top:5px;z-index:3;font-size:9.5px;font-weight:800;padding:2px 6px;
   border-radius:99px;background:var(--reuna2);color:#0d1017;white-space:nowrap}
 .r-merkki.hyva{background:var(--vihrea)}
 .r-merkki.kelt{background:var(--keltainen)}
