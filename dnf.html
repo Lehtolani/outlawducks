@@ -5294,13 +5294,18 @@ function maali(){
       gen(K.vastus.kuski)+" mukaan ajetaan uusiksi kunhan autot on korjattu.","var(--keltainen)");
     kuluta(); B=null; K=null; paivitaStatit(); piirra(); return;
   }
+  let syy="";
   if(K.keskeytys){
     voitto=false;
+    syy="Auto hajosi kesken vedon etkä päässyt maaliin.";
     kirjaa("<b class='r'>Kisa keskeytyi vian takia.</b>","r");
   }else if(hajoaakoKesken()){
-    voitto=false;
-    nyk().kunto=Math.max(0,nyk().kunto-18);
-    kirjaa('<b class="r">💥 Moottori alkoi nakuttaa kesken vedon.</b> Piti nostaa jalka kaasulta.',"r");
+    // maaliviivan jälkeen puhjennut vika ei vie voittoa — se maksaa korjauksena
+    const vah=Math.round(12+Math.random()*10);
+    nyk().kunto=Math.max(8,nyk().kunto-vah);
+    nyk().remppa=(nyk().remppa||0)+2;
+    syy="Maalin jälkeen moottori alkoi nakuttaa. Kunto −"+vah+" % ja auto vaatii remontin.";
+    kirjaa('<b class="r">💥 Moottori alkoi nakuttaa heti maalin jälkeen.</b> Kunto −'+vah+' %.',"r");
   }
   if(o.sleeper)kirjaa('<b class="r">'+o.sleeper.paljastus+"</b>","r");
   S.epailys=K.nitroKaytetty?Math.min(100,S.epailys+18):Math.max(0,S.epailys-4);
@@ -5336,8 +5341,10 @@ function maali(){
     '<b style="color:var(--punainen)">HÄVISIT</b>')+
     '<small>'+oma.toFixed(2)+' s vastaan '+vast.toFixed(2)+' s</small>';
   naytaTulos(voitto?"VOITIT":"HÄVISIT",
-    teksti+"<br>Aikasi <b>"+oma.toFixed(2)+" s</b> · "+o.kuski+" "+vast.toFixed(2)+
-    " s · napakoita vaihtoja "+K.hyvia+"/"+K.vaihtoja+" · kunto −"+kulu.toFixed(1)+" %",
+    teksti+"<br>Aikasi <b>"+oma.toFixed(2)+" s</b> · "+o.kuski+" <b>"+vast.toFixed(2)+" s</b>"+
+    (syy?"<br><br><span style='color:var(--punainen)'>"+syy+"</span>":"")+
+    "<br><br><span style='color:var(--himmea);font-size:13px'>Napakoita vaihtoja "+
+    K.hyvia+"/"+K.vaihtoja+" · kunto −"+kulu.toFixed(1)+" %</span>",
     voitto?"var(--vihrea)":"var(--punainen)");
   paivitaStatit(); lopetusNappi();
 }
