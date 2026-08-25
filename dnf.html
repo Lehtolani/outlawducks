@@ -234,10 +234,11 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
   .intro-otsikko,.intro-rivi{opacity:1;transform:none}
 }
 .ohjeet{position:fixed;inset:0;z-index:120;background:rgba(6,9,14,.97);display:none;
-  align-items:center;justify-content:center;padding:20px;overflow-y:auto}
-.ohjeet.on{display:flex}
-.ohjeet-in{max-width:900px;width:100%;background:var(--paneeli);border:3px solid var(--keltainen);
-  border-radius:16px;padding:26px 28px;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+  overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 16px}
+.ohjeet.on{display:block}
+.ohjeet-in{max-width:900px;width:100%;margin:0 auto;background:var(--paneeli);
+  border:3px solid var(--keltainen);border-radius:16px;padding:26px 28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.7)}
 .ohjeet-otsikko{font-size:30px;margin:0 0 8px;text-align:center}
 .ohjeet-johdanto{color:var(--himmea);font-size:15px;line-height:1.6;margin:0 0 18px;text-align:center}
 .ohjeet-johdanto b{color:var(--teksti)}
@@ -253,9 +254,9 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .rahakupla small{display:block;font-size:12px;font-weight:600;color:var(--himmea)}
 @keyframes rahaSisaan{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
 .pako{position:fixed;inset:0;z-index:99;background:rgba(4,14,34,.95);display:none;
-  align-items:center;justify-content:center;padding:20px}
+  align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .pako.on{display:flex}
-.pako-in{background:#101a2b;border:4px solid #3b7ddd;border-radius:16px;padding:24px 28px;
+.pako-in{margin:auto 0;background:#101a2b;border:4px solid #3b7ddd;border-radius:16px;padding:24px 28px;
   text-align:center;max-width:520px;width:100%;box-shadow:0 0 60px rgba(59,125,221,.45)}
 .pako-otsikko{font-size:26px;font-weight:800;color:#6fa8f5;letter-spacing:.03em;
   animation:sini .8s ease-in-out infinite alternate}
@@ -289,9 +290,9 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .hl-tila{font-size:15px;font-weight:800;margin:8px 0 12px;min-height:24px}
 .hl-loki{background:#0f1219;border:2px solid var(--reuna);border-radius:10px;padding:9px 11px;font-size:12.5px;max-height:110px;overflow-y:auto;line-height:1.6;text-align:left;margin-bottom:12px}
 .qte{position:fixed;inset:0;z-index:98;background:rgba(30,4,4,.93);display:none;
-  align-items:center;justify-content:center;padding:20px}
+  align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .qte.on{display:flex}
-.qte-in{background:#1d1116;border:4px solid var(--punainen);border-radius:16px;padding:26px 30px;
+.qte-in{margin:auto 0;background:#1d1116;border:4px solid var(--punainen);border-radius:16px;padding:26px 30px;
   text-align:center;max-width:460px;width:100%;box-shadow:0 0 50px rgba(228,72,60,.4)}
 .qte-otsikko{font-size:26px;font-weight:800;color:var(--punainen);letter-spacing:.03em}
 .qte-teksti{font-size:15px;color:var(--himmea);margin:8px 0 16px;line-height:1.5}
@@ -318,7 +319,7 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .qte-ohje{font-size:14px;color:var(--himmea);font-weight:700}
 .qte-ohje::after{content:"Napauta valoa joka palaa."}
 .isokartta{position:fixed;inset:0;z-index:95;background:rgba(6,9,14,.96);display:none;
-  align-items:center;justify-content:center;padding:20px}
+  align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .isokartta.on{display:flex}
 .isokartta-in{width:min(1200px,96vw);max-height:94vh;display:flex;flex-direction:column;gap:10px}
 .isokartta-otsikko{display:flex;justify-content:space-between;align-items:center;gap:12px;
@@ -406,6 +407,7 @@ h2 .pikku{font-size:14px;font-weight:600;color:var(--himmea)}
 /* isot ruudut: kaksi rinnakkain */
 .ruudukko.iso{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .ruudukko.iso .ruutu{aspect-ratio:4/3}
+.ruudukko.iso .r-kuva{object-fit:cover;object-position:center 55%}
 .ruudukko.iso .r-nimi{font-size:12.5px;-webkit-line-clamp:2}
 .ruudukko.iso .r-alle{font-size:10.5px}
 .ruudukko.iso .r-hinta{font-size:12.5px;padding:3px 9px}
@@ -726,7 +728,8 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
   line-height:1.5;margin-bottom:11px;padding:8px;background-size:cover;background-position:center}
 .kuvapaikka.pieni{aspect-ratio:4/3;margin-bottom:0}
 .kuvapaikka{position:relative;overflow:hidden}
-.kuvapaikka img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.kuvapaikka img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:center;display:block}
 .kuvapaikka.on{border-style:solid;border-color:var(--reuna)}
 .kuvapaikka.on .paikkateksti{display:none}
 .hahmo{position:relative;overflow:hidden}
@@ -781,6 +784,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .ptyyppi.kisa{background:#4fc3f7}
 .ptyyppi.kauppa{background:#3fd07a}
 .ptyyppi.parkki{background:#b083f0}
+.ptyyppi.koti{background:#ffb32e}
 .pkm{font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:99px;white-space:nowrap}
 .pkm.ok{background:var(--vihrea);color:#08210f}
 .pkm.ei{background:#39424f;color:#8b97a8}
@@ -788,6 +792,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .tallikortti .tk-rivi{display:flex;gap:11px;align-items:center}
 .tallikortti .tk-kuva{width:112px;flex:0 0 112px}
 .tallikortti .tk-kuva .kuvapaikka{margin:0;aspect-ratio:4/3;font-size:9px}
+.tallikortti .tk-kuva img{object-position:center 55%}
 .tallikortti .tk-tiedot{flex:1;min-width:0}
 @media (max-width:400px){.tallikortti .tk-kuva{width:84px;flex:0 0 84px}}
 .kauppaerik{background:var(--paneeli2);border-left:4px solid var(--keltainen);border-radius:8px;
@@ -885,6 +890,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
   .s-napit{gap:26px;margin-top:16px}
   .s-nappi{width:62px;height:62px;font-size:25px}
   /* ohjeet */
+  .ohjeet{padding:12px 10px max(12px,env(safe-area-inset-bottom))}
   .ohjeet-in{padding:16px 14px;border-radius:14px}
   .ohjeet-otsikko{font-size:22px}
   .ohjeet-johdanto{font-size:13.5px;margin-bottom:12px}
@@ -933,11 +939,16 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 /* vanhat paneelit puhelimeen sopiviksi */
 
 .sisalto{background:transparent;border:0;border-radius:0;padding:0}
-.tulos{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.94);z-index:110;
-  width:min(420px,92vw);display:none;background:var(--paneeli);border:3px solid var(--reuna2);
-  border-radius:16px;padding:20px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.8)}
-.tulos.on{display:block;animation:tulosSisaan .3s cubic-bezier(.2,.9,.3,1.1) forwards}
-@keyframes tulosSisaan{to{transform:translate(-50%,-50%) scale(1)}}
+.tulos{position:fixed;inset:0;z-index:110;display:none;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;padding:20px 16px;background:rgba(6,9,14,.72);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.tulos.on{display:block}
+.tulos>*{max-width:min(420px,92vw)}
+.tulos::before{content:"";display:block;height:0}
+.tulos-laatikko{max-width:min(420px,92vw);margin:auto;background:var(--paneeli);
+  border:3px solid var(--reuna2);border-radius:16px;padding:20px;text-align:center;
+  box-shadow:0 24px 70px rgba(0,0,0,.8);animation:tulosSisaan .3s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes tulosSisaan{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
 .tulos .otsikko{font-size:26px;font-weight:800;line-height:1.15}
 .tulos .teksti{font-size:14.5px;color:var(--himmea);margin-top:8px;line-height:1.55}
 .valintanapit{display:flex;gap:9px;margin-top:16px}
@@ -1057,7 +1068,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
       <span class="mp-luku" id="mp-luku">0</span>
     </div>
     <button class="oncnappi" id="onc">ONC</button>
-    <button class="nukunappi" id="nuku">Aja nukkumaan</button>
+    <button class="nukunappi" id="nuku">Aja kotiin</button>
   </div>
   <div class="ilmoituspino" id="pino"></div>
 
@@ -1187,49 +1198,6 @@ function arvoToriValikoima(){
 /* ============ AUTOMALLIT ============ */
 // [avain]: nimi, vuosi, hv, nm, paino, veto, pera, puna, vaihteet, turbo, arvo, od (Outlaw Ducks -omistaja)
 const AUTOMALLIT={
- fordka99sleeper:   {nimi:"Ford Ka 1.3 Sleeper",vuosi:1999,hv:145,nm:190,paino:830,veto:"etu",pera:4.40,puna:7000,vaihteet:5,turbo:true,arvo:3500},
- matiz00sleeper:    {nimi:"Daewoo Matiz 0.8 Sleeper",vuosi:2000,hv:120,nm:160,paino:780,veto:"etu",pera:4.60,puna:7200,vaihteet:5,turbo:true,arvo:3000},
- multipla99sleeper: {nimi:"Fiat Multipla 1.6 Sleeper",vuosi:1999,hv:240,nm:300,paino:1280,veto:"etu",pera:3.80,puna:7000,vaihteet:5,turbo:true,arvo:5500},
- twingo96sleeper:   {nimi:"Renault Twingo 1.2 Sleeper",vuosi:1996,hv:160,nm:180,paino:800,veto:"etu",pera:4.30,puna:7500,vaihteet:5,turbo:true,arvo:3200},
- yugo91sleeper:     {nimi:"Zastava Yugo 1.1 Sleeper",vuosi:1991,hv:180,nm:220,paino:820,veto:"etu",pera:4.50,puna:7000,vaihteet:5,turbo:true,arvo:2800},
- smart02sleeper:    {nimi:"Smart Fortwo 0.6 Sleeper",vuosi:2002,hv:200,nm:260,paino:720,veto:"taka",pera:4.70,puna:7500,vaihteet:6,turbo:true,arvo:4500},
- polo94sleeper:     {nimi:"VW Polo 1.4 Sleeper",vuosi:1994,hv:190,nm:240,paino:900,veto:"etu",pera:4.20,puna:7200,vaihteet:5,turbo:true,arvo:3800},
- 306d97sleeper:     {nimi:"Peugeot 306 1.9D Sleeper",vuosi:1997,hv:160,nm:300,paino:1080,veto:"etu",pera:3.70,puna:5200,vaihteet:5,turbo:true,arvo:3500},
- clio98sleeper:     {nimi:"Renault Clio 1.2 Sleeper",vuosi:1998,hv:175,nm:200,paino:880,veto:"etu",pera:4.30,puna:7600,vaihteet:5,turbo:true,arvo:3600},
- yaris00sleeper:    {nimi:"Toyota Yaris 1.0 Sleeper",vuosi:2000,hv:165,nm:180,paino:840,veto:"etu",pera:4.50,puna:7800,vaihteet:5,turbo:true,arvo:4200},
- micra92:   {nimi:"Nissan Micra 1.0",vuosi:1992,hv:55,nm:75,paino:760,veto:"etu",pera:4.35,puna:6000,vaihteet:5,arvo:500},
- fiesta89:  {nimi:"Ford Fiesta 1.1",vuosi:1989,hv:50,nm:85,paino:780,veto:"etu",pera:4.06,puna:5800,vaihteet:5,arvo:400},
- colt95:    {nimi:"Mitsubishi Colt 1.3",vuosi:1995,hv:75,nm:110,paino:930,veto:"etu",pera:4.10,puna:6200,vaihteet:5,arvo:700},
- sunny87:   {nimi:"Nissan Sunny 1.3",vuosi:1987,hv:68,nm:100,paino:940,veto:"etu",pera:3.94,puna:6000,vaihteet:5,arvo:600},
- carina88:  {nimi:"Toyota Carina II 1.6",vuosi:1988,hv:90,nm:130,paino:1100,veto:"etu",pera:3.72,puna:6000,vaihteet:5,arvo:900},
- samara91:  {nimi:"Lada Samara 1.3",vuosi:1991,hv:64,nm:95,paino:950,veto:"etu",pera:4.10,puna:5600,vaihteet:5,arvo:500},
- polo94:    {nimi:"VW Polo 1.4",vuosi:1994,hv:60,nm:116,paino:930,veto:"etu",pera:4.06,puna:5800,vaihteet:5,arvo:700},
- 306d97:    {nimi:"Peugeot 306 1.9D",vuosi:1997,hv:68,nm:120,paino:1100,veto:"etu",pera:3.94,puna:4800,vaihteet:5,arvo:900},
- clio98:    {nimi:"Renault Clio 1.2",vuosi:1998,hv:58,nm:100,paino:900,veto:"etu",pera:4.11,puna:6000,vaihteet:5,arvo:600},
- yaris00:   {nimi:"Toyota Yaris 1.0",vuosi:2000,hv:68,nm:90,paino:860,veto:"etu",pera:4.30,puna:6000,vaihteet:5,arvo:1200},
- transit92: {nimi:"Ford Transit 2.5D",vuosi:1992,hv:76,nm:150,paino:1900,veto:"taka",pera:4.56,puna:4200,vaihteet:5,arvo:1800},
- duett69:   {nimi:"Volvo Duett B18",vuosi:1969,hv:75,nm:140,paino:1350,veto:"taka",pera:4.56,puna:5000,vaihteet:4,arvo:3500},
- omega94:   {nimi:"Opel Omega 2.0",vuosi:1994,hv:115,nm:170,paino:1400,veto:"taka",pera:3.70,puna:6000,vaihteet:5,arvo:1500},
- caravelle91:{nimi:"VW Caravelle 2.1",vuosi:1991,hv:95,nm:160,paino:1800,veto:"taka",pera:4.57,puna:4800,vaihteet:5,arvo:3000},
- escort81:  {nimi:"Ford Escort 1.3",vuosi:1981,hv:60,nm:95,paino:900,veto:"etu",pera:4.11,puna:5600,vaihteet:4,arvo:700},
- kadett85:  {nimi:"Opel Kadett 1.2",vuosi:1985,hv:55,nm:90,paino:880,veto:"etu",pera:4.30,puna:5800,vaihteet:4,arvo:600},
- corolla82: {nimi:"Toyota Corolla 1.3",vuosi:1982,hv:65,nm:100,paino:950,veto:"taka",pera:4.10,puna:6000,vaihteet:5,arvo:900},
- fordka99:  {nimi:"Ford Ka 1.3",vuosi:1999,hv:60,nm:105,paino:850,veto:"etu",pera:4.25,puna:5800,vaihteet:5,arvo:700},
- matiz00:   {nimi:"Daewoo Matiz 0.8",vuosi:2000,hv:51,nm:70,paino:800,veto:"etu",pera:4.44,puna:6000,vaihteet:5,arvo:500},
- multipla99:{nimi:"Fiat Multipla 1.6",vuosi:1999,hv:103,nm:145,paino:1300,veto:"etu",pera:3.94,puna:6000,vaihteet:5,arvo:1200},
- twingo96:  {nimi:"Renault Twingo 1.2",vuosi:1996,hv:55,nm:92,paino:820,veto:"etu",pera:4.11,puna:6000,vaihteet:5,arvo:600},
- yugo91:    {nimi:"Zastava Yugo 1.1",vuosi:1991,hv:55,nm:85,paino:840,veto:"etu",pera:4.30,puna:5800,vaihteet:4,arvo:400},
- smart02:   {nimi:"Smart Fortwo 0.6 Turbo",vuosi:2002,hv:61,nm:95,paino:730,veto:"taka",pera:4.50,puna:6000,vaihteet:6,turbo:true,arvo:1500},
- accord99:  {nimi:"Honda Accord Type R",vuosi:1999,hv:212,nm:215,paino:1270,veto:"etu",pera:4.40,puna:8000,vaihteet:5,arvo:6500},
- s60r04:    {nimi:"Volvo S60R 2.5T AWD",vuosi:2004,hv:300,nm:400,paino:1650,veto:"neli",pera:3.31,puna:6500,vaihteet:6,turbo:true,arvo:7500},
- gt86:      {nimi:"Toyota GT86 2.0",vuosi:2014,hv:200,nm:205,paino:1250,veto:"taka",pera:4.10,puna:7400,vaihteet:6,arvo:15000},
- focusst06: {nimi:"Ford Focus ST 2.5T",vuosi:2006,hv:225,nm:320,paino:1400,veto:"etu",pera:4.06,puna:6500,vaihteet:6,turbo:true,arvo:6000},
- audiA4b5:  {nimi:"Audi A4 2.8 Quattro",vuosi:1999,hv:193,nm:280,paino:1500,veto:"neli",pera:3.89,puna:6500,vaihteet:5,arvo:3500},
- yaris20:   {nimi:"Toyota Yaris 1.5",vuosi:2020,hv:125,nm:153,paino:1080,veto:"etu",pera:4.53,puna:6600,vaihteet:6,arvo:14000},
- octavia18: {nimi:"Skoda Octavia 1.0 TSI",vuosi:2018,hv:115,nm:200,paino:1200,veto:"etu",pera:3.55,puna:6000,vaihteet:6,turbo:true,arvo:13000},
- i20_21:    {nimi:"Hyundai i20 1.2",vuosi:2021,hv:84,nm:118,paino:1040,veto:"etu",pera:4.70,puna:6000,vaihteet:5,arvo:15000},
- clio20:    {nimi:"Renault Clio V 1.0 TCe",vuosi:2020,hv:100,nm:160,paino:1100,veto:"etu",pera:4.30,puna:6200,vaihteet:5,turbo:true,arvo:13500},
- corolla22: {nimi:"Toyota Corolla 1.8 Hybrid",vuosi:2022,hv:140,nm:142,paino:1400,veto:"etu",pera:3.70,puna:5200,vaihteet:6,arvo:22000},
  corolla94:{nimi:"Toyota Corolla 1.6",vuosi:1994,hv:114,nm:145,paino:1050,veto:"etu",pera:3.94,puna:6500,vaihteet:5,arvo:900},
  primera:  {nimi:"Nissan Primera 2.0 ”Renauldi”",vuosi:1998,hv:130,nm:178,paino:1250,veto:"etu",pera:4.17,puna:6400,vaihteet:5,arvo:700,od:"Mallard"},
  mazda5:   {nimi:"Mazda5 2.0 ”Kombo”",vuosi:2013,hv:150,nm:191,paino:1450,veto:"etu",pera:4.10,puna:6500,vaihteet:6,arvo:6800,od:"Wigeon"},
@@ -1263,7 +1231,50 @@ const AUTOMALLIT={
    pera:3.94,puna:6300,vaihteet:6,arvo:9800,vari:"valkoinen, teipit kyljessä",
    ds:"Korjaamon sijaisauto. Ei sinun, ja se näkyy teipeistä."},
  prius:    {nimi:"Toyota Prius IV (XW50) hybrid",vuosi:2018,hv:122,nm:142,paino:1400,veto:"etu",pera:3.70,puna:5200,vaihteet:5,arvo:14000,vari:"turkoosi"},
- caddy:    {nimi:"VW Caddy 1.9 TDI",vuosi:2007,hv:105,nm:250,paino:1450,veto:"etu",pera:3.94,puna:4600,vaihteet:5,turbo:true,arvo:3900}
+ caddy:    {nimi:"VW Caddy 1.9 TDI",vuosi:2007,hv:105,nm:250,paino:1450,veto:"etu",pera:3.94,puna:4600,vaihteet:5,turbo:true,arvo:3900},
+ fordka99sleeper:   {nimi:"Ford Ka 1.3 Sleeper",vuosi:1999,hv:145,nm:190,paino:830,veto:"etu",pera:4.40,puna:7000,vaihteet:5,turbo:true,arvo:3500},
+ matiz00sleeper:    {nimi:"Daewoo Matiz 0.8 Sleeper",vuosi:2000,hv:120,nm:160,paino:780,veto:"etu",pera:4.60,puna:7200,vaihteet:5,turbo:true,arvo:3000},
+ multipla99sleeper: {nimi:"Fiat Multipla 1.6 Sleeper",vuosi:1999,hv:240,nm:300,paino:1280,veto:"etu",pera:3.80,puna:7000,vaihteet:5,turbo:true,arvo:5500},
+ twingo96sleeper:   {nimi:"Renault Twingo 1.2 Sleeper",vuosi:1996,hv:160,nm:180,paino:800,veto:"etu",pera:4.30,puna:7500,vaihteet:5,turbo:true,arvo:3200},
+ yugo91sleeper:     {nimi:"Zastava Yugo 1.1 Sleeper",vuosi:1991,hv:180,nm:220,paino:820,veto:"etu",pera:4.50,puna:7000,vaihteet:5,turbo:true,arvo:2800},
+ smart02sleeper:    {nimi:"Smart Fortwo 0.6 Sleeper",vuosi:2002,hv:200,nm:260,paino:720,veto:"taka",pera:4.70,puna:7500,vaihteet:6,turbo:true,arvo:4500},
+ polo94sleeper:     {nimi:"VW Polo 1.4 Sleeper",vuosi:1994,hv:190,nm:240,paino:900,veto:"etu",pera:4.20,puna:7200,vaihteet:5,turbo:true,arvo:3800},
+ peugeot306sleeper:     {nimi:"Peugeot 306 1.9D Sleeper",vuosi:1997,hv:160,nm:300,paino:1080,veto:"etu",pera:3.70,puna:5200,vaihteet:5,turbo:true,arvo:3500},
+ clio98sleeper:     {nimi:"Renault Clio 1.2 Sleeper",vuosi:1998,hv:175,nm:200,paino:880,veto:"etu",pera:4.30,puna:7600,vaihteet:5,turbo:true,arvo:3600},
+ yaris00sleeper:    {nimi:"Toyota Yaris 1.0 Sleeper",vuosi:2000,hv:165,nm:180,paino:840,veto:"etu",pera:4.50,puna:7800,vaihteet:5,turbo:true,arvo:4200},
+ micra92:   {nimi:"Nissan Micra 1.0",vuosi:1992,hv:55,nm:75,paino:760,veto:"etu",pera:4.35,puna:6000,vaihteet:5,arvo:500},
+ fiesta89:  {nimi:"Ford Fiesta 1.1",vuosi:1989,hv:50,nm:85,paino:780,veto:"etu",pera:4.06,puna:5800,vaihteet:5,arvo:400},
+ colt95:    {nimi:"Mitsubishi Colt 1.3",vuosi:1995,hv:75,nm:110,paino:930,veto:"etu",pera:4.10,puna:6200,vaihteet:5,arvo:700},
+ sunny87:   {nimi:"Nissan Sunny 1.3",vuosi:1987,hv:68,nm:100,paino:940,veto:"etu",pera:3.94,puna:6000,vaihteet:5,arvo:600},
+ carina88:  {nimi:"Toyota Carina II 1.6",vuosi:1988,hv:90,nm:130,paino:1100,veto:"etu",pera:3.72,puna:6000,vaihteet:5,arvo:900},
+ samara91:  {nimi:"Lada Samara 1.3",vuosi:1991,hv:64,nm:95,paino:950,veto:"etu",pera:4.10,puna:5600,vaihteet:5,arvo:500},
+ polo94:    {nimi:"VW Polo 1.4",vuosi:1994,hv:60,nm:116,paino:930,veto:"etu",pera:4.06,puna:5800,vaihteet:5,arvo:700},
+ peugeot306:    {nimi:"Peugeot 306 1.9D",vuosi:1997,hv:68,nm:120,paino:1100,veto:"etu",pera:3.94,puna:4800,vaihteet:5,arvo:900},
+ clio98:    {nimi:"Renault Clio 1.2",vuosi:1998,hv:58,nm:100,paino:900,veto:"etu",pera:4.11,puna:6000,vaihteet:5,arvo:600},
+ yaris00:   {nimi:"Toyota Yaris 1.0",vuosi:2000,hv:68,nm:90,paino:860,veto:"etu",pera:4.30,puna:6000,vaihteet:5,arvo:1200},
+ transit92: {nimi:"Ford Transit 2.5D",vuosi:1992,hv:76,nm:150,paino:1900,veto:"taka",pera:4.56,puna:4200,vaihteet:5,arvo:1800},
+ duett69:   {nimi:"Volvo Duett B18",vuosi:1969,hv:75,nm:140,paino:1350,veto:"taka",pera:4.56,puna:5000,vaihteet:4,arvo:3500},
+ omega94:   {nimi:"Opel Omega 2.0",vuosi:1994,hv:115,nm:170,paino:1400,veto:"taka",pera:3.70,puna:6000,vaihteet:5,arvo:1500},
+ caravelle91:{nimi:"VW Caravelle 2.1",vuosi:1991,hv:95,nm:160,paino:1800,veto:"taka",pera:4.57,puna:4800,vaihteet:5,arvo:3000},
+ escort81:  {nimi:"Ford Escort 1.3",vuosi:1981,hv:60,nm:95,paino:900,veto:"etu",pera:4.11,puna:5600,vaihteet:4,arvo:700},
+ kadett85:  {nimi:"Opel Kadett 1.2",vuosi:1985,hv:55,nm:90,paino:880,veto:"etu",pera:4.30,puna:5800,vaihteet:4,arvo:600},
+ corolla82: {nimi:"Toyota Corolla 1.3",vuosi:1982,hv:65,nm:100,paino:950,veto:"taka",pera:4.10,puna:6000,vaihteet:5,arvo:900},
+ fordka99:  {nimi:"Ford Ka 1.3",vuosi:1999,hv:60,nm:105,paino:850,veto:"etu",pera:4.25,puna:5800,vaihteet:5,arvo:700},
+ matiz00:   {nimi:"Daewoo Matiz 0.8",vuosi:2000,hv:51,nm:70,paino:800,veto:"etu",pera:4.44,puna:6000,vaihteet:5,arvo:500},
+ multipla99:{nimi:"Fiat Multipla 1.6",vuosi:1999,hv:103,nm:145,paino:1300,veto:"etu",pera:3.94,puna:6000,vaihteet:5,arvo:1200},
+ twingo96:  {nimi:"Renault Twingo 1.2",vuosi:1996,hv:55,nm:92,paino:820,veto:"etu",pera:4.11,puna:6000,vaihteet:5,arvo:600},
+ yugo91:    {nimi:"Zastava Yugo 1.1",vuosi:1991,hv:55,nm:85,paino:840,veto:"etu",pera:4.30,puna:5800,vaihteet:4,arvo:400},
+ smart02:   {nimi:"Smart Fortwo 0.6 Turbo",vuosi:2002,hv:61,nm:95,paino:730,veto:"taka",pera:4.50,puna:6000,vaihteet:6,turbo:true,arvo:1500},
+ accord99:  {nimi:"Honda Accord Type R",vuosi:1999,hv:212,nm:215,paino:1270,veto:"etu",pera:4.40,puna:8000,vaihteet:5,arvo:6500},
+ s60r04:    {nimi:"Volvo S60R 2.5T AWD",vuosi:2004,hv:300,nm:400,paino:1650,veto:"neli",pera:3.31,puna:6500,vaihteet:6,turbo:true,arvo:7500},
+ gt86:      {nimi:"Toyota GT86 2.0",vuosi:2014,hv:200,nm:205,paino:1250,veto:"taka",pera:4.10,puna:7400,vaihteet:6,arvo:15000},
+ focusst06: {nimi:"Ford Focus ST 2.5T",vuosi:2006,hv:225,nm:320,paino:1400,veto:"etu",pera:4.06,puna:6500,vaihteet:6,turbo:true,arvo:6000},
+ audiA4b5:  {nimi:"Audi A4 2.8 Quattro",vuosi:1999,hv:193,nm:280,paino:1500,veto:"neli",pera:3.89,puna:6500,vaihteet:5,arvo:3500},
+ yaris20:   {nimi:"Toyota Yaris 1.5",vuosi:2020,hv:125,nm:153,paino:1080,veto:"etu",pera:4.53,puna:6600,vaihteet:6,arvo:14000},
+ octavia18: {nimi:"Skoda Octavia 1.0 TSI",vuosi:2018,hv:115,nm:200,paino:1200,veto:"etu",pera:3.55,puna:6000,vaihteet:6,turbo:true,arvo:13000},
+ i20_21:    {nimi:"Hyundai i20 1.2",vuosi:2021,hv:84,nm:118,paino:1040,veto:"etu",pera:4.70,puna:6000,vaihteet:5,arvo:15000},
+ clio20:    {nimi:"Renault Clio V 1.0 TCe",vuosi:2020,hv:100,nm:160,paino:1100,veto:"etu",pera:4.30,puna:6200,vaihteet:5,turbo:true,arvo:13500},
+ corolla22: {nimi:"Toyota Corolla 1.8 Hybrid",vuosi:2022,hv:140,nm:142,paino:1400,veto:"etu",pera:3.70,puna:5200,vaihteet:6,arvo:22000},
 };
 /* ============ KATU-USKOTTAVUUS: TASOT JA SPONSSIT ============ */
 // [taso, tarvittava uskottavuus, sponssin nimi, kuvaus, etu]
@@ -1303,7 +1314,9 @@ function rahaSponssi(){
 }
 const JASENET=["Mallard","Wigeon","Goosander","Duckling","Gadwall"];
 const ODAUTOT=Object.keys(AUTOMALLIT).filter(k=>!!AUTOMALLIT[k].od);
-function eiSalainen(k){ return k!=="atoy"&&(typeof SALAAUTOT==="undefined"||!SALAAUTOT[k]) }
+function onSleeper(k){ return /sleeper$/i.test(k) }
+function eiSalainen(k){ return k!=="atoy"&&!onSleeper(k)&&
+  (typeof SALAAUTOT==="undefined"||!SALAAUTOT[k]) }
 
 /* ============ OMAT TALLIHOMMAT ============ */
 // [avain, nimi, iltoja, kuvaus, vaikutus]
@@ -1396,6 +1409,7 @@ const PAIKAT=[
  {avain:"limingantulli",nimi:"Prisma Limingantulli",tyyppi:"parkki",x:61.4,y:69.0,ds:"Perjantai-iltana taynna porukkaa."},
  {avain:"kaakkuri",nimi:"Kaakkuri Verkkokauppa",tyyppi:"kauppa",kauppa:"verkkokauppa",x:52.8,y:69.6,ds:"Elektroniikkaa ja kaiuttimia."},
  {avain:"keskusta",nimi:"Oulun keskusta",tyyppi:"parkki",x:57.4,y:52.7,ds:"Torinranta ja kauppatori."},
+ {avain:"koti",nimi:"Koti",tyyppi:"koti",x:63.5,y:57.5,ds:"Rivitalon pääty ja autotalli pihassa. Täällä nukutaan ja rassataan."},
  {avain:"raksila",nimi:"Raksilan marketit",tyyppi:"parkki",x:60.6,y:60.6,ds:"Klassikko. Taalla esitellaan autoja."},
  {avain:"nallisport",nimi:"Nallisport",tyyppi:"parkki",x:66.0,y:52.4,ds:"Iso parkki hallin edessa."},
  {avain:"ouluhalli",nimi:"Ouluhalli",tyyppi:"kisa",x:69.1,y:60.3,ds:"Yolla tyhja ja sileaa asfalttia."},
@@ -1441,7 +1455,7 @@ function paikkaMerkki(avain,tyyppi){
     const aariviva=(avain==="vasaraT")?';-webkit-text-stroke:1px #fff':'';
     return '<span class="pmerkki" style="background:'+m[1]+';color:'+(m[2]||"#fff")+aariviva+'">'+m[0]+'</span>';
   }
-  const ico={kisa:"🏁",kauppa:"🔧",parkki:"🅿️"}[tyyppi]||"📍";
+  const ico={kisa:"🏁",kauppa:"🔧",parkki:"🅿️",koti:"🏠"}[tyyppi]||"📍";
   return '<span class="pmerkki tyhja">'+ico+'</span>';
 }
 const paikka=av=>PAIKAT.find(p=>p.avain===av);
@@ -1563,18 +1577,18 @@ const SALA=[
    Kuvat haetaan kansiosta kuvat/  — esim. kuvat/Aatu.jpg */
 const KUVAKANSIO="kuvat/";
 const KUSKIT=[
- {nimi:"Aatu",kuva:"Aatu",auto:"corolla94",taito:0.48,luonne:"Ajaa isänsä vanhalla Corollalla ja opettelee vasta."},
- {nimi:"Aleksi",kuva:"Aleksi",auto:"golf2",taito:0.62,luonne:"Golfilla joka on ollut suvussa kolmannessa polvessa."},
- {nimi:"Benjamin",kuva:"Benjamin",auto:"fabia",taito:0.44,luonne:"Ensimmäinen oma auto. Ei uskalla vielä kaasuttaa kunnolla."},
- {nimi:"Hannes",kuva:"Hannes",auto:"e30",taito:0.71,luonne:"Tietää mitä tekee. E30 on pidetty siistinä."},
+ {nimi:"Aatu",kuva:"Aatu",auto:"fordka99",taito:0.48,luonne:"Ajaa isänsä vanhalla Corollalla ja opettelee vasta."},
+ {nimi:"Aleksi",kuva:"Aleksi",auto:"matiz00",taito:0.62,luonne:"Golfilla joka on ollut suvussa kolmannessa polvessa."},
+ {nimi:"Benjamin",kuva:"Benjamin",auto:"multipla99",taito:0.44,luonne:"Ensimmäinen oma auto. Ei uskalla vielä kaasuttaa kunnolla."},
+ {nimi:"Hannes",kuva:"Hannes",auto:"twingo96",taito:0.71,luonne:"Tietää mitä tekee. E30 on pidetty siistinä."},
  {nimi:"Hannu",kuva:"Hannu",auto:"volkswagenlt",taito:0.53,luonne:"Pakulla töihin ja pakulla viivalle. Ei häpeä."},
- {nimi:"Heikki",kuva:"Heikki",auto:"volvo240",taito:0.66,luonne:"Vanhan liiton mies. Volvo on ajettu kolmesti ympäri Suomen."},
+ {nimi:"Heikki",kuva:"Heikki",auto:"yugo91",taito:0.66,luonne:"Vanhan liiton mies. Volvo on ajettu kolmesti ympäri Suomen."},
  {nimi:"Heimo",kuva:"Heimo",auto:"w123",taito:0.59,luonne:"Mersu käy dieselillä ja Heimo käy kahvilla."},
- {nimi:"Hemppu",kuva:"Hemppu",auto:"escort",taito:0.51,luonne:"Escort natisee mutta kulkee."},
- {nimi:"Irmeli",kuva:"Irmeli",auto:"prius",taito:0.42,luonne:"Ajaa Priuksella ja ihmettelee miksi kaikki kaasuttaa."},
- {nimi:"Jaakkima",kuva:"Jaakkima",auto:"sierra",taito:0.69,luonne:"Sierra on takavetoinen ja Jaakkima tietää sen."},
- {nimi:"Jaakko",kuva:"Jaakko",auto:"mondeo",taito:0.57,luonne:"Mondeo on tylsä mutta luotettava. Kuten Jaakko."},
- {nimi:"Jani",kuva:"Jani",auto:"audi80",taito:0.63,luonne:"Audi on matalalla ja Jani puheliaalla tuulella."},
+ {nimi:"Hemppu",kuva:"Hemppu",auto:"smart02",taito:0.51,luonne:"Escort natisee mutta kulkee."},
+ {nimi:"Irmeli",kuva:"Irmeli",auto:"polo94",taito:0.42,luonne:"Ajaa Priuksella ja ihmettelee miksi kaikki kaasuttaa."},
+ {nimi:"Jaakkima",kuva:"Jaakkima",auto:"peugeot306",taito:0.69,luonne:"Sierra on takavetoinen ja Jaakkima tietää sen."},
+ {nimi:"Jaakko",kuva:"Jaakko",auto:"clio98",taito:0.57,luonne:"Mondeo on tylsä mutta luotettava. Kuten Jaakko."},
+ {nimi:"Jani",kuva:"Jani",auto:"yaris00",taito:0.63,luonne:"Audi on matalalla ja Jani puheliaalla tuulella."},
  {nimi:"Janne",kuva:"Janne",auto:"bora",taito:0.74,luonne:"Boran turbo on herätetty henkiin. Varo."},
  {nimi:"Jaoe",kuva:"Jaoe",auto:"caddy",taito:0.55,luonne:"Caddyssä on työkalut ja yllättävän hyvä vääntö."},
  {nimi:"Jenny",kuva:"Jenny",auto:"civic",taito:0.78,luonne:"VTi herää yli kuudella tuhannella ja Jenny tietää sen tarkalleen."},
@@ -1635,6 +1649,32 @@ const KUSKINIMET=["Jonne","Make","Reijo","Tuomas","Ukko","Sami","Janne","Petri",
 /* Mallien nopeusindeksi lasketaan kerran: 200 m aika täydellisellä ajolla.
    Vastustajat valitaan oman auton lähistöltä, jotta alku ei ole toivoton. */
 let NOPEUSINDEKSI=null;
+let HUIPPUCACHE={};
+function huippunopeus(malliTaiAuto){
+  const avain=typeof malliTaiAuto==="string"?malliTaiAuto:null;
+  if(avain&&HUIPPUCACHE[avain]!==undefined)return HUIPPUCACHE[avain];
+  const a=avain?Object.assign({pitoKerroin:1},AUTOMALLIT[avain]):malliTaiAuto;
+  // 1. vaihteituksen sallima huippu ylimmällä vaihteella
+  const vaihdeRaja=a.puna*RENGAS/(60*a.pera*VAIHTEET[a.vaihteet-1]);
+  // 2. ilmanvastuksen sallima huippu: etsitään nopeus jolla veto = vastus
+  let matala=5, korkea=vaihdeRaja;
+  for(let k=0;k<40;k++){
+    const v=(matala+korkea)/2;
+    const kierrokset=v*60*a.pera*VAIHTEET[a.vaihteet-1]/RENGAS;
+    const mom=kierrokset<=a.puna?momentti(a,kierrokset):0;
+    const F=mom*VAIHTEET[a.vaihteet-1]*pera(a)*0.92/(RENGAS/(2*Math.PI));
+    // realistinen ilmanvastus: otsapinta arvioidaan massasta
+    const otsapinta=1.55+a.paino/2400;
+    let cd=a.paino>1900?0.44:(a.paino>1500?0.34:0.32);
+    if(a.vuosi<1992)cd+=0.06;          // vanhat korit ovat kulmikkaita
+    else if(a.vuosi<2000)cd+=0.02;
+    const vastus=0.5*1.2*cd*otsapinta*v*v+a.paino*0.012*9.81;
+    if(F>vastus)matala=v; else korkea=v;
+  }
+  const kmh=Math.round(Math.min(vaihdeRaja,matala)*3.6);
+  if(avain)HUIPPUCACHE[avain]=kmh;
+  return kmh;
+}
 function indeksit(){
   if(NOPEUSINDEKSI)return NOPEUSINDEKSI;
   NOPEUSINDEKSI={};
@@ -1718,12 +1758,18 @@ function teeVastustaja(k,od){
   v.palkkio=Math.round(Math.max(0.45,Math.min(3.2,1.0+ero*0.85))*100)/100;
   if(od)v.palkkio=Math.round(v.palkkio*(S.odJasen?1.32:1.15)*100)/100;
   // tuttu kuski voi olla virittänyt autoaan
+  // jos mallista on oma sleeper-versio, käytetään sen oikeita arvoja
+  const sleeperMalli=AUTOMALLIT[k.auto+"sleeper"];
+  const teeSleeper=function(paljastus){
+    if(sleeperMalli)return {hv:sleeperMalli.hv,nm:sleeperMalli.nm,paino:sleeperMalli.paino,
+      pera:sleeperMalli.pera,puna:sleeperMalli.puna,vaihteet:sleeperMalli.vaihteet,
+      turbo:!!sleeperMalli.turbo,paljastus:paljastus};
+    return {hv:Math.round(m.hv*1.8),nm:Math.round(m.nm*1.7),turbo:true,paljastus:paljastus};
+  };
   if(!od&&tila.nahty>6&&Math.random()<0.20){
-    v.sleeper={hv:Math.round(m.hv*1.8),nm:Math.round(m.nm*1.7),turbo:true,
-      paljastus:gen(k.nimi)+" auto oli viritetty edellisen tapaamisen jälkeen."};
-  }else if(!od&&Math.random()<0.07){
-    v.sleeper={hv:Math.round(m.hv*2.1),nm:Math.round(m.nm*2.0),turbo:true,
-      paljastus:"Konepellin alta kuului ahtimen vihellys. Se ei ollutkaan tehdaskuntoinen."};
+    v.sleeper=teeSleeper(gen(k.nimi)+" auto oli viritetty edellisen tapaamisen jälkeen.");
+  }else if(!od&&Math.random()<(sleeperMalli?0.16:0.07)){
+    v.sleeper=teeSleeper("Konepellin alta kuului ahtimen vihellys. Se ei ollutkaan tehdaskuntoinen.");
   }
   return v;
 }
@@ -1976,7 +2022,7 @@ function aikaTeksti(sek){
   const m=Math.floor(sek/60), s=Math.round(sek%60);
   return m+" min"+(s?" "+s+" s":"");
 }
-function nollaaIndeksi(){ NOPEUSINDEKSI=null }
+function nollaaIndeksi(){ NOPEUSINDEKSI=null; HUIPPUCACHE={} }
 function tarkistaTyot(){
   const nyt=Date.now(); let muuttui=false;
   tyoJono().slice().forEach(function(t){
@@ -2070,7 +2116,7 @@ let S={raha:400,epailys:0,voitot:0,tappiot:0,
        autot:[uusiAuto("corolla94",78,243000)], auto:0,
        tori:{}, nettiauto:[], huuto:null,
        pysaytykset:0, sakot:0, huomautukset:0, cred:0,
-       paiva:1, energia:100, palkkakertyma:0, paikka:"biltema",
+       paiva:1, energia:100, palkkakertyma:0, paikka:"koti",
        seuraavaCruising:21, varasto:[], ilmoitukset:[], tarjoukset:[],
        projekti:null, tuplaTyo:false, sorsaOnni:false, vastustajat:[],
        sponssiOsa:0, sponssiSpessu:0, huoltoKaytetty:-99, viimeTaso:1};
@@ -2082,7 +2128,7 @@ function kuntoKatto(a){
   OSAT.forEach(o=>{ if(a.osat[o.avain]&&o.kuntokatto)katto=Math.min(katto,o.kuntokatto) });
   return katto;
 }
-let V=null, panos=50, LAJI="kiihdytys", K=null, ajastin=null;
+let V=null, AUTOPANOS=false, panos=50, LAJI="kiihdytys", K=null, ajastin=null;
 const $=id=>document.getElementById(id);
 const gen=nimi=>{const v="aeiouyäö";return v.indexOf(nimi.slice(-1).toLowerCase())>=0?nimi+"n":nimi+"in"};
 const raha=n=>Math.round(n).toLocaleString("fi-FI")+" €";
@@ -2126,7 +2172,7 @@ function naytaValinta(otsikko,teksti,vari,napit){
     html+='<button class="btn valinta '+(n.lk||"")+'" data-val="'+i+'">'+n.teksti+'</button>';
   });
   html+='</div>';
-  el.innerHTML=html;
+  el.innerHTML='<div class="tulos-laatikko">'+html+'</div>';
   el.querySelectorAll("[data-val]").forEach(function(b){
     b.onclick=function(){
       const n=napit[parseInt(b.dataset.val,10)];
@@ -2141,9 +2187,9 @@ function naytaTulos(otsikko,teksti,vari){
   el.style.borderColor=vari;
   // jos tekstissä on omat napit, ei lisätä Selvä-nappia
   const omatNapit=teksti.indexOf("valintanapit")>=0;
-  el.innerHTML='<div class="otsikko" style="color:'+vari+'">'+otsikko+'</div>'+
+  el.innerHTML='<div class="tulos-laatikko">'+('<div class="otsikko" style="color:'+vari+'">'+otsikko+'</div>'+
     '<div class="teksti">'+teksti+'</div>'+
-    (omatNapit?'':'<button class="tulos-sulje" id="tulos-sulje">Selvä</button>');
+    (omatNapit?'':'<button class="tulos-sulje" id="tulos-sulje">Selvä</button>'))+'</div>';
   const s=$("tulos-sulje");
   if(s)s.onclick=function(){ el.className="tulos" };
 }
@@ -2327,6 +2373,8 @@ function pTalliAutot(p){
         '<div><span>Paino</span><b>'+m.paino+' kg</b></div>'+
         '<div><span>Kierrosraja</span><b>'+m.puna+'</b></div>'+
         '<div><span>Kulutus</span><b>'+kulutus(a.malli)+' l</b></div>'+
+        '<div><span>Huippunopeus</span><b>'+huippunopeus(a.malli)+' km/h</b></div>'+
+        '<div><span>200 m</span><b>'+indeksit()[a.malli].toFixed(1)+' s</b></div>'+
       '</div>'+
       '<div class="ak-palkit">'+
         '<div class="ak-palkki"><span>🔧</span><i><b style="width:'+a.kunto+'%;background:'+kv+'"></b></i>'+
@@ -2439,6 +2487,7 @@ function naytaNettiauto(x){
     "<div style='text-align:left'>"+
     m.vuosi+" · "+m.hv+" hv · "+m.nm+" Nm · "+m.paino+" kg · "+m.veto+"veto<br>"+
     m.vaihteet+"-vaihteinen · kierrosraja "+m.puna+"<br>"+
+    "Huippunopeus "+huippunopeus(x.malli)+" km/h · 200 m "+indeksit()[x.malli].toFixed(1)+" s<br>"+
     x.km.toLocaleString("fi-FI")+" km · kunto "+Math.round(x.kunto)+" %"+
     (m.od?"<br><span style='color:#e8c14a'>🦆 Sama malli kuin "+m.od+"illa</span>":"")+
     "<br><br><b style='font-size:20px'>"+raha(x.hinta)+"</b></div>",
@@ -2592,29 +2641,27 @@ function vasaraPutosi(){
 
 /* ============ CARWIKI ============ */
 const MERKKITIEDOT={
- "Toyota":"Japanilainen jättiläinen jonka maine perustuu siihen ettei mitään hajoa. Corolla, Carina ja Yaris ovat arjen peruskiviä, ja Hiace sekä Hilux kulkevat vaikka ilman öljyä. Sleeper‑rakennuksissa Toyota on yllättävän potentiaalinen.",
- "Mazda":"Pieni japanilainen valmistaja joka uskaltaa tehdä omituisia ratkaisuja — wankel-moottori ja MX-5. Kevyet korit, tarkka ohjaus ja usein yllättävän pirteät moottorit. Mazda5 ja 626 ovat luotettavia käyttöautoja.",
- "Volvo":"Ruotsalainen turvallisuuden perikuva. Farmarit ovat Pohjois-Suomessa käytännössä virallinen ajoneuvo. 240, 850 ja V70 kulkevat kunnes runko syöpyy. Uudemmat V90‑mallit ovat jo premiumia.",
- "BMW":"Baijerilainen takavetoinen käsitys ajamisesta. E30 ja E36 ovat harrastajien peruskalliota: halpoja, viritettäviä ja kaikkien osat saatavilla. Sleeper‑rakennuksissa BMW on klassikko.",
- "Mercedes-Benz":"Saksalaista ylirakentamista. W123 ja W124 tehtiin kestämään miljoona kilometriä, ja monet ovat sen todistaneet. Vanhemmat dieselit ovat ikuisia, uudemmat jo luksusta.",
- "Volkswagen":"Kansanauto joka on kansanauto. Golf on maailman viritetyin auto, ja Polo sekä Bora ovat helppoja virittää sleeper‑tyyliin. LT ja Caddy tuovat pakettiautopuolen mukaan.",
- "Audi":"Quattro-neliveto muutti rallin. Vanha 80 on halpa tapa päästä nelivetoon kiinni, ja A4:n V6‑mallit ovat yllättävän ripeitä. Audi on usein hillitty mutta nopea.",
- "Ford":"Escort ja Sierra ovat 80–90‑luvun katukulttuurin perusta. Fiesta ja Ka ovat mummon kauppakasseja — kunnes niistä tehdään sleeper. Mondeo ja Transit ovat arjen työjuhtia.",
- "Opel":"Saksalaista arkea. Halpaa ja helposti korjattavaa, mutta ruoste on ikuinen vihollinen. Kadett ja Omega ovat tonnin pommien klassikoita.",
- "Nissan":"Primera ja Sunny ovat tonnin pommeja jotka kulkevat vielä sitten kun rekisterikilvet ovat irronneet. Micra ja Yaris‑luokan kilpailijat ovat kevyitä ja pirteitä.",
- "Honda":"VTEC-moottorit ovat pieniä mestariteoksia: kierrosluvut ylös ja teho tulee vasta siellä. Civic VTi on kevyt ja tarkka — sleeper‑rakennuksissa erittäin suosittu.",
- "Subaru":"Boksarimoottori ja neliveto. Impreza teki rallista katukulttuuria — ääni tunnistetaan korttelin päästä. Legacy on rauhallisempi mutta silti nelivetoinen työjuhta.",
- "Saab":"Ruotsalaista insinööritaidetta ja turboja ennen kuin se oli muodikasta. 9-5 on halpa ja nopea, ja sleeper‑potentiaali on valtava.",
- "Citroën":"Ranskalaista mukavuutta. Hydraulinen jousitus keinuu kuin laiva ja hajoaa kuin laiva. C5 on pehmeä kuin sohva mutta yllättävän ripeä 2.0‑moottorilla.",
- "Renault":"Ranskalainen arki. Halpoja käytettynä syystä, mutta pienet moottorit ovat pirteitä. Clio on kevyt ja hyvä sleeper‑pohja.",
- "Škoda":"Entinen vitsi, nykyään Volkswagen halvemmalla. Fabia ja Octavia ovat järkeviä ja kestäviä — Octavian TSI‑moottorit ovat hyviä virityspohjia.",
- "Lada":"Neuvostoliittolainen Fiatin johdannainen. Yksinkertainen kuin lapio ja korjattavissa samoilla työkaluilla. Sleeper‑Lada on aina hauska yllätys.",
- "Kia":"Korealainen joka nousi 2010-luvulla oikeaksi kilpailijaksi. Vanhemmat mallit ovat halpoja ja yksinkertaisia, uudemmat jo laadukkaita.",
- "Hyundai":"Kian sisarmerkki. i20 ja i30 ovat kevyitä ja helppoja ajaa. Sleeper‑rakennuksissa yllättävän potentiaalinen, koska moottorit kestävät viritystä.",
- "Peugeot":"Ranskalainen jolla on ollut hyviä pikkuautoja. 205 GTI on ikoni, mutta 306D on Suomen teiden diesel‑klassikko.",
- "Chevrolet":"Amerikkalaista tilavuutta. Suomessa harvinaisuus ja siksi huomiota herättävä. Usein isoja mutta alitehoisia — täydellisiä sleeper‑projekteihin."
+ "Toyota":"Japanilainen jättiläinen jonka maine perustuu siihen ettei mitään hajoa. Suomessa Corolla ja Hiace ovat kulkeneet sukupolvien läpi. Tylsä on tässä kehu.",
+ "Mazda":"Pieni japanilainen valmistaja joka uskaltaa tehdä omituisia ratkaisuja — wankel-moottori ja MX-5. Kevyet korit ja tarkka ohjaustuntuma.",
+ "Volvo":"Ruotsalainen turvallisuuden perikuva. Farmarit ovat Pohjois-Suomessa käytännössä virallinen ajoneuvo. 240 ja V70 kulkevat kunnes runko syöpyy.",
+ "BMW":"Baijerilainen takavetoinen käsitys ajamisesta. E30 ja E36 ovat harrastajien peruskalliota: halpoja, viritettäviä ja kaikkien osat saatavilla.",
+ "Mercedes-Benz":"Saksalaista ylirakentamista. W123 ja W124 tehtiin kestämään miljoona kilometriä, ja monet ovat sen todistaneet.",
+ "Volkswagen":"Kansanauto joka on kansanauto. Golf on maailman viritetyin auto, ja Mk2 on niistä klassisin.",
+ "Audi":"Quattro-neliveto muutti rallin. Vanha 80 on halpa tapa päästä nelivetoon kiinni.",
+ "Ford":"Escort ja Sierra ovat 80-luvun katukulttuurin perusta. Takaveto ja kevyt kori — Sierra Cosworth on legenda.",
+ "Opel":"Saksalaista arkea. Halpaa ja helposti korjattavaa, mutta ruoste on ikuinen vihollinen.",
+ "Nissan":"Primera ja Sunny ovat tonnin pommeja jotka kulkevat vielä sitten kun rekisterikilvet ovat irronneet.",
+ "Honda":"VTEC-moottorit ovat pieniä mestariteoksia: kierrosluvut ylös ja teho tulee vasta siellä. Civic on kevyt ja tarkka.",
+ "Subaru":"Boksarimoottori ja neliveto. Impreza teki rallista katukulttuuria — ääni tunnistetaan korttelin päästä.",
+ "Saab":"Ruotsalaista insinööritaidetta ja turboja ennen kuin se oli muodikasta. Omalaatuinen ja rakastettu.",
+ "Citroën":"Ranskalaista mukavuutta. Hydraulinen jousitus keinuu kuin laiva ja hajoaa kuin laiva.",
+ "Renault":"Ranskalainen arki. Halpoja käytettynä syystä, mutta pienet moottorit ovat pirteitä.",
+ "Škoda":"Entinen vitsi, nykyään Volkswagen halvemmalla. Fabia on ensiauto jolla ei ole varaa hajota.",
+ "Lada":"Neuvostoliittolainen Fiatin johdannainen. Yksinkertainen kuin lapio ja korjattavissa samoilla työkaluilla.",
+ "Kia":"Korealainen. Vielä 2000-luvulla halpa vaihtoehto, nykyään ihan oikea auto.",
+ "Peugeot":"Ranskalainen jolla on ollut hyviä pikkuautoja. 205 GTI on ikoni.",
+ "Chevrolet":"Amerikkalaista tilavuutta. Suomessa harvinaisuus ja siksi huomiota herättävä."
 };
-
 function merkkiNimesta(nimi){
   const k=Object.keys(MERKKITIEDOT);
   for(let i=0;i<k.length;i++){
@@ -2655,7 +2702,8 @@ function pWiki(p){
         "<div class='nimi'>"+m.nimi+(omistat?" <span class='lappu hyva'>omistat</span>":"")+"</div>"+
         "<div class='tiedot'>"+m.vuosi+" · "+m.hv+" hv · "+m.nm+" Nm<br>"+
         m.paino+" kg · "+m.veto+"veto · "+m.vaihteet+"-vaihteinen<br>"+
-        "Kierrosraja "+m.puna+" · arvo n. "+raha(m.arvo)+
+        "Kierrosraja "+m.puna+" · huippu "+huippunopeus(x.avain)+" km/h<br>"+
+        "200 m "+indeksit()[x.avain].toFixed(1)+" s · arvo n. "+raha(m.arvo)+
         (m.od?"<br><span style='color:#e8c14a'>🦆 "+m.od+"</span>":"")+"</div>";
       g.appendChild(el);
     });
@@ -2970,7 +3018,7 @@ function naytaTiedot(otsikko,kuva,rivit,napit,vari){
       return '<button class="btn valinta '+(n.lk||"")+'" data-val="'+i+'" '+
         (n.disabled?"disabled":"")+'>'+n.teksti+'</button>';
     }).join("")+'</div>';
-  el.innerHTML=html;
+  el.innerHTML='<div class="tulos-laatikko">'+html+'</div>';
   el.querySelectorAll("[data-val]").forEach(function(b){
     b.onclick=function(){
       const n=napit[parseInt(b.dataset.val,10)];
@@ -3158,6 +3206,9 @@ function paivitaTila(){
   $("mp-tayte").style.width=(s2?Math.round((S.cred-alku2)/(loppu2-alku2)*100):100)+"%";
   $("mp-luku").textContent=Math.round(S.cred).toLocaleString("fi-FI")+(s2?" / "+s2.raja.toLocaleString("fi-FI"):"");
   $("mainepalkki").title="Taso "+t2.taso+" — "+t2.nimi;
+  const kotona=S.paikka==="koti";
+  $("nuku").textContent=kotona?"Nuku":"Aja kotiin";
+  $("nuku").style.borderColor=kotona?"var(--keltainen)":"var(--reuna2)";
   const cd2=S.seuraavaCruising-S.paiva;
   $("onc").textContent="ONC "+(cd2<=0?"tänään":cd2+" vrk");
   $("onc").style.background=cd2<=0?"var(--violetti)":"#2b2540";
@@ -3579,7 +3630,7 @@ function pMyynti(p){
 }
 
 let KARTTATILA="lista";
-const PAIKKAIKONI={kisa:"🏁",kauppa:"🔧",parkki:"🅿️"};
+const PAIKKAIKONI={kisa:"🏁",kauppa:"🔧",parkki:"🅿️",koti:"🏠"};
 function paikkaKm(av){ return Math.round(etaisyys(S.paikka,av)*0.8*10)/10 }
 function paikkaToiminnot(pk){
   const n=nyk(), a=auto(), t=[];
@@ -3589,6 +3640,10 @@ function paikkaToiminnot(pk){
     t.push({ico:"🦆",nm:"Night Cruising",lk:"duck",toiminto:function(){aloitaCruising()}});
   if(pk.kauppa)t.push({ico:"🛒",nm:"Astu sisään",lk:"",
     toiminto:function(){ avaaAppi("kaupat") }});
+  if(pk.tyyppi==="koti"){
+    t.push({ico:"🔧",nm:"Avaa talli",lk:"",toiminto:function(){avaaAppi("talli")}});
+    t.push({ico:"🛏️",nm:"Nuku yön yli",lk:"",toiminto:function(){ajaNukkumaan()}});
+  }
   if(pk.tyyppi==="parkki")t.push({ico:"😎",nm:"Esittele autoa",lk:"",toiminto:function(){esittele()}});
   if(pk.tyyppi==="parkki"||pk.avain==="tupos"){
     const tila=Math.round(tankki(n.malli)-n.bensa);
@@ -3598,7 +3653,7 @@ function paikkaToiminnot(pk){
   return t;
 }
 function piirraPaikkalista(p){
-  const ryhmat=[["kisa","🏁 Kisapaikat"],["kauppa","🔧 Varaosakaupat"],["parkki","🅿️ Parkkipaikat"]];
+  const ryhmat=[["koti","🏠 Koti"],["kisa","🏁 Kisapaikat"],["kauppa","🔧 Varaosakaupat"],["parkki","🅿️ Parkkipaikat"]];
   ryhmat.forEach(function(r){
     const lista=PAIKAT.filter(function(x){return x.tyyppi===r[0]})
       .sort(function(a,b){return etaisyys(S.paikka,a.avain)-etaisyys(S.paikka,b.avain)});
@@ -3615,7 +3670,7 @@ function piirraPaikkalista(p){
       const n2=nyk();
       const tarve=km*kulutus(n2.malli)/100*(talvi()?1.15:1);
       const riittaa=n2.bensa>=tarve;
-      const tyyppinimi={kisa:"Kisapaikka",kauppa:"Kauppa",parkki:"Parkkipaikka"}[pk.tyyppi];
+      const tyyppinimi={kisa:"Kisapaikka",kauppa:"Kauppa",parkki:"Parkkipaikka",koti:"Koti"}[pk.tyyppi];
       let html=paikkaMerkki(pk.avain,pk.tyyppi)+
         '<span class="pt"><b>'+pk.nimi+'</b><small>'+lyhyt+'</small></span>'+
         '<span class="plaput"><span class="ptyyppi '+pk.tyyppi+'">'+tyyppinimi+'</span>'+
@@ -3790,6 +3845,20 @@ function kylmakaynnistys(){
   return true;
 }
 function aja(kohde){
+  // väsyneenä ajaminen on riski
+  if(S.energia<10&&kohde!==S.paikka&&!S.vasymysVaroitettu){
+    S.vasymysVaroitettu=true;
+    naytaValinta("😵 SILMÄT PAINUU UMPEEN",
+      "Energiaa on enää <b>"+Math.round(S.energia)+"</b>. Väsyneenä ratissa voi käydä huonosti "+
+      "— ja poliisi huomaa poukkoilevan auton helpommin.","var(--punainen)",
+      [{teksti:"Aja silti",lk:"kelt",toiminto:function(){ S.vasymysAjo=true; aja(kohde) }},
+       {teksti:"Odota hetki",lk:"vihrea",toiminto:function(){
+          S.energia=Math.min(100,S.energia+14); S.vasymysVaroitettu=false;
+          kirjaa("Nukuit tunnin auton penkillä. Vähän parempi.",""); paivitaTila();
+       }}]);
+    return;
+  }
+  S.vasymysVaroitettu=false;
   const n=nyk();
   if(n.korjaamossa){
     naytaTulos("🏭 KORJAAMOLLA","Tämä auto on korjaamolla huomiseen asti. Aja sijaisautolla.","var(--keltainen)");
@@ -3802,6 +3871,28 @@ function aja(kohde){
   const matka=etaisyys(S.paikka,kohde);
   const km=Math.round(matka*0.8*10)/10;
   const tarve=km*kulutus(n.malli)/100*(talvi()?1.15:1);
+  if(S.vasymysAjo){
+    S.vasymysAjo=false;
+    const vasymys=(10-Math.min(10,S.energia))/10;
+    if(Math.random()<0.14+vasymys*0.22){
+      const vahinko=Math.round(10+Math.random()*20);
+      n.kunto=Math.max(8,n.kunto-vahinko);
+      n.remppa=(n.remppa||0)+2;
+      const korjaus=Math.round(vahinko*12);
+      S.raha-=korjaus; rahaPop(-korjaus,"kolari");
+      S.cred=Math.max(0,Math.round(S.cred*0.95));
+      S.energia=Math.max(0,S.energia-8);
+      kirjaa("<b class='r'>💥 Nukahdit hetkeksi rattiin.</b> Ojaan ja hinaus. Kunto −"+vahinko+" %.","r");
+      naytaTulos("💥 KOLARI","Silmät menivät kiinni sekunniksi. Auto ojaan ja hinausauto yöllä."+
+        "<br><br>Kunto −"+vahinko+" %, kuluja "+raha(korjaus)+".","var(--punainen)");
+      paivitaTila(); return;
+    }
+    if(Math.random()<0.16+vasymys*0.25){
+      kirjaa("Poliisi kiinnostui poukkoilevasta autosta.","");
+      poliisiTarkastus("Auto ajoi keskiviivan päällä. Partio kiinnostui.");
+      return;
+    }
+  }
   if(n.bensa<tarve){
     // lähdet silti ja jäät tielle
     S.raha-=150; S.sakot+=0; rahaPop(-150,"hinaus");
@@ -4040,9 +4131,13 @@ function aloitaCruising(){
   paivitaStatit(); piirra();
 }
 function ajaNukkumaan(){
-  const n=nyk(), matka=Math.max(3,Math.round(etaisyys(S.paikka,"biltema")*0.8));
-  if(S.energia>=10){ iltaLoppu(); return }
-  // väsyneenä kotimatka on riski
+  if(S.paikka!=="koti"){
+    naytaTulos("🏠 EI VIELÄ KOTONA","Nukkumaan pääsee vasta kotona. Aja ensin kotiin.","var(--keltainen)");
+    return;
+  }
+  const n=nyk(), matka=0;
+  iltaLoppu(); return;
+  // väsyneenä kotimatka on riski (siirretty ajamiseen)
   naytaValinta("😵 SILMÄT PAINUU UMPEEN",
     "Energiaa on enää <b>"+Math.round(S.energia)+"</b>. Kotiin on "+matka+" km pimeää tietä.<br><br>"+
     "Väsyneenä ratissa voi käydä huonosti — ja poliisi huomaa poukkoilevan auton helpommin.",
@@ -4054,29 +4149,7 @@ function ajaNukkumaan(){
         paivitaTila();
      }}]);
 }
-function vasynytKotimatka(){
-  const n=nyk();
-  const vasymys=(10-Math.min(10,S.energia))/10;      // 0..1
-  if(Math.random()<0.22+vasymys*0.30){
-    const vahinko=Math.round(12+Math.random()*26);
-    n.kunto=Math.max(8,n.kunto-vahinko);
-    n.remppa=(n.remppa||0)+2;
-    const korjaus=Math.round(vahinko*14);
-    S.raha-=korjaus; rahaPop(-korjaus,"kolari");
-    S.cred=Math.max(0,Math.round(S.cred*0.94));
-    kirjaa("<b class='r'>💥 Nukahdit hetkeksi rattiin.</b> Ojaan ja hinaus. Kunto −"+vahinko+" %.","r");
-    naytaTulos("💥 KOLARI","Silmät menivät kiinni sekunniksi. Auto ojaan, kylki naarmuille ja hinausauto "+
-      "yöllä.<br><br>Kunto −"+vahinko+" %, kuluja "+raha(korjaus)+".","var(--punainen)");
-    iltaLoppu(); return;
-  }
-  if(Math.random()<0.20+vasymys*0.35){
-    kirjaa("Poliisi kiinnostui poukkoilevasta autosta kotimatkalla.","");
-    poliisiTarkastus("Auto ajoi keskiviivan päällä. Partio kiinnostui.");
-    return;
-  }
-  kirjaa("Ajoit kotiin väsyneenä. Meni nipin napin.","");
-  iltaLoppu();
-}
+
 function iltaLoppu(){
   // cruising tapahtuu vain sinä päivänä — jos jäit pois, seuraava on kolmen viikon päästä
   if(cruisingTanaan()&&!S.cruisingAjettu){
@@ -4213,7 +4286,8 @@ function pKisat(p){
         '</div></div>'+
       kuvapaikka("auto_"+o.malli,"auton kuva")+
       '<div class="nm">'+o.nimi+'</div>'+
-      '<div class="ds">'+o.vuosi+' · '+o.hv+' hv · '+o.paino+' kg · '+o.veto+'veto</div>'+
+      '<div class="ds">'+o.vuosi+' · '+o.hv+' hv · '+o.paino+' kg · '+o.veto+'veto'+
+        ' · '+huippunopeus(o.malli)+' km/h</div>'+
       '<div class="rivi" style="margin-top:6px"><span class="lappu">maksaa '+Math.round(o.palkkio*100)+' %</span>'+
       (voitettuSamalla?'<span class="lappu huono">jo voitettu</span>':'')+'</div>'+
       (voitettuSamalla?'<div class="ds" style="color:var(--punainen);margin-top:6px">'+
@@ -4229,7 +4303,7 @@ function pKisat(p){
       "</b> — autosi näyttää "+arvioituTeho(a)+" hevosen romulta, vaikka siinä on "+a.hv+
       ". Vastustajat lyövät vetoa liian kevyesti.</p>":""));
   const pp=document.createElement("div"); pp.className="panokset";
-  const panosVaihtoehdot=S.odJasen?[20,50,100,250,500,1000]:[20,50,100,250];
+  const panosVaihtoehdot=S.odJasen?[50,150,400,1000,2500,5000]:[50,150,400,1000,2500];
   panosVaihtoehdot.forEach(m=>{
     const b=document.createElement("button");
     b.className="btn "+(panos===m?"":"haamu"); b.textContent=raha(m); b.disabled=m>S.raha;
@@ -4237,10 +4311,27 @@ function pKisat(p){
     pp.appendChild(b);
   });
   p.appendChild(pp);
+  // auto panoksena, jos vastustajan auto on samaa luokkaa
+  if(V!==null){
+    const vast=vastustajaLista()[V];
+    // tasaväkisyys ratkaistaan suorituskyvyllä, ei jälleenmyyntiarvolla
+    const omaAika=omaIndeksi(), vastAika=indeksit()[vast.malli];
+    const ero=Math.abs(omaAika-vastAika);
+    if(ero<0.75&&S.autot.length>0){
+      const ab=document.createElement("button");
+      ab.className="btn wide"+(AUTOPANOS?"":" haamu");
+      ab.style.marginTop="10px";
+      ab.innerHTML=AUTOPANOS?"🔑 Autopanos päällä — voittaja saa toisen auton"
+        :"🔑 Panosta auto (sinä "+omaAika.toFixed(1)+" s · hän "+vastAika.toFixed(1)+" s)";
+      ab.onclick=function(){ AUTOPANOS=!AUTOPANOS; piirra() };
+      p.appendChild(ab);
+    }else if(AUTOPANOS)AUTOPANOS=false;
+  }
   const b=document.createElement("button");
   b.className="btn iso"; b.style.marginTop="14px";
   b.disabled=V===null;
-  b.textContent=V===null?"Valitse vastustaja":"Aja viivalle — panos "+raha(panos);
+  b.textContent=V===null?"Valitse vastustaja":
+    (AUTOPANOS?"Aja viivalle — autopanos":"Aja viivalle — panos "+raha(panos));
   b.onclick=()=>aloitaKisa();
   p.appendChild(b);
 }
@@ -4314,9 +4405,42 @@ function pRenkaat(p){
 }
 
 function pTalli(p){
+  p.innerHTML="";
+  if(S.paikka!=="koti"){
+    p.insertAdjacentHTML("beforeend",
+      "<div class='kortti' style='border-color:var(--keltainen)'>"+
+      "<div class='nm'>🏠 Talli on kotona</div>"+
+      "<div class='ds'>Työkalut, nosturi ja osat ovat kotitallissa. "+
+      "Aja kotiin, niin pääset rassaamaan.</div>"+
+      "<button class='btn wide' id='talliKotiin'>Aja kotiin</button></div>");
+    const tk=$("talliKotiin");
+    if(tk)tk.onclick=function(){ aja("koti"); if(S.paikka==="koti")avaaAppi("talli",true) };
+    return;
+  }
+  // ajossa oleva auto ja vaihto
+  if(S.autot.length>1){
+    p.insertAdjacentHTML("beforeend","<div class='ryhmaotsikko'>🚗 Ajossa oleva auto</div>");
+    const vg=teeRuudukko(); vg.classList.add("iso");
+    S.autot.forEach(function(a,i){
+      const m=AUTOMALLIT[a.malli], kaytossa=i===S.auto;
+      vg.appendChild(teeRuutu({
+        kuva:"auto_"+a.malli, ikoni:"🚗", nimi:m.nimi,
+        alle:m.vuosi+" · kunto "+Math.round(a.kunto)+" % · renkaat "+Math.round(a.renkaat)+" %",
+        merkki:kaytossa?"ajossa":(a.laina?"sijaisauto":(a.korjaamossa?"korjaamolla":null)),
+        merkkiLk:kaytossa?"hyva":"kelt", lk:kaytossa?"on":"", himmea:a.korjaamossa,
+        klik:function(){
+          if(kaytossa||a.korjaamossa)return;
+          S.auto=i;
+          kirjaa("Vaihdoit ajoon: <b>"+m.nimi+"</b>.","g");
+          avaaAppi("talli",true);
+        }}));
+    });
+    p.appendChild(vg);
+    p.insertAdjacentHTML("beforeend","<div class='sep'></div>");
+  }
 
   const a=auto();
-  p.innerHTML="<h2>"+a.nimi+" ("+a.vuosi+") <span class='pikku'>— oma auto</span></h2>";
+  p.insertAdjacentHTML("beforeend","<h2>"+a.nimi+" ("+a.vuosi+") <span class='pikku'>— oma auto</span></h2>");
   // auton kortti kuvineen
   (function(){
     const m0=AUTOMALLIT[nyk().malli], n0=nyk();
@@ -4325,7 +4449,8 @@ function pTalli(p){
       '<div class="tk-kuva">'+kuvapaikka("auto_"+n0.malli,"")+'</div><div class="tk-tiedot">'+
       '<div class="nimi">'+m0.nimi+'</div>'+
       '<div class="ds">'+m0.vuosi+' · '+auto().hv+' hv · '+n0.km.toLocaleString("fi-FI")+' km · '+
-      m0.veto+'veto'+(m0.vari?' · '+m0.vari:'')+'</div></div></div></div>');
+      m0.veto+'veto · '+huippunopeus(auto())+' km/h'+(m0.vari?' · '+m0.vari:'')+
+      '</div></div></div></div>');
   })();
   p.insertAdjacentHTML("beforeend","<div class='statit' style='margin:12px 0'>"+
     "<div class='laatikko'><div class='k'>TEHO</div><div class='v'>"+a.hv+" <small>hv</small></div></div>"+
@@ -4892,7 +5017,7 @@ function aloitaKisa(){
       "Auto on korjattava Tallissa ennen kuin sillä ajetaan viivalle.","var(--punainen)");
     return;
   }
-  if(S.raha<panos){
+  if(!AUTOPANOS&&S.raha<panos){
     naytaTulos("EI RAHAA","Panokseen tarvitaan "+raha(panos)+". Kukaan ei aja viivalle velaksi.",
       "var(--punainen)");
     return;
@@ -4914,7 +5039,7 @@ function aloitaKisa(){
      vikaTullut:false,vikaKohta:110+Math.random()*70,
      vastusHajoaa:Math.random()<0.10?(80+Math.random()*100):null,vastusPysahtyi:false,
      vastusS:0,pohjassa:false,vihreaAika:null,reaktio:0,lahtoRpm:0,
-     valoAika:1.3+Math.random()*1.0,kello:0,loppu:false,rpmSuunta:1};
+     valoAika:1.3+Math.random()*1.0,kello:0,loppu:false,rajoitinFaasi:0};
   $("vnimi").textContent=o.nimi;
   $("vtiedot").textContent="— "+o.kuski;
   $("panosnyt").textContent=raha(panos);
@@ -4938,8 +5063,7 @@ function aloitaKisa(){
   }else{
     valot(0);
     $("ohje").innerHTML='<b>Kaasu on pohjassa</b>'+
-      '<small>Kierrokset heiluvat. Nosta kytkin kun neula on sinisellä ('+LAHTORPM[a.veto]+
-      ' r/min) <b>ja</b> valo on vihreä.</small>';
+      '<small>Kierrokset hakkaavat rajoitinta. <b>Nosta kytkin heti kun vihreä syttyy.</b></small>';
     $("toiminto").textContent="KYTKIN YLÖS";
   }
   $("toiminto").onclick=nappiPainettu;
@@ -4956,10 +5080,16 @@ function pyorita(){
       K.kello+=dt;
       if(K.kello>=K.valoAika&&K.vihreaAika===null){K.vihreaAika=K.kello;valot(4)}
       else if(K.vihreaAika===null)valot(Math.min(3,Math.floor(K.kello/K.valoAika*3)+1));
-      // kaasu on pohjassa itsestään: kierrokset heiluvat ylös ja alas
-      K.rpm+=K.rpmSuunta*3400*dt;
-      if(K.rpm>=K.oma.puna-200){K.rpm=K.oma.puna-200;K.rpmSuunta=-1}
-      if(K.rpm<=1200){K.rpm=1200;K.rpmSuunta=1}
+      // kaasu pohjassa: kierrokset nousevat ja hakkaavat rajoitinta vasten
+      const katto=K.oma.puna;
+      if(K.rpm<katto-260){
+        K.rpm+=5200*dt;
+      }else{
+        // rajoitin katkoo: neula pomppii kattoa vasten
+        K.rajoitinFaasi=(K.rajoitinFaasi||0)+dt*26;
+        K.rpm=katto-150+Math.sin(K.rajoitinFaasi)*130;
+        K.rajoitinAani=true;
+      }
       naytaMittari(K.rpm,false);
       if(K.vihreaAika!==null&&K.kello-K.vihreaAika>1.2)paastaKytkin(true);
     }else if(K.vaihe==="ajo"){
@@ -5008,16 +5138,24 @@ function paastaKytkin(myohassa){
   }
   const a=K.oma;
   K.reaktio=K.kello-K.vihreaAika; K.lahtoRpm=K.rpm;
-  K.vaihe="ajo"; K.g=0; K.v=1.0; K.aika=K.reaktio;
-  const ihanne=LAHTORPM[a.veto]*(0.75+0.25*(nyk().renkaat/100)), ero=Math.abs(K.lahtoRpm-ihanne);
-  if(K.lahtoRpm>ihanne+1100){
-    K.sutii=1.0; K.sutinut=true;
-    kirjaa("Renkaat savusivat — "+Math.round(K.lahtoRpm)+" r/min oli liikaa.","r");
-  }else if(K.lahtoRpm<ihanne-900){
-    K.v=0.3; K.aika+=0.30; kirjaa("Moottori nyki — liian vähän kierroksia.","r");
-  }else if(ero<450){
-    K.v=2.4; kirjaa("<b>Täydellinen lähtö!</b> "+Math.round(K.lahtoRpm)+" r/min.","g");
-  }else{K.v=1.6; kirjaa("Kelvollinen lähtö, "+Math.round(K.lahtoRpm)+" r/min.","")}
+  K.vaihe="ajo"; K.g=0; K.aika=K.reaktio;
+  // lähtö ratkeaa reaktiolla — kierrokset ovat aina rajoittimella
+  if(K.reaktio<0.20){
+    K.v=2.6; kirjaa("<b>Täydellinen lähtö!</b> Reaktio "+K.reaktio.toFixed(2)+" s.","g");
+  }else if(K.reaktio<0.40){
+    K.v=2.1; kirjaa("Terävä lähtö, reaktio "+K.reaktio.toFixed(2)+" s.","g");
+  }else if(K.reaktio<0.75){
+    K.v=1.5; kirjaa("Kelvollinen lähtö, reaktio "+K.reaktio.toFixed(2)+" s.","");
+  }else{
+    K.v=1.0; kirjaa("Nukahdit valoihin — reaktio "+K.reaktio.toFixed(2)+" s.","r");
+  }
+  // luisto riippuu autosta ja renkaista, ei pelaajasta
+  const tehoPaino=a.hv/a.paino*1000;
+  const pito=PITO[a.veto]*(0.7+0.3*(nyk().renkaat/100))*rengasKerroin();
+  if(tehoPaino/pito>135){
+    K.sutii=0.55+Math.random()*0.45; K.sutinut=true;
+    kirjaa("Renkaat savusivat lähdössä — vetoa on enemmän kuin pitoa.","");
+  }
   kirjaa("Reaktio "+K.reaktio.toFixed(2)+" s"+(K.reaktio<0.35?" — terävä!":""),K.reaktio<0.35?"g":"");
   $("ohje").innerHTML='<b style="color:var(--vihrea)">MENOKSI</b><small>Napauta välilyöntiä kun vaihtovalot ovat vihreät</small>';
   $("toiminto").textContent="VAIHDA";
@@ -5123,14 +5261,14 @@ function paattyyQTE(onnistui){
   $("qte").classList.remove("on");
   const n=nyk();
   if(onnistui){
-    const vahinko=Math.round(5+(1-nopeus)*13);
+    const vahinko=Math.round(9+(1-nopeus)*17);
     n.kunto=Math.max(8,n.kunto-vahinko);
     n.remppa=(n.remppa||0)+1;
     kirjaa("<b class='g'>Sait valot sammumaan.</b> "+vika.nimi+" — kunto −"+vahinko+
       " %. Vika on silti korjattava.","g");
     jatka(true,vahinko);
   }else{
-    const vahinko=Math.round(26+Math.random()*14);
+    const vahinko=Math.round(34+Math.random()*20);
     n.kunto=Math.max(8,n.kunto-vahinko);
     n.remppa=(n.remppa||0)+3;
     kirjaa("<b class='r'>Et ehtinyt reagoida.</b> "+vika.nimi+" — kunto −"+vahinko+
@@ -5142,15 +5280,18 @@ function paattyyQTE(onnistui){
 /* ---- hajoaminen ---- *//* ---- hajoaminen ---- */
 function vikaRiski(){
   const a=auto(), n=nyk();
-  let r=0.012+Math.max(0,(88-n.kunto))*0.0055+Math.max(0,(100-a.luotto))*0.0022;
-  if(kuntoKatto()<=90)r+=0.010;
-  return Math.max(0,Math.min(0.42,r));
+  // vika on harvinainen: alle 60 %:n kunnolla alkaa olla riski, ja sekin pieni
+  let r=Math.max(0,(60-n.kunto))*0.0011+Math.max(0,(100-a.luotto))*0.0004;
+  if(kuntoKatto()<=90)r+=0.002;
+  if(S.paiva<25)r*=0.3;
+  return Math.max(0,Math.min(0.06,r));
 }
 function hajoaakoKesken(){
   const a=auto();
-  if(nyk().kunto>72)return false;
-  const riski=Math.max(0,(55-nyk().kunto)*0.7 + Math.max(0,(100-a.luotto))*0.2);
-  return Math.random()*100<riski*0.35;
+  if(nyk().kunto>45)return false;
+  if(S.paiva<25)return false;
+  const riski=Math.max(0,(45-nyk().kunto)*0.5 + Math.max(0,(100-a.luotto))*0.15);
+  return Math.random()*100<riski*0.12;
 }
 function kuluta(){
   const a=auto();
@@ -5346,10 +5487,11 @@ function maali(){
     kirjaa("<b class='r'>Kisa keskeytyi vian takia.</b>","r");
   }else if(hajoaakoKesken()){
     // maaliviivan jälkeen puhjennut vika ei vie voittoa — se maksaa korjauksena
-    const vah=Math.round(12+Math.random()*10);
+    const vah=Math.round(24+Math.random()*18);
     nyk().kunto=Math.max(8,nyk().kunto-vah);
-    nyk().remppa=(nyk().remppa||0)+2;
-    syy="Maalin jälkeen moottori alkoi nakuttaa. Kunto −"+vah+" % ja auto vaatii remontin.";
+    nyk().remppa=(nyk().remppa||0)+3;
+    syy="Maalin jälkeen jotain petti kunnolla. Kunto −"+vah+" % ja auto on korjattava "+
+      "ennen seuraavaa kisaa.";
     kirjaa('<b class="r">💥 Moottori alkoi nakuttaa heti maalin jälkeen.</b> Kunto −'+vah+' %.',"r");
   }
   if(o.sleeper)kirjaa('<b class="r">'+o.sleeper.paljastus+"</b>","r");
@@ -5366,6 +5508,13 @@ function maali(){
       o.voitettu=true; o.voitettuAuto=nyk().malli;
       S.cred+=Math.round(6+o.palkkio*6);
       const kt=kuskiTila(o.kuski); kt.voitot++; kt.voitettuAuto=nyk().malli;
+      if(AUTOPANOS){
+        const m2=AUTOMALLIT[o.malli];
+        S.autot.push(uusiAuto(o.malli,Math.round(60+Math.random()*30),
+          Math.round(120000+Math.random()*90000),0));
+        kirjaa("<b class='v'>🔑 Voitit "+gen(o.kuski)+" auton: "+m2.nimi+"</b>","v");
+        AUTOPANOS=false;
+      }
       const summa=Math.round(panos*o.palkkio*sk*(K&&K.sorsa?1.2:1));
       S.raha+=summa; S.voitot++; rahaPop(summa,"kisavoitto");
       kirjaa('<b class="g">Voitto!</b> '+o.kuski+" maksoi "+raha(summa)+
@@ -5373,8 +5522,25 @@ function maali(){
       teksti="Voitit "+raha(summa)+".";
     }
   }else{
-    S.raha-=panos; S.tappiot++; rahaPop(-panos,"havitty veto");
-    kuskiTila(o.kuski).tappiot++;
+    if(AUTOPANOS){
+      AUTOPANOS=false;
+      const menetetty=AUTOMALLIT[nyk().malli].nimi;
+      if(S.autot.length>1){
+        S.autot.splice(S.auto,1); S.auto=0;
+        kirjaa("<b class='r'>🔑 Menetit auton "+menetetty+".</b>","r");
+        teksti="Hävisit autosi "+menetetty+".";
+      }else{
+        // viimeistä autoa ei viedä — maksetaan sen arvo
+        const hinta=Math.min(S.raha,autonArvo(nyk()));
+        S.raha-=hinta; rahaPop(-hinta,"autopanos");
+        kirjaa("<b class='r'>Et voinut luovuttaa ainoaa autoasi — maksoit "+raha(hinta)+".</b>","r");
+      }
+      S.tappiot++; kuskiTila(o.kuski).tappiot++;
+      S.cred=Math.max(0,S.cred-20);
+    }else{
+      S.raha-=panos; S.tappiot++; rahaPop(-panos,"havitty veto");
+      kuskiTila(o.kuski).tappiot++;
+    }
     S.cred=Math.max(0,S.cred-Math.round(4+panos*0.02));
     kirjaa('<b class="r">Häviö.</b> Menetit '+raha(panos)+".","r");
     teksti="Hävisit "+raha(panos)+".";
@@ -5698,7 +5864,12 @@ $("s-hylkaa").onclick=function(){
   piirra();
 };
 $("koti-tanko").onclick=koti;
-$("nuku").onclick=function(){ if(!K&&!QTE&&!PAKO)ajaNukkumaan() };
+$("nuku").onclick=function(){
+  if(K||QTE||PAKO)return;
+  if(S.paikka==="koti"){ ajaNukkumaan(); return }
+  aja("koti");
+  if(S.paikka==="koti")avaaAppi("kartta",true);
+};
 $("onc").onclick=function(){ naytaONC() };
 $("hl-korota").onclick=function(){ korotaHuuto() };
 $("hl-poistu").onclick=function(){ suljeHuutolava(); piirra() };
