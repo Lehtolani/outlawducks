@@ -2454,36 +2454,35 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="salaovi.js"></script>
 
 <!-- ================================================================
-     OUTLAW DUCKS - PIILOLINKKI ENERGIAJUOMATESTEIHIN
-     Liita tama patka paasivusi loppuun, juuri ennen </body>.
-     5 klikkausta alimpaan "Outlaw Ducks TC" -tekstiin avaa testisivun.
-     Saada TARGET-polku vastaamaan kansiosi sijaintia.
+     OUTLAW DUCKS - PIILOLINKKI ENERGIAJUOMATESTEIHIN (robusti v2)
+     Liita ennen </body>. 5 klikkausta "Outlaw Ducks TC" -tekstiin.
      ================================================================ -->
 <script>
 (function(){
-  var TARGET = "energiatestit/index.html";   // tai "/energiatestit/" jos kansio on juuressa
-  var NEEDED = 5, WINDOW_MS = 1500;
-  function findEl(){
-    var all = document.body.getElementsByTagName("*"), match = null;
-    for (var i=0;i<all.length;i++){
-      var e = all[i];
-      if (e.children.length === 0){
-        var t = (e.textContent||"").replace(/\s+/g," ").trim();
-        if (/outlaw ducks tc/i.test(t)) match = e;   // viimeinen osuma = alin
-      }
-    }
-    return match;
+  var TARGET    = "/energiatestit/";  // sivun osoite (juuresta)
+  var NEEDED    = 5;                   // klikkausten maara
+  var WINDOW_MS = 1500;               // aikaikkuna (ms)
+  var DEBUG     = false;              // true -> tulostaa konsoliin (F12) testaukseen
+ 
+  var n = 0, timer = null;
+  function log(){ if (DEBUG && window.console) console.log.apply(console,
+    ["[piilolinkki]"].concat([].slice.call(arguments))); }
+  function tick(){
+    n++; log("klik", n + "/" + NEEDED);
+    clearTimeout(timer);
+    timer = setTimeout(function(){ n = 0; }, WINDOW_MS);
+    if (n >= NEEDED){ n = 0; log("avataan", TARGET); window.location.href = TARGET; }
   }
-  document.addEventListener("DOMContentLoaded", function(){
-    var el = findEl();
-    if (!el) return;
-    var n = 0, timer = null;
-    el.addEventListener("click", function(){
-      n++; clearTimeout(timer);
-      timer = setTimeout(function(){ n = 0; }, WINDOW_MS);
-      if (n >= NEEDED){ n = 0; window.location.href = TARGET; }
-    });
-  }, false);
+  // Kuunnellaan kaikkia klikkauksia (capture) ja etsitaan teksti klikkauskohdasta.
+  document.addEventListener("click", function(ev){
+    var el = ev.target, hops = 0;
+    while (el && hops < 5){
+      var t = (el.textContent || "").replace(/\s+/g, " ").trim();
+      if (t.length <= 60 && /outlaw ducks tc/i.test(t)){ tick(); return; }
+      el = el.parentElement; hops++;
+    }
+  }, true);
+  log("piilolinkki ladattu");
 })();
 </script>
   
