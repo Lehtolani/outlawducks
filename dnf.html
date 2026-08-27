@@ -610,7 +610,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .maisema-teksti{position:absolute;left:0;right:0;bottom:9%;text-align:center;color:#6c7a90;font-size:14px}
 .maisema-teksti b{display:block;font-size:24px;color:#8fa0b8}
 
-.puhelin{position:relative;z-index:2;width:min(760px,97vw);height:min(1000px,96vh);
+.puhelin{--alapalkki-korkeus:64px;position:relative;z-index:2;width:min(760px,97vw);height:min(1000px,96vh);
   background:#12161e;border:14px solid #232a36;border-radius:28px;
   box-shadow:0 34px 90px rgba(0,0,0,.75);display:flex;flex-direction:column;overflow:hidden}
 /* leveällä ruudulla tabletti: appirivi väljempi ja teksti isompi */
@@ -626,6 +626,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 }
 /* puhelimella ei kehyksiä, koko ruutu käyttöön */
 @media (max-width:640px){
+  .puhelin{--alapalkki-korkeus:78px}
   body{display:block;padding:0}
   .maisema{display:none}
   .puhelin{width:100vw;height:100dvh;height:100svh;max-height:none;border:0;border-radius:0;box-shadow:none}
@@ -642,7 +643,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .tila{background:#0d1017;padding:9px 18px;display:flex;justify-content:space-between;
   font-size:12.5px;color:var(--himmea);border-bottom:1px solid #232a36;flex:0 0 auto}
 
-.ilmoituspino{position:absolute;left:10px;right:10px;bottom:14px;z-index:60;
+.ilmoituspino{position:absolute;left:10px;right:10px;bottom:calc(var(--alapalkki-korkeus,64px) + 10px);z-index:60;
   display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
 .ilmoitus{background:rgba(30,37,50,.72);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
   border:2px solid rgba(85,99,122,.6);border-radius:14px;padding:8px 11px;display:flex;gap:10px;
@@ -710,7 +711,14 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
   cursor:pointer;flex:0 0 auto}
 .nukunappi:hover{border-color:var(--keltainen);color:var(--keltainen)}
 .pmittarit{display:flex;background:#151a23;border-bottom:1px solid #232a36;flex:0 0 auto}
-.pmittari{flex:1;text-align:center;padding:8px 3px 9px;cursor:help;min-width:0}
+.pmittari{flex:1;text-align:center;padding:8px 3px 9px;cursor:help;min-width:0;position:relative}
+.raha-flash{position:absolute;left:50%;bottom:100%;transform:translate(-50%,4px);
+  font-weight:800;font-size:15px;white-space:nowrap;opacity:0;pointer-events:none;
+  transition:transform .5s cubic-bezier(.2,.8,.3,1),opacity .5s;z-index:5;
+  text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.raha-flash.plus{color:var(--vihrea)}
+.raha-flash.miinus{color:var(--punainen)}
+.raha-flash.nayta{opacity:1;transform:translate(-50%,-6px)}
 .pmittari+.pmittari{border-left:1px solid #232a36}
 .pmittari .k{font-size:9.5px;color:var(--himmea);font-weight:800;letter-spacing:.04em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1140,8 +1148,8 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 
   <div class="naytto" id="naytto"></div>
   <div class="alapalkki">
-    <button class="ap-nappi" id="ap-koti" title="Kotinäkymään"><span>📱</span><small>Puhelin</small></button>
     <button class="ap-nappi paa" id="ap-ajakotiin"><span>🏠</span><small id="ap-kotiteksti">Aja kotiin</small></button>
+    <button class="ap-nappi" id="ap-koti" title="Kotinäkymään"><span>📱</span><small>Puhelin</small></button>
     <button class="ap-nappi" id="ap-kartta" title="Kartta"><span>🗺️</span><small>Kartta</small></button>
     <div class="opastus" id="opastus">
       <div class="op-nuoli"></div>
@@ -2222,11 +2230,16 @@ let V=null, AUTOPANOS=false, panos=50, LAJI="kiihdytys", K=null, ajastin=null;
 const $=id=>document.getElementById(id);
 const gen=nimi=>{const v="aeiouyäö";return v.indexOf(nimi.slice(-1).toLowerCase())>=0?nimi+"n":nimi+"in"};
 const raha=n=>Math.round(n).toLocaleString("fi-FI")+" €";
-function rahaPop(summa,selite){
+function rahaPop(summa){
   if(!summa)return;
-  ilmoita({ico:summa>0?"💶":"💸",lk:summa>0?"raha":"meno",
-    otsikko:summa>0?"Rahaa tilille":"Rahaa meni",teksti:selite,
-    summa:(summa>0?"+":"\u2212")+raha(Math.abs(summa))});
+  const kohde=$("m-raha"); if(!kohde)return;
+  const isa=kohde.closest(".pmittari")||kohde.parentNode;
+  const el=document.createElement("span");
+  el.className="raha-flash "+(summa>0?"plus":"miinus");
+  el.textContent=(summa>0?"+":"\u2212")+raha(Math.abs(summa));
+  isa.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add("nayta") });
+  setTimeout(function(){ el.remove() },1500);
 }
 
 function piilotaKupla(d){
@@ -2570,8 +2583,8 @@ function pTalliAutot(p){
     S.raha+=hinta; rahaPop(hinta,"pikamyynti");
     kirjaa("Myit auton <b>"+AUTOMALLIT[a.malli].nimi+"</b> nopeasti hintaan "+raha(hinta)+".","g");
     S.autot.splice(i,1); if(S.auto>i)S.auto--;
-    naytaTulos("AUTO MYYTY","Vaihtoautoliike otti sen heti. Sait <b>"+raha(hinta)+
-      "</b> — vähemmän kuin ilmoituksella, mutta rahat ovat tilillä nyt.","var(--vihrea)");
+    naytaTulos("AUTO MYYTY","Vaihtoautoliike otti sen heti — vähemmän kuin ilmoituksella, "+
+      "mutta rahat ovat tilillä nyt.","var(--vihrea)");
     avaaAppi("talli",true);
   }});
 
@@ -3260,7 +3273,6 @@ const APPIT=[
   {id:"tori",ico:"🏷️",nm:"Tori",fn:function(){return pTori}},
   {id:"huuto",ico:"🔨",nm:"Huutokauppa",fn:function(){return pHuutokauppa}},
   {id:"wiki",ico:"📖",nm:"CarWiki",fn:function(){return pWiki}},
-  {id:"myynti",ico:"💰",nm:"Myynti",fn:function(){return pMyynti}},
   {id:"maine",ico:"🌟",nm:"Maine",fn:function(){return pMaine}},
   {id:"viestit",ico:"💬",nm:"Viestit",fn:function(){return pViestit}},
   {id:"loki",ico:"📋",nm:"Tapahtumat",fn:function(){return pLoki}},
@@ -3274,7 +3286,7 @@ function merkki(id){
     if(tyoJono().length||S.projekti)return "⏱";
     if(nyk().remppa>=3)return "!";
   }
-  if(id==="myynti"&&S.tarjoukset.length)return String(S.tarjoukset.length);
+  if(id==="tori"&&S.tarjoukset.length)return String(S.tarjoukset.length);
   if(id==="viestit"){ const u=VIESTIT.filter(function(v){return !v.luettu}).length; if(u)return String(u) }
   if(id==="kartta"&&cruisingTanaan())return "🦆";
   if(id==="maine"){ const s=seuraavaTaso(); if(s&&S.cred>=s.raja)return "↑" }
@@ -3343,13 +3355,18 @@ function piirra(){
   if(K)return;
   if(VL===null)koti(); else avaaAppi(VL);
 }
-function vuodenaikaVari(){
+function vuodenaika(){
   const k=kuukausiNro();
-  if(k>=6&&k<=8) return ["#16321f","#0a1410"];   // kesä
-  if(k>=9&&k<=10)return ["#3a2612","#140f0a"];   // syksy
-  if(k>=11||k<=3)return ["#16273f","#080d14"];   // talvi
-  return ["#3a3512","#14120a"];                  // kevät
+  if(k>=6&&k<=8) return {nimi:"kesä",ico:"☀️",vari:["#16321f","#0a1410"],
+    ds:"Valoisat illat ja kuiva asfaltti."};
+  if(k>=9&&k<=10)return {nimi:"syksy",ico:"🍂",vari:["#3a2612","#140f0a"],
+    ds:"Lehdet putoavat ja illat pimenevät."};
+  if(k>=11||k<=3)return {nimi:"talvi",ico:"❄️",vari:["#16273f","#080d14"],
+    ds:"Lumi ja pakkanen. Kesärenkailla ei kannata lähteä."};
+  return {nimi:"kevät",ico:"🌱",vari:["#3a3512","#14120a"],
+    ds:"Lumet sulavat ja hiekoitushiekka näkyy teillä."};
 }
+function vuodenaikaVari(){ return vuodenaika().vari }
 function paivitaTila(){
   const vv=vuodenaikaVari();
   document.body.style.background="radial-gradient(90% 70% at 50% 0%,"+vv[0]+","+vv[1]+" 70%)";
@@ -3424,9 +3441,75 @@ function alinetti(p,fn){
 }
 /* Tori omana näkymänään (ei vaadi paikalla oloa — se on netissä) */
 function pTori(p){
-  const vanha=KAUPPA; KAUPPA="tori";
+  // saapuneet tarjoukset ensin
+  if(S.tarjoukset.length){
+    p.insertAdjacentHTML("beforeend","<div class='ryhmaotsikko'>📩 Saapuneet tarjoukset</div>");
+    const gt=document.createElement("div"); gt.className="kortit";
+    S.tarjoukset.forEach(function(t,i){
+      const el=document.createElement("div"); el.className="kortti";
+      el.style.borderColor="var(--keltainen)";
+      el.innerHTML='<div class="nimi">'+t.nimi+'</div>'+
+        '<div class="tiedot"><b>'+t.ostaja+'</b> tarjoaa <b style="color:var(--keltainen)">'+
+        raha(t.tarjous)+'</b>. Pyyntisi on '+raha(t.hinta)+'.<br>"'+t.viesti+'"</div>'+
+        '<div class="rivi"><button class="btn" data-hyv="'+i+'">Hyväksy</button>'+
+        '<button class="btn haamu" data-hyl="'+i+'">Kieltäydy</button></div>';
+      gt.appendChild(el);
+    });
+    p.appendChild(gt);
+    p.querySelectorAll("[data-hyv]").forEach(function(b){b.onclick=function(){
+      const t=S.tarjoukset.splice(parseInt(b.dataset.hyv,10),1)[0];
+      if(S.ilmoitukset.indexOf(t.ilmo)<0){
+        naytaTulos("JO MYYTY","Tämä kohde on jo mennyt.","var(--keltainen)"); avaaAppi("tori",true); return;
+      }
+      S.raha+=t.tarjous; rahaPop(t.tarjous,"myynti");
+      S.tarjoukset=S.tarjoukset.filter(function(x){return x.ilmo!==t.ilmo});
+      poistaIlmoitus(t.ilmo);
+      kirjaa("<b class='g'>Myyty:</b> "+t.nimi+" — "+raha(t.tarjous)+".","g");
+      naytaTulos("💰 KAUPAT","Myit kohteen <b>"+t.nimi+"</b> hintaan "+raha(t.tarjous)+".","var(--vihrea)");
+      avaaAppi("tori",true);
+    }});
+    p.querySelectorAll("[data-hyl]").forEach(function(b){b.onclick=function(){
+      const t=S.tarjoukset.splice(parseInt(b.dataset.hyl,10),1)[0];
+      kirjaa("Kieltäydyit tarjouksesta ("+t.nimi+").","");
+      avaaAppi("tori",true);
+    }});
+    p.insertAdjacentHTML("beforeend","<div class='sep'></div>");
+  }
+  // omat ilmoitukset
+  if(S.ilmoitukset.length){
+    p.insertAdjacentHTML("beforeend","<div class='ryhmaotsikko'>📤 Omat ilmoitukset</div>");
+    const og=teeRuudukko(); og.classList.add("iso");
+    S.ilmoitukset.forEach(function(il,i){
+      const p2=Math.round(myyntiTodennakoisyys(il.hinta,il.suositus)*100);
+      og.appendChild(teeRuutu({
+        kuva:"osa_"+(il.osakuva||""), ikoni:il.ikoni||"🔩", nimi:il.nimi,
+        alle:il.paivia+" pv · "+il.katselut+" katselua",
+        hinta:raha(il.hinta), merkki:p2+" %/ilta", merkkiLk:"kelt",
+        klik:function(){
+          naytaTiedot(il.nimi,"osa_"+(il.osakuva||""),
+            [["Pyyntö",raha(il.hinta)],["Suositushinta",raha(il.suositus)],
+             ["Esillä",il.paivia+" pv"],["Katseluita",il.katselut],
+             ["Menekki",p2+" % / ilta"]],
+            [{teksti:"Laske hintaa −15 %",lk:"kelt",toiminto:function(){
+               il.hinta=Math.max(1,Math.round(il.hinta*0.85));
+               kirjaa("Laskit hintaa: "+il.nimi+" nyt "+raha(il.hinta)+".","");
+               avaaAppi("tori",true);
+             }},
+             {teksti:"Poista ilmoitus",lk:"",toiminto:function(){
+               if(il.data)S.varasto.push(il.data);
+               S.ilmoitukset.splice(i,1);
+               kirjaa("Poistit ilmoituksen: "+il.nimi+".","");
+               avaaAppi("tori",true);
+             }}],"var(--neon)");
+        }}));
+    });
+    p.appendChild(og);
+    p.insertAdjacentHTML("beforeend","<div class='ryhmaotsikko'>🏷️ Torilla myytävänä</div>");
+  }
+  // KAUPPA jätetään "tori":ksi — ostonapit lukevat sen vasta klikatessa,
+  // ja palauttaminen tässä rikkoisi oston (ks. ostaOsa)
+  KAUPPA="tori";
   toriNakyma(p);
-  KAUPPA=vanha;
 }
 
 /* ---------- KAUPAT-APPI kokoaa ostamisen ---------- */
@@ -3476,7 +3559,7 @@ const SALAKOODIT={
  "OD52":{nimi:"poliisikalusto",autot:["poliisiv70","poliisisprinter","poliisipassat"],
    viesti:"Radiopuhelin rätisee. Kolme sinivalkoista ajaa pihaan ja kuskit kävelevät pois."},
  "MOTHERLODE":{nimi:"rahalasti",raha:50000,toistuva:true,
-   viesti:"Puhelin pirahtaa: tilillesi kilahti 50 000 €. Kukaan ei kysy mistä."}
+   viesti:"Puhelin pirahtaa: tuntematon lähde siirsi rahaa tilillesi. Kukaan ei kysy mistä."}
 };
 const SALAAUTOT={
  charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
@@ -3522,8 +3605,7 @@ function kokeileKoodi(teksti){
     rahaPop(s.raha,"motherlode");
     aani("taso");
     kirjaa("<b class='v'>🔓 "+koodi+"</b> — "+raha(s.raha)+" tilille.","v");
-    naytaTulos("🔓 "+koodi, s.viesti+"<br><br><b style='font-size:26px;color:var(--vihrea)'>+"+
-      raha(s.raha)+"</b>","var(--vihrea)");
+    naytaTulos("🔓 "+koodi, s.viesti,"var(--vihrea)");
     piirra();
     return true;
   }
@@ -3691,109 +3773,7 @@ function myyntiTodennakoisyys(hinta,suositus){
   const suhde=hinta/Math.max(1,suositus);
   return Math.max(0.04,Math.min(0.80,1.25-suhde*0.75));
 }
-function pMyynti(p){
-  p.innerHTML="<h2>💰 Omat myynti-ilmoitukset</h2>"+
-    "<p style='color:var(--himmea);margin:4px 0 12px'>Laita hinta itse. Halpa menee nopeasti, kallis voi jäädä "+
-    "roikkumaan viikoiksi. Ostajat tinkivät.</p>";
 
-  // avoimet tarjoukset
-  if(S.tarjoukset.length){
-    p.insertAdjacentHTML("beforeend","<h2>📩 Saapuneet tarjoukset</h2>");
-    const gt=document.createElement("div"); gt.className="kortit";
-    S.tarjoukset.forEach((t,i)=>{
-      const el=document.createElement("div"); el.className="kortti" ;
-      el.style.borderColor="var(--keltainen)";
-      el.innerHTML='<div class="nimi">'+t.nimi+'</div>'+
-        '<div class="tiedot"><b>'+t.ostaja+'</b> tarjoaa <b style="color:var(--keltainen)">'+raha(t.tarjous)+
-        '</b>. Pyyntisi on '+raha(t.hinta)+'.<br>"'+t.viesti+'"</div>'+
-        '<div class="rivi"><button class="btn" data-hyv="'+i+'">Hyväksy</button>'+
-        '<button class="btn haamu" data-hyl="'+i+'">Kieltäydy</button></div>';
-      gt.appendChild(el);
-    });
-    p.appendChild(gt);
-    p.querySelectorAll("[data-hyv]").forEach(b=>b.onclick=()=>{
-      const t=S.tarjoukset.splice(parseInt(b.dataset.hyv,10),1)[0];
-      if(S.ilmoitukset.indexOf(t.ilmo)<0){
-        naytaTulos("JO MYYTY","Tämä kohde on jo mennyt.","var(--keltainen)"); piirra(); return;
-      }
-      S.raha+=t.tarjous; rahaPop(t.tarjous,"myynti");
-      S.tarjoukset=S.tarjoukset.filter(function(x){return x.ilmo!==t.ilmo});
-      poistaIlmoitus(t.ilmo);
-      kirjaa("<b class='g'>Myyty:</b> "+t.nimi+" — "+raha(t.tarjous)+".","g");
-      naytaTulos("💰 KAUPAT","Myit kohteen <b>"+t.nimi+"</b> hintaan "+raha(t.tarjous)+".","var(--vihrea)");
-      piirra();
-    });
-    p.querySelectorAll("[data-hyl]").forEach(b=>b.onclick=()=>{
-      const t=S.tarjoukset.splice(parseInt(b.dataset.hyl,10),1)[0];
-      kirjaa("Kieltäydyit tarjouksesta ("+t.nimi+").","");
-      piirra();
-    });
-    p.insertAdjacentHTML("beforeend","<div class='sep'></div>");
-  }
-
-  // aktiiviset ilmoitukset
-  p.insertAdjacentHTML("beforeend","<h2>Myynnissä nyt</h2>");
-  const gi=document.createElement("div"); gi.className="kortit tori";
-  if(!S.ilmoitukset.length)gi.innerHTML="<p style='color:var(--himmea)'>Ei ilmoituksia. Laita jotain myyntiin alta.</p>";
-  S.ilmoitukset.forEach((il,i)=>{
-    const p2=Math.round(myyntiTodennakoisyys(il.hinta,il.suositus)*100);
-    const el=document.createElement("div"); el.className="tori-ilmo";
-    el.innerHTML='<div class="tori-kuva">'+il.ikoni+'</div><div class="tori-sisalto">'+
-      '<div class="tori-otsikko">'+il.nimi+'</div><div class="tori-hinta">'+raha(il.hinta)+'</div>'+
-      '<div class="tori-meta">Oulu · ollut esillä '+il.paivia+' pv · '+il.katselut+' katselua</div>'+
-      '<div class="tori-teksti">Suositushinta '+raha(il.suositus)+'. Menekki noin '+p2+' % / ilta.</div>'+
-      '<div class="tori-napit"><button class="btn haamu" data-laske="'+i+'">Laske hintaa −15 %</button>'+
-      '<button class="btn haamu" data-poista="'+i+'">Poista ilmoitus</button></div></div>';
-    gi.appendChild(el);
-  });
-  p.appendChild(gi);
-  p.querySelectorAll("[data-laske]").forEach(b=>b.onclick=()=>{
-    const il=S.ilmoitukset[parseInt(b.dataset.laske,10)];
-    il.hinta=Math.max(10,Math.round(il.hinta*0.85/10)*10);
-    kirjaa("Laskit hintaa: "+il.nimi+" nyt "+raha(il.hinta)+".","");
-    piirra();
-  });
-  p.querySelectorAll("[data-poista]").forEach(b=>b.onclick=()=>{
-    const il=S.ilmoitukset.splice(parseInt(b.dataset.poista,10),1)[0];
-    palautaIlmoitus(il);
-    piirra();
-  });
-
-  // varasto
-  // varasto ruudukkona
-  if(S.varasto.length){
-    p.insertAdjacentHTML("beforeend","<div class='sep'></div><h2>📦 Varasto "+
-      "<span class='pikku'>— "+S.varasto.length+" osaa odottaa</span></h2>");
-    const vg=teeRuudukko();
-    S.varasto.forEach(function(v,i){
-      const o=OSAT.find(function(x){return x.avain===v.avain});
-      const kn=KAUPAT.find(function(x){return x.avain===v.kauppa}).nimi;
-      const sug=Math.round(o.hinta*0.55*v.laatu);
-      vg.appendChild(teeRuutu({
-        kuva:"osa_"+(o.osakuva||o.avain), ikoni:o.ikoni||"🔩", nimi:o.nimi,
-        alle:kn+" · laatu "+Math.round(v.laatu*100)+" %",
-        merkki:"varastossa", merkkiLk:"kelt",
-        klik:function(){
-          naytaTiedot(o.nimi,"osa_"+(o.osakuva||o.avain),
-            [["Kauppa",kn],["Laatu",Math.round(v.laatu*100)+" %"],
-             ["Asennus",aikaTeksti(o.sek||60)],["Myyntihinta n.",raha(sug)]],
-            [{teksti:"Asenna",lk:"vihrea",toiminto:function(){
-               S.varasto.splice(i,1);
-               aloitaAsennus(o.avain,v.laatu,v.kauppa,false); avaaAppi("talli",true);
-             }},
-             {teksti:"Myy Torilla",lk:"kelt",toiminto:function(){
-               S.varasto.splice(i,1);
-               S.ilmoitukset.push({tyyppi:"osa",data:v,nimi:o.nimi,ikoni:o.ikoni||"🔩",
-                 osakuva:o.osakuva,hinta:sug,suositus:sug,paivia:0,katselut:0});
-               kirjaa("Laitoit myyntiin: <b>"+o.nimi+"</b> "+raha(sug)+".","");
-               avaaAppi("talli",true);
-             }},
-             {teksti:"Takaisin",lk:"",toiminto:null}],"var(--keltainen)");
-        }}));
-    });
-    p.appendChild(vg);
-  }
-}
 
 let KARTTATILA="lista";
 const PAIKKAIKONI={kisa:"🏁",kauppa:"🔧",parkki:"🅿️",koti:"🏠"};
@@ -4285,8 +4265,8 @@ function aloitaCruising(){
   naytaTulos("🦆 OULU NIGHT CRUISING",
     "Letka lähti Kempeleen Biltemalta ja kiersi Limingantullin, Raksilan ja Nallikarin kautta.<br><br>"+
     tapahtuneet.map(function(t){return t.ico+" "+t.teksti}).join("<br>")+
-    "<br><br>Palkkio <b>"+raha(palkinto)+"</b> ja <b>40 katu-uskottavuutta</b>. "+
-    "Seuraava ajetaan kolmen viikon päästä.","var(--violetti)");
+    "<br><br>Sait <b>"+maine+" katu-uskottavuutta</b>. Seuraava ajetaan kolmen viikon päästä.",
+    "var(--violetti)");
   aani("voitto");
   paivitaStatit(); piirra();
 }
@@ -4311,6 +4291,7 @@ function ajaNukkumaan(){
 }
 
 function iltaLoppu(){
+  const vanhaVuodenaika=vuodenaika().nimi;
   // cruising tapahtuu vain sinä päivänä — jos jäit pois, seuraava on kolmen viikon päästä
   if(cruisingTanaan()&&!S.cruisingAjettu){
     S.seuraavaCruising=S.paiva+21;
@@ -4342,18 +4323,27 @@ function iltaLoppu(){
   }else{S.tuplaTyo=false;teksti="Viikonloppu — ei töitä."}
   if(S.paiva%14===0){
     S.raha+=S.palkkakertyma; rahaPop(S.palkkakertyma,"palkkapaiva");
-    teksti+="<br><b style='color:var(--vihrea)'>Palkkapäivä! Tilille kilahti "+raha(S.palkkakertyma)+".</b>";
+    teksti+="<br><b style='color:var(--vihrea)'>Palkkapäivä!</b>";
     kirjaa("<b class='g'>Palkkapäivä: "+raha(S.palkkakertyma)+"</b>","g");
     S.palkkakertyma=0;
   }
-  ilmoita({ico:"🌅",lk:"paiva",otsikko:"Päivä "+S.paiva+" — "+VIIKONPAIVAT[vpNro()],
-    teksti:kuukausi()+" · "+keli().nimi,kesto:5000});
-  ilmoita({ico:"🦆",lk:"paiva",otsikko:"Seuraava Oulu Night Cruising",
-    teksti:cruisingTanaan()?"Tänään! Lähtö Kempeleen Biltemalta.":
-      (S.seuraavaCruising-S.paiva)+" päivän päästä Biltemalta.",kesto:5000});
   if(Math.random()<0.45)setTimeout(function(){soi(Math.floor(Math.random()*SOITTAJAT.length))},2600);
-  naytaTulos("PÄIVÄ "+S.paiva+" — "+VIIKONPAIVAT[vpNro()].toUpperCase(),
-    teksti+"<br>Torin valikoima vaihtui.","var(--keltainen)");
+  const oncTeksti=cruisingTanaan()?"🦆 Tänään lähtee Oulu Night Cruising — Kempeleen Biltemalta.":
+    "🦆 Seuraava ONC "+(S.seuraavaCruising-S.paiva)+" päivän päästä.";
+  const uusiVuodenaika=vuodenaika();
+  if(uusiVuodenaika.nimi!==vanhaVuodenaika){
+    naytaValinta(uusiVuodenaika.ico+" NYT ON "+uusiVuodenaika.nimi.toUpperCase(),
+      uusiVuodenaika.ds+"<br><br><span style='color:var(--himmea);font-size:13px'>"+
+      "Päivä "+S.paiva+" — "+VIIKONPAIVAT[vpNro()]+"<br>"+teksti+"</span>",
+      uusiVuodenaika.vari[0]==="#16321f"?"var(--vihrea)":
+      uusiVuodenaika.vari[0]==="#3a2612"?"#ff8a3d":
+      uusiVuodenaika.vari[0]==="#16273f"?"var(--neon)":"var(--keltainen)",
+      [{teksti:"Selvä",lk:"vihrea",toiminto:null}]);
+  }else{
+    naytaTulos("PÄIVÄ "+S.paiva+" — "+VIIKONPAIVAT[vpNro()].toUpperCase(),
+      teksti+"<br>"+keli().ico+" "+keli().nimi+".<br>Torin valikoima vaihtui.<br><br>"+
+      "<span style='color:var(--himmea);font-size:13px'>"+oncTeksti+"</span>","var(--keltainen)");
+  }
   kirjaa("— Päivä "+S.paiva+", "+VIIKONPAIVAT[vpNro()]+" —","");
   piirra();
 }
@@ -4827,6 +4817,7 @@ function pTalli(p){
         if(osa.tyyli)rivit.push(["Tyyli","+"+osa.tyyli]);
         if(osa.pito)rivit.push(["Pito","+"+Math.round((osa.pito-1)*100)+" %"]);
         if(osa.kuntokatto)rivit.push(["Kuntokatto",osa.kuntokatto+" %"]);
+        if(osa.vaatii)rivit.push(["Vaatii ensin",OSAT.find(function(x){return x.avain===osa.vaatii}).nimi]);
         rivit.push(["Tila",tyossa?"työn alla":kauppa?"asennettu ("+
           KAUPAT.find(function(x){return x.avain===kauppa}).nimi+")":
           varastossa?varastossa+" kpl varastossa":"ei omistuksessa"]);
@@ -5043,10 +5034,6 @@ function ostaOsa(avain,alennettu){
       Math.round(tori.laatu*100)+" prosentiksi. Osa odottaa varastossa.",tori.laatu>=1?"g":"r");
     delete S.tori[avain];
   }else kirjaa("Ostit osan <b>"+o.nimi+"</b> ("+k.nimi+", "+raha(hinta)+"). Asenna se Tallissa.","g");
-  naytaTulos("📦 OSA VARASTOON","<b>"+o.nimi+"</b> on ostettu.<br><br>"+
-    "Asennus tehdään <b>Tallissa</b> tai teetetään <b>nyrkkipajalla</b>. "+
-    "Itse tehtynä se vie aikaa mutta ei rahaa; paja hoitaa sen heti maksua vastaan.",
-    "var(--vihrea)");
   piirra();
 }
 function tingi(avain){
