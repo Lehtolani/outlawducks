@@ -1327,6 +1327,8 @@ const AUTOMALLIT={
  saab900t: {nimi:"Saab 900 Turbo",vuosi:1985,hv:145,nm:235,paino:1180,veto:"etu",pera:3.61,puna:6000,vaihteet:5,turbo:true,arvo:4400},
  starletgt:{nimi:"Toyota Starlet GT Turbo (EP82)",vuosi:1990,hv:115,nm:160,paino:900,veto:"etu",pera:4.20,puna:7200,vaihteet:5,turbo:true,arvo:5600},
  w201_16v: {nimi:"Mercedes-Benz 190E 2.3-16",vuosi:1986,hv:185,nm:225,paino:1230,veto:"taka",pera:3.46,puna:7000,vaihteet:5,arvo:9800},
+ a6:       {nimi:"Audi A6 2.5 TDI",diesel:true,vuosi:1996,hv:140,nm:290,paino:1550,veto:"etu",
+   pera:3.89,puna:4600,vaihteet:5,turbo:true,arvo:2400},
  prius:    {nimi:"Toyota Prius IV (XW50) hybrid",vuosi:2018,hv:122,nm:142,paino:1400,veto:"etu",pera:3.70,puna:5200,vaihteet:5,arvo:14000,vari:"turkoosi"},
  caddy:    {nimi:"VW Caddy 1.9 TDI",diesel:true,vuosi:2007,hv:105,nm:250,paino:1450,veto:"etu",pera:3.94,puna:4600,vaihteet:5,turbo:true,arvo:3900},
  fordka99sleeper:   {nimi:"Ford Ka 1.3 Sleeper",vuosi:1999,hv:145,nm:190,paino:830,veto:"etu",pera:4.40,puna:7000,vaihteet:5,turbo:true,arvo:3500},
@@ -1527,6 +1529,8 @@ const PAIKAT=[
  {avain:"limingantulli",nimi:"Prisma Limingantulli",tyyppi:"parkki",x:61.4,y:69.0,ds:"Perjantai-iltana taynna porukkaa."},
  {avain:"kaakkuri",nimi:"Kaakkuri Verkkokauppa",tyyppi:"kauppa",kauppa:"verkkokauppa",x:52.8,y:69.6,ds:"Elektroniikkaa ja kaiuttimia."},
  {avain:"keskusta",nimi:"Oulun keskusta",tyyppi:"parkki",x:57.4,y:52.7,ds:"Torinranta ja kauppatori."},
+ {avain:"aimarautio",nimi:"Äimäraution ravirata",tyyppi:"parkki",x:66.8,y:47.5,
+   ds:"Iso avoin kenttä. Elokuun toisena lauantaina täynnä joka lähtöä olevaa peltiä."},
  {avain:"koti",nimi:"Koti",tyyppi:"koti",x:63.5,y:57.5,ds:"Rivitalon pääty ja autotalli pihassa. Täällä nukutaan ja rassataan."},
  {avain:"raksila",nimi:"Raksilan marketit",tyyppi:"parkki",x:60.6,y:60.6,ds:"Klassikko. Taalla esitellaan autoja."},
  {avain:"nallisport",nimi:"Nallisport",tyyppi:"parkki",x:66.0,y:52.4,ds:"Iso parkki hallin edessa."},
@@ -2045,10 +2049,10 @@ const PUZZLET=[
   vaiht:["Pääsylinteri vuotaa sisäisesti","Palat ovat loppu",
          "Jarruneste on liian uutta"],oikea:0}];
 var PUZZLE=null;
-function aloitaKorjausPuzzle(perushinta){
+function aloitaVikaPuzzle(vika,jatka){
   const pakka=PUZZLET.slice(); const valitut=[];
   for(let i=0;i<3;i++)valitut.push(pakka.splice(Math.floor(Math.random()*pakka.length),1)[0]);
-  PUZZLE={kysymykset:valitut,kohta:0,oikein:0,perushinta:perushinta};
+  PUZZLE={kysymykset:valitut,kohta:0,oikein:0,vika:vika,jatka:jatka};
   piirraPuzzle();
   $("qte").classList.add("on");
 }
@@ -2058,7 +2062,7 @@ function piirraPuzzle(){
   if(!k.jarjestys){
     k.jarjestys=k.vaiht.map(function(_,i){return i}).sort(function(){return Math.random()-0.5});
   }
-  $("qte-otsikko").textContent="🔧 RASSAUS "+(p.kohta+1)+" / 3";
+  $("qte-otsikko").textContent="🔧 "+p.vika.nimi+" ("+(p.kohta+1)+"/3)";
   $("qte-teksti").textContent=k.kys;
   $("qte-koodi").innerHTML='<div class="puzzlevaiht">'+
     k.jarjestys.map(function(i){
@@ -2076,27 +2080,9 @@ function piirraPuzzle(){
 function paataPuzzle(){
   const p=PUZZLE; PUZZLE=null;
   $("qte").classList.remove("on");
-  const n=nyk();
-  let hinta, teksti, vari;
-  if(p.oikein===3){
-    hinta=0; vari="var(--vihrea)";
-    teksti="Kolme kolmesta. Homma meni putkeen eikä maksanut mitään.";
-  }else if(p.oikein===2){
-    hinta=Math.round(p.perushinta*0.4); vari="var(--keltainen)";
-    teksti="Kaksi kolmesta. Yksi tiiviste meni pilalle — "+raha(hinta)+".";
-  }else if(p.oikein===1){
-    hinta=Math.round(p.perushinta*1.1); vari="#ff8a3d";
-    teksti="Yksi kolmesta. Kierteet meni ja osia piti hakea lisää — "+raha(hinta)+".";
-  }else{
-    hinta=Math.round(p.perushinta*2.2); vari="var(--punainen)";
-    teksti="Nolla kolmesta. Homma kusi pahasti ja korjaamo joutui pelastamaan — "+raha(hinta)+
-      ". Tämä tuli kalliimmaksi kuin jos olisit vienyt sen heti.";
-  }
-  S.raha-=hinta; if(hinta)rahaPop(-hinta,"rassaus");
-  n.kunto=Math.min(kuntoKatto(),Math.max(n.kunto,p.oikein>=2?75:60));
-  kirjaa("<b>Rassasit auton itse.</b> "+teksti,p.oikein>=2?"g":"r");
-  naytaTulos("🔧 RASSAUS VALMIS",teksti+"<br>Kunto on nyt "+Math.round(n.kunto)+" %.",vari);
-  piirra();
+  const onnistui=p.oikein>=2;
+  const vahinko=onnistui?Math.round(9+(2-p.oikein)*8):Math.round(34+Math.random()*20);
+  p.jatka(onnistui,vahinko);
 }
 
 /* ============ ASENNUSTYOT ============ */
@@ -2197,6 +2183,12 @@ function lataaTallennus(){
     S.varasto=(S.varasto||[]).filter(function(v){return poistetut.indexOf(v.avain)<0});
     S.ilmoitukset=(S.ilmoitukset||[]).filter(function(il){
       return !(il.tyyppi==="osa"&&il.data&&poistetut.indexOf(il.data.avain)>=0)});
+    // vanhasta yhden tapahtuman rakenteesta uuteen kolmen tapahtuman rakenteeseen
+    if(!S.naytt){
+      S.naytt={hotsi:S.seuraavaHotsi||105,asc:345,rideinoulu:75};
+      while(S.naytt.hotsi<=S.paiva-2)S.naytt.hotsi+=360;
+    }
+    NAYTTELYT.forEach(function(n){ if(S.naytt[n.avain]===undefined)S.naytt[n.avain]=105 });
     if((S.versio||1)<TALLENNUSVERSIO){
       // hahmot vaihtuivat vakiokuskeiksi: arvotaan illan porukka uusiksi
       S.vastustajat=[]; S.versio=TALLENNUSVERSIO;
@@ -2245,7 +2237,8 @@ let S={raha:400,epailys:0,voitot:0,tappiot:0,
        autot:[uusiAuto("corolla94",78,243000)], auto:0,
        tori:{}, nettiauto:[], huuto:null,
        pysaytykset:0, sakot:0, huomautukset:0, cred:0,
-       paiva:1, energia:100, palkkakertyma:0, paikka:"koti",
+       paiva:1, energia:100, palkkakertyma:0,
+       naytt:{hotsi:105,asc:345,rideinoulu:75}, naytViilaus:null, paikka:"koti",
        seuraavaCruising:21, varasto:[], ilmoitukset:[], tarjoukset:[],
        projekti:null, tuplaTyo:false, sorsaOnni:false, vastustajat:[],
        sponssiOsa:0, sponssiSpessu:0, huoltoKaytetty:-99, viimeTaso:1};
@@ -3875,6 +3868,11 @@ function paikkaToiminnot(pk){
   const n=nyk(), a=auto(), t=[];
   if(pk.avain!==S.paikka)return t;
   if(pk.tyyppi==="kisa")t.push({ico:"🏁",nm:"Aja viivalle",lk:"",toiminto:function(){avaaAppi("kisat")}});
+  (function(){
+    const n=NAYTTELYT.find(function(x){return x.paikka===pk.avain&&naytteluTanaan(x.avain)});
+    if(n)t.push({ico:n.ikoni,nm:n.nimi.split(" — ")[0]+" käynnissä",lk:"duck",
+      toiminto:function(){ avaaNayttely(n.avain) }});
+  })();
   if(cruisingTanaan()&&pk.avain==="biltema")
     t.push({ico:"🦆",nm:"Night Cruising",lk:"duck",toiminto:function(){aloitaCruising()}});
   if(pk.kauppa)t.push({ico:"🛒",nm:"Astu sisään",lk:"",
@@ -4311,7 +4309,201 @@ function esittele(){
 }
 
 function cruisingTanaan(){ return S.paiva>=S.seuraavaCruising }
+/* ============ AUTONÄYTTELYT: Hötsi, ASC, Ride In Oulu ============ */
+const AMERIKKALAISET=["Ford","Dodge","Chevrolet","Chevy","Chrysler","Pontiac","Buick","Cadillac","Jeep","Lincoln","Plymouth","GMC"];
+function onAmerikkalainen(malli){
+  const nimi=AUTOMALLIT[malli].nimi;
+  return AMERIKKALAISET.some(function(m){return nimi.indexOf(m)===0});
+}
+const NAYTTELYT=[
+ {avain:"hotsi",nimi:"Hötsi — Hifi & Tuning Show",paikka:"ouluhalli",ikoni:"🏆",vari:"var(--violetti)",
+  ds:"Pohjois-Suomen suurin autonäyttely, Ouluhallissa syyskuussa.",
+  kategoriat:[
+   {avain:"katu",nimi:"Katuauto",ds:"Tyyli ja viimeistely ratkaisevat.",
+    pisteet:function(a){return a.tyyli*2+nyk().kunto*0.3}},
+   {avain:"kilpa",nimi:"Kilpa-auto",ds:"Teho ja suorituskyky ratkaisevat.",
+    pisteet:function(a){return (a.hv/a.paino)*420+(a.turbo?20:0)+(a.nitrot||0)*15}},
+   {avain:"sisusta",nimi:"Sisusta",ds:"Äänentoisto ja viimeistely sisältä.",
+    pisteet:function(a){return a.melu*2.2+((nyk().tehdyt||[]).indexOf("kaiuttimet")>=0?25:0)}}
+  ]},
+ {avain:"asc",nimi:"American Car Show",paikka:"ouluhalli",ikoni:"🇺🇸",vari:"#3b6fd6",
+  amerikkalainen:true,
+  ds:"American Car Club Oulun jenkkiautonäyttely äitienpäiväviikonloppuna. Yleisö äänestää suosikkinsa.",
+  kategoriat:[
+   {avain:"klassikko",nimi:"Klassikko",ds:"Vanha ja alkuperäinen voittaa.",
+    pisteet:function(a){return Math.max(0,1998-AUTOMALLIT[nyk().malli].vuosi)*2.4+nyk().kunto*0.4}},
+   {avain:"custom",nimi:"Custom",ds:"Viritys ja oma tyyli ratkaisevat.",
+    pisteet:function(a){return a.tyyli*2.4+(nyk().osat.vanteet?15:0)}}
+  ]},
+ {avain:"rideinoulu",nimi:"Ride In Oulu Motor Meet",paikka:"aimarautio",ikoni:"🏁",vari:"var(--neon)",
+  ds:"Pohjois-Suomen suurin harrasteajoneuvotapahtuma Äimäraution raviradalla. Kaikki kulkuneuvot mukaan.",
+  kategoriat:[
+   {avain:"yleiso",nimi:"Yleisön suosikki",ds:"Kaikki ajoneuvot samassa sarjassa.",
+    pisteet:function(a){return a.tyyli*1.6+nyk().kunto*0.35+a.melu*0.6}}
+  ]}
+];
+function naytteluTanaan(av){
+  const n=NAYTTELYT.find(function(x){return x.avain===av});
+  const alku=S.naytt[av];
+  return S.paiva>=alku&&S.paiva<alku+2;
+}
+function paikanNayttely(){ return NAYTTELYT.find(function(n){return n.paikka===S.paikka&&naytteluTanaan(n.avain)}) }
+function avaaNayttely(av){
+  const n=NAYTTELYT.find(function(x){return x.avain===av});
+  if(!naytteluTanaan(av)){
+    naytaTulos(n.ikoni+" "+n.nimi.split(" ")[0].toUpperCase()+" OHI",
+      "Tämän vuoden tapahtuma on jo pidetty. Seuraava on vuoden päästä.","var(--himmea)");
+    return;
+  }
+  const a=auto();
+  const eiSovi=n.amerikkalainen&&!onAmerikkalainen(nyk().malli);
+  const viilattu=S.naytViilaus===S.paiva+av;
+  naytaValinta(n.ikoni+" "+n.nimi,
+    n.ds+(eiSovi?"<br><br><span style='color:var(--punainen)'>"+
+      "Tuomarit vilkaisevat autoasi pitkään — tämä ei ole jenkkiauto, joten pisteet jäävät heikoiksi.</span>":"")+
+    (viilattu?"<br><br><span style='color:var(--vihrea)'>Auto on jo viilattu tälle päivälle.</span>":
+      "<br><br>Voit vielä <b>viilata autoa</b> ennen tuomarointia (10 energiaa, +tyyliä hetkeksi).")+
+    "<br><br>Ilmoittautuminen maksaa <b>30 €</b> ja 25 energiaa.",
+    n.vari,
+    (viilattu?[]:[{teksti:"🧽 Viilaa ensin (10 energiaa)",lk:"kelt",toiminto:function(){ naytViilaa(av) }}])
+    .concat(n.kategoriat.map(function(k){
+      return {teksti:k.nimi,lk:"vihrea",toiminto:function(){ nayttelyIlmoittaudu(n,k) }};
+    })).concat([{teksti:"En tänään",lk:"",toiminto:null}]));
+}
+function naytViilaa(av){
+  if(S.energia<10){naytaTulos("🔋 EI JAKSA","Viilaamiseen tarvitaan 10 energiaa.","var(--keltainen)");return}
+  S.energia-=10; S.naytViilaus=S.paiva+av;
+  kirjaa("Viilasit autoa ennen tapahtumaa.","g");
+  avaaNayttely(av);
+}
+function nayttelyIlmoittaudu(n,kategoria){
+  if(S.energia<25){naytaTulos("🔋 EI JAKSA","Koko päivä paikan päällä vaatii 25 energiaa.","var(--keltainen)");return}
+  if(S.raha<30){naytaTulos("EI RAHAA","Ilmoittautuminen maksaa 30 €.","var(--punainen)");return}
+  S.energia-=25; S.raha-=30; rahaPop(-30,n.nimi.toLowerCase());
+  const a=auto();
+  const eiSovi=n.amerikkalainen&&!onAmerikkalainen(nyk().malli);
+  const viilausKerroin=S.naytViilaus===S.paiva+n.avain?1.18:1;
+  let oma=Math.round(kategoria.pisteet(a)*viilausKerroin);
+  if(eiSovi)oma=Math.round(oma*0.35);
+  const kentta=n.avain==="rideinoulu"?38:18;
+  const kilpailijat=[];
+  for(let i=0;i<kentta;i++)kilpailijat.push(Math.round(oma*(0.55+Math.random()*0.85)));
+  kilpailijat.push(oma);
+  kilpailijat.sort(function(x,y){return y-x});
+  const sija=kilpailijat.indexOf(oma)+1;
+  let cred,raha2,teksti,vari;
+  if(sija===1){ cred=260; raha2=400; vari="var(--keltainen)";
+    teksti="<b>1. sija sarjassa "+kategoria.nimi+"!</b> Pokaali käteen ja porukka kerääntyy autosi ympärille.";
+  }else if(sija===2){ cred=170; raha2=220; vari="var(--vihrea)";
+    teksti="<b>2. sija sarjassa "+kategoria.nimi+".</b> Niukasti hopealle jäätiin.";
+  }else if(sija===3){ cred=110; raha2=100; vari="var(--vihrea)";
+    teksti="<b>3. sija sarjassa "+kategoria.nimi+".</b> Pronssi otettiin kotiin.";
+  }else if(sija<=Math.ceil(kentta*0.4)){ cred=55; raha2=0; vari="var(--neon)";
+    teksti="Sijoitus "+sija+"/"+(kentta+1)+" sarjassa "+kategoria.nimi+". Ei pokaalia, mutta hyviä juttuja porukan kanssa.";
+  }else{ cred=25; raha2=0; vari="var(--himmea)";
+    teksti="Sijoitus "+sija+"/"+(kentta+1)+" sarjassa "+kategoria.nimi+". Kova sarja tänä vuonna.";
+  }
+  S.cred+=cred; if(raha2){S.raha+=raha2; rahaPop(raha2,n.nimi.toLowerCase()+"-palkinto")}
+  S.naytt[n.avain]+=360; S.naytViilaus=null;
+  kirjaa("<b class='v'>"+n.ikoni+" "+n.nimi+": "+teksti.replace(/<[^>]+>/g,"")+"</b> Uskottavuutta +"+cred+".","v");
+  const kohtaaminen=(n.avain==="rideinoulu"&&Math.random()<0.4)?arvoKohtaaminen():null;
+  naytaTulos(n.ikoni+" "+n.nimi.toUpperCase()+" — TULOKSET",teksti+"<br><br>Katu-uskottavuutta +<b>"+cred+"</b>"+
+    (raha2?" ja palkintorahaa <b>"+raha(raha2)+"</b>":"")+".",n.vari);
+  if(kohtaaminen)setTimeout(function(){ kohtaaminen() },400);
+  piirra();
+}
+
+/* ---- satunnaiset kohtaamiset: oikeita valintoja, oikea RNG ---- */
+const KOHTAAMISET=[
+ function(){
+   // vieras haastaa kolikonheittoon omasta autosta
+   const ehdokkaat=Object.keys(AUTOMALLIT).filter(function(k){
+     return eiSalainen(k)&&k!==nyk().malli;
+   });
+   const oma=autonArvo(nyk());
+   let sopivat=ehdokkaat.filter(function(k){
+     const ero=AUTOMALLIT[k].arvo/Math.max(1,oma);
+     return ero>0.6&&ero<1.6;
+   });
+   if(!sopivat.length)sopivat=ehdokkaat;
+   const vierasMalli=sopivat[Math.floor(Math.random()*sopivat.length)];
+   const vierasNimi=gen(["Aku","Ile","Santeri","Miska","Otto","Valtteri"][Math.floor(Math.random()*6)]);
+   naytaValinta("🪙 KOLIKONHEITTO",
+     vierasNimi+" tulee juttusille ja heiluttaa kolikkoa. \"Heitetään tosta sun ja mun peltilaatikosta — "+
+     "kruuna sun, klaava mun.\" Tarjolla on hänen <b>"+AUTOMALLIT[vierasMalli].nimi+"</b> vs sinun autosi. "+
+     "Aito 50/50, ei mitään kikkailua.","var(--keltainen)",
+     [{teksti:"Heitetään",lk:"vihrea",toiminto:function(){
+        const voitto=Math.random()<0.5;
+        if(voitto){
+          S.autot.push(uusiAuto(vierasMalli,Math.round(55+Math.random()*35),
+            Math.round(90000+Math.random()*140000),0));
+          kirjaa("<b class='v'>🪙 Kolikko osui — voitit auton: "+AUTOMALLIT[vierasMalli].nimi+"</b>","v");
+          naytaTulos("🪙 KRUUNA — VOITIT!",vierasNimi+" luovutti avaimet murjottaen. Uusi auto talliin: "+
+            "<b>"+AUTOMALLIT[vierasMalli].nimi+"</b>.","var(--vihrea)");
+        }else{
+          const menetetty=AUTOMALLIT[nyk().malli].nimi;
+          if(S.autot.length>1){
+            S.autot.splice(S.auto,1); S.auto=0;
+            kirjaa("<b class='r'>🪙 Klaava — menetit auton: "+menetetty+"</b>","r");
+            naytaTulos("🪙 KLAAVA — HÄVISIT",vierasNimi+" ajoi pois autollasi. Menetit: <b>"+menetetty+"</b>.",
+              "var(--punainen)");
+          }else{
+            const korvaus=Math.round(autonArvo(nyk())*0.5);
+            S.raha-=korvaus; rahaPop(-korvaus,"kolikonheitto");
+            kirjaa("<b class='r'>🪙 Klaava — ainoaa autoa ei viety, maksoit "+raha(korvaus)+"</b>","r");
+            naytaTulos("🪙 KLAAVA — HÄVISIT",vierasNimi+" suostui rahakorvaukseen kun autosi oli ainoa: "+
+              raha(korvaus)+".","var(--punainen)");
+          }
+        }
+        piirra();
+     }},
+      {teksti:"Ei kiitos",lk:"kelt",toiminto:function(){
+        kirjaa(vierasNimi+" tarjosi kolikonheittoa. Kieltäydyit.","");
+      }}]);
+ },
+ function(){
+   // salkullinen tavaraa tuntemattomalta myyjältä
+   const hinta=Math.round(120+Math.random()*180);
+   naytaValinta("🎒 SALKULLINEN JOTAIN",
+     "Pakettiauton kyydistä myydään mustaa salkkua 'täynnä hyvää tavaraa' — "+raha(hinta)+" käteisellä, "+
+     "ei kuitteja, ei kysymyksiä. Myyjä hymyilee vähän liikaa.","var(--neon)",
+     [{teksti:"Ostetaan ("+raha(hinta)+")",lk:"vihrea",toiminto:function(){
+        if(S.raha<hinta){naytaTulos("EI RAHAA","Ei ole varaa riskeerata.","var(--punainen)");return}
+        S.raha-=hinta; rahaPop(-hinta,"salkku");
+        const arpa=Math.random();
+        if(arpa<0.12){
+          const sakko=Math.round(150+Math.random()*200);
+          S.raha-=sakko; S.sakot+=sakko; rahaPop(-sakko,"sakko"); S.huomautukset++;
+          kirjaa("<b class='r'>🚔 Salkku oli merkattu — partio otti kiinni.</b> Sakko "+raha(sakko)+".","r");
+          naytaTulos("🚔 ANSA",
+            "Salkku olikin poliisin syötti. Sakko "+raha(sakko)+" ja huomautus.","var(--punainen)");
+        }else if(arpa<0.45){
+          kirjaa("<b class='r'>Salkussa oli vain vanhoja sanomalehtiä.</b>","r");
+          naytaTulos("🗞️ HUIJATTIIN","Salkku täynnä paperia. Rahat meni.","var(--punainen)");
+        }else if(arpa<0.85){
+          const voitto=Math.round(hinta*(1.6+Math.random()*1.6));
+          S.raha+=voitto; rahaPop(voitto,"salkku");
+          kirjaa("<b class='v'>Salkussa oli käteistä.</b> +"+raha(voitto)+".","v");
+          naytaTulos("💰 KÄTEISTÄ",
+            "Salkusta löytyi nippu seteleitä. Sait "+raha(voitto)+".","var(--vihrea)");
+        }else{
+          const voitto=Math.round(hinta*4+Math.random()*400);
+          S.raha+=voitto; rahaPop(voitto,"salkku");
+          kirjaa("<b class='v'>Salkussa oli paksusti rahaa!</b> +"+raha(voitto)+".","v");
+          naytaTulos("💰💰 JACKPOT",
+            "Salkku oli täynnä nippuja. Sait "+raha(voitto)+" — paras kauppa ikinä.","var(--keltainen)");
+        }
+        piirra();
+     }},
+      {teksti:"Ei kiitos",lk:"kelt",toiminto:function(){ kirjaa("Kieltäydyit epäilyttävästä salkusta.","") }}]);
+ }
+];
+function arvoKohtaaminen(){
+  return KOHTAAMISET[Math.floor(Math.random()*KOHTAAMISET.length)];
+}
+
 const CRUISINGTAPAHTUMAT=[
+
  function(){ const v=arpo2(8,22); nyk().kunto=Math.max(8,nyk().kunto-v);
    return {ico:"💥",teksti:"Joku peruutti kylkeen Prisman parkkiksella eikä jäänyt odottamaan. Kunto −"+v+" %.",lk:"r"} },
  function(){ S.cruisingKerroin*=0.55;
@@ -4386,6 +4578,9 @@ function ajaNukkumaan(){
 function iltaLoppu(){
   const vanhaVuodenaika=vuodenaika().nimi;
   // cruising tapahtuu vain sinä päivänä — jos jäit pois, seuraava on kolmen viikon päästä
+  NAYTTELYT.forEach(function(n){
+    if(S.paiva>=S.naytt[n.avain]+2)S.naytt[n.avain]+=360;
+  });
   if(cruisingTanaan()&&!S.cruisingAjettu){
     S.seuraavaCruising=S.paiva+21;
     kirjaa("Letka lähti ilman sinua. Seuraava kolmen viikon päästä.","");
@@ -4692,13 +4887,15 @@ function pTalli(p){
   const g=document.createElement("div"); g.className="huoltolista";
   // kalliin auton osat maksavat enemmän
   const arvokerroin=Math.max(0.7,Math.min(3.2,AUTOMALLIT[nyk().malli].arvo/3000));
-  const itseHinta=Math.round((kuntoKatto()-nyk().kunto)*2.6*arvokerroin);
+  const itseKatto=Math.min(80,kuntoKatto());
+  const itseAskel=Math.min(15,Math.max(0,itseKatto-nyk().kunto));
+  const itseHinta=Math.round(itseAskel*2.6*arvokerroin);
   const korjaamoHinta=Math.round((kuntoKatto()-nyk().kunto)*9*arvokerroin);
   const itseHinta2=itseHinta, korjaamoHinta2=korjaamoHinta;
   g.innerHTML=
-    '<button class="huoltorivi" id="korjaaItse" '+((nyk().kunto>=Math.min(75,kuntoKatto())||S.raha<itseHinta2)?"disabled":"")+'>'+
+    '<button class="huoltorivi" id="korjaaItse" '+((itseAskel<=0||S.raha<itseHinta2||S.energia<14)?"disabled":"")+'>'+
       '<span class="hi">🔧</span><span class="ht"><b>Rassaa itse</b>'+
-      '<small>Kolme kysymystä · 14 energiaa · oikein = ilmaista</small></span>'+
+      '<small>+'+itseAskel+' % · 14 energiaa · korkeintaan '+itseKatto+' %:iin</small></span>'+
       '<span class="hh">'+raha(itseHinta2)+'</span></button>'+
     '<button class="huoltorivi" id="korjaaPaja" '+((nyk().kunto>=kuntoKatto()||S.raha<korjaamoHinta2)?"disabled":"")+'>'+
       '<span class="hi">🏭</span><span class="ht"><b>Vie korjaamolle</b>'+
@@ -4709,9 +4906,19 @@ function pTalli(p){
   const kI=$("korjaaItse"), kP=$("korjaaPaja"), kR=$("renkaat");
   if(kI)kI.onclick=function(){
     nyk().remppa=0;
+    if(itseAskel<=0)return;
     if(S.energia<14){naytaTulos("🔋 EI JAKSA","Rassaamiseen tarvitaan 14 energiaa.","var(--keltainen)");return}
     S.energia-=14;
-    aloitaKorjausPuzzle(itseHinta);
+    S.raha-=itseHinta; if(itseHinta)rahaPop(-itseHinta,"rassaus");
+    const n=nyk();
+    n.kunto=Math.min(itseKatto,n.kunto+itseAskel);
+    const valmis=n.kunto>=itseKatto;
+    kirjaa("<b>Rassasit auton itse.</b> Kunto nyt "+Math.round(n.kunto)+" %.","g");
+    naytaTulos("🔧 RASSATTU ITSE","Sait "+itseAskel+" % lisää kuntoa pihalla.<br>Kunto on nyt "+
+      Math.round(n.kunto)+" %."+(valmis?" Ilman ammattilaisen viilausta tämä ei nouse enempää — "+
+      "loput hoituu vain korjaamolla.":" Voit jatkaa samaan malliin niin kauan kuin energiaa ja rahaa riittää."),
+      "var(--vihrea)");
+    avaaAppi("talli",true);
   };
   if(kP)kP.onclick=function(){
     nyk().remppa=0;
@@ -5356,7 +5563,7 @@ function pyorita(){
       if(!K.vikaTullut&&K.s>=K.vikaKohta&&Math.random()<vikaRiski()){
         K.vikaTullut=true;
         cancelAnimationFrame(ajastin);
-        aloitaQTE(arvoVika(),(onnistui)=>{
+        aloitaVikaPuzzle(arvoVika(),(onnistui)=>{
           if(onnistui){ K.v*=0.72; pyorita(); }
           else { K.keskeytys=true; maali(); }
         });
@@ -5448,79 +5655,7 @@ function arvoVika(){
   const mahdolliset=VIAT.filter(v=>!v.syy||n.osat[v.syy]);
   return mahdolliset[Math.floor(Math.random()*mahdolliset.length)];
 }
-const VAROVALOT=[
- {ico:"🛢️",nm:"öljynpaine"},{ico:"🌡️",nm:"lämpötila"},{ico:"🔋",nm:"laturi"},
- {ico:"⚙️",nm:"vaihteisto"},{ico:"💨",nm:"ahtopaine"},{ico:"⚠️",nm:"moottori"}
-];
-function aloitaQTE(vika,jatka){
-  aani("hajoaa");
-  QTE={vika:vika,jatka:jatka,osuu:0,tarvitaan:5,aika:6.0,kesto:6.0,nyt:0,raf:null};
-  QTE.nyt=Math.floor(Math.random()*VAROVALOT.length);
-  $("qte-otsikko").textContent="💥 "+vika.nimi;
-  $("qte-teksti").textContent=vika.teksti+" Sammuta varoitusvalot ennen kuin ehtii käydä pahemmin.";
-  piirraQTE();
-  $("qte").classList.add("on");
-  let viime=performance.now();
-  const loop=function(t){
-    if(!QTE)return;
-    const dt=(t-viime)/1000; viime=t;
-    QTE.aika-=dt;
-    const p=$("qte-palkki"); if(p)p.style.width=Math.max(0,QTE.aika/QTE.kesto*100)+"%";
-    if(QTE.aika<=0){ paattyyQTE(false); return }
-    QTE.raf=requestAnimationFrame(loop);
-  };
-  QTE.raf=requestAnimationFrame(loop);
-}
-function piirraQTE(){
-  if(!QTE)return;
-  $("qte-koodi").innerHTML='<div class="valoruudukko">'+
-    VAROVALOT.map(function(v,i){
-      return '<button class="varovalo'+(i===QTE.nyt?" palaa":"")+'" data-valo="'+i+'">'+
-        '<span class="vi">'+v.ico+'</span><span class="vn">'+v.nm+'</span></button>';
-    }).join("")+'</div>'+
-    '<div class="qte-laskuri">Sammutettu <b>'+QTE.osuu+'</b> / '+QTE.tarvitaan+'</div>';
-  document.querySelectorAll("[data-valo]").forEach(function(b){
-    b.onclick=function(){ napautaValo(parseInt(b.dataset.valo,10)) };
-  });
-}
-function napautaValo(i){
-  if(!QTE)return;
-  if(i===QTE.nyt){
-    QTE.osuu++;
-    aani("klik");
-    if(QTE.osuu>=QTE.tarvitaan){ paattyyQTE(true); return }
-    let uusi=QTE.nyt;
-    while(uusi===QTE.nyt)uusi=Math.floor(Math.random()*VAROVALOT.length);
-    QTE.nyt=uusi;
-  }else{
-    QTE.aika=Math.max(0.15,QTE.aika-0.7);   // väärä nappi maksaa aikaa
-    aani("ohi");
-  }
-  piirraQTE();
-}
-function paattyyQTE(onnistui){
-  if(!QTE)return;
-  cancelAnimationFrame(QTE.raf);
-  const nopeus=QTE.aika/QTE.kesto, jatka=QTE.jatka, vika=QTE.vika;
-  QTE=null;
-  $("qte").classList.remove("on");
-  const n=nyk();
-  if(onnistui){
-    const vahinko=Math.round(9+(1-nopeus)*17);
-    n.kunto=Math.max(8,n.kunto-vahinko);
-    n.remppa=(n.remppa||0)+1;
-    kirjaa("<b class='g'>Sait valot sammumaan.</b> "+vika.nimi+" — kunto −"+vahinko+
-      " %. Vika on silti korjattava.","g");
-    jatka(true,vahinko);
-  }else{
-    const vahinko=Math.round(34+Math.random()*20);
-    n.kunto=Math.max(8,n.kunto-vahinko);
-    n.remppa=(n.remppa||0)+3;
-    kirjaa("<b class='r'>Et ehtinyt reagoida.</b> "+vika.nimi+" — kunto −"+vahinko+
-      " %. Auto vaatii ison remontin.","r");
-    jatka(false,vahinko);
-  }
-}
+
 
 /* ---- hajoaminen ---- *//* ---- hajoaminen ---- */
 function vikaRiski(){
