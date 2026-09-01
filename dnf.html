@@ -1173,6 +1173,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 
   <div class="soitto" id="soitto">
     <audio id="puheluaani" style="display:none"></audio>
+    <audio id="taustamusa" style="display:none"></audio>
     <div class="s-yla">Saapuva puhelu</div>
     <div class="s-kuva" id="s-kuva">👤</div>
     <div class="s-nimi" id="s-nimi"></div>
@@ -1719,6 +1720,7 @@ const SALA=[
    Kuvat haetaan kansiosta kuvat/  — esim. kuvat/Aatu.jpg */
 const KUVAKANSIO="kuvat/";
 const AANIKANSIO="aanet/";   // erillinen kansio, ei sekoitu kuviin
+const MUSIIKKIKANSIO="musa/";   // musiikkiraidat omassa kansiossaan
 const KUSKIT=[
  {nimi:"Aatu",kuva:"Aatu",auto:"fordka99",taito:0.48,luonne:"Ajaa isänsä vanhalla Corollalla ja opettelee vasta."},
  {nimi:"Aleksi",kuva:"Aleksi",auto:"matiz00",taito:0.62,luonne:"Golfilla joka on ollut suvussa kolmannessa polvessa."},
@@ -3712,6 +3714,9 @@ const SALAKOODIT={
    viesti:"Radiopuhelin rätisee. Kolme sinivalkoista ajaa pihaan ja kuskit kävelevät pois."},
  "MOTHERLODE":{nimi:"rahalasti",raha:50000,toistuva:true,
    viesti:"Puhelin pirahtaa: tuntematon lähde siirsi rahaa tilillesi. Kukaan ei kysy mistä."}
+,
+ "BLAST ME":{nimi:"stoori",musiikki:"stoori",toistuva:true,
+   viesti:"Kaiuttimet räjähtävät täyteen lukemaan."}
 };
 const SALAAUTOT={
  charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
@@ -3758,6 +3763,26 @@ function kokeileKoodi(teksti){
     aani("taso");
     kirjaa("<b class='v'>🔓 "+koodi+"</b> — "+raha(s.raha)+" tilille.","v");
     naytaTulos("🔓 "+koodi, s.viesti,"var(--vihrea)");
+    piirra();
+    return true;
+  }
+  // pelkkä musiikkikoodi
+  if(s.musiikki){
+    const a=$("taustamusa");
+    const polku=MUSIIKKIKANSIO+encodeURIComponent(s.musiikki)+".mp3";
+    a.src=polku;
+    a.onerror=function(){
+      ilmoita({ico:"🔇",lk:"",otsikko:"Raitaa ei löytynyt",
+        teksti:"Tiedostoa “"+polku+"” ei löytynyt palvelimelta."});
+    };
+    const p=a.play();
+    if(p&&p.catch)p.catch(function(){
+      ilmoita({ico:"🔇",lk:"",otsikko:"Raita ei lähtenyt soimaan",
+        teksti:"Selain saattoi estää automaattisen toiston."});
+    });
+    aani("taso");
+    kirjaa("<b class='v'>🔊 "+koodi+"</b> — musiikki käynnistyi.","v");
+    naytaTulos("🔊 "+koodi, s.viesti,"var(--neon)");
     piirra();
     return true;
   }
