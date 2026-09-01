@@ -648,8 +648,10 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .maisema-teksti b{display:block;font-size:24px;color:#8fa0b8}
 
 .puhelin{--alapalkki-korkeus:64px;position:relative;z-index:2;width:min(760px,97vw);height:min(1000px,96vh);
-  background:#12161e;border:14px solid #232a36;border-radius:28px;
-  box-shadow:0 34px 90px rgba(0,0,0,.75);display:flex;flex-direction:column;overflow:hidden}
+  background:#12161e;border:14px solid var(--kuori,#232a36);border-radius:28px;
+  box-shadow:0 34px 90px rgba(0,0,0,.75),0 0 46px -6px var(--kuorihehku,transparent);
+  transition:border-color .4s,box-shadow .4s;
+  display:flex;flex-direction:column;overflow:hidden}
 /* leveällä ruudulla tabletti: appirivi väljempi ja teksti isompi */
 @media (min-width:820px){
   .appit{grid-template-columns:repeat(5,1fr);gap:16px}
@@ -1027,6 +1029,15 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a
 .viesti.vinkki{border-color:var(--neon)}
 .viesti.turha{opacity:.75}
 .viesti .yla{display:flex;gap:9px;align-items:center;margin-bottom:6px}
+.puhvarit{display:flex;flex-wrap:wrap;gap:9px;margin-top:9px}
+.puhvarinappi{width:44px;height:44px;border-radius:50%;border:3px solid var(--reuna);
+  background:var(--paneeli2);cursor:pointer;display:grid;place-items:center;font-size:15px;
+  padding:0;position:relative}
+.puhvarinappi span{width:26px;height:26px;border-radius:50%;display:block}
+.puhvarinappi.on{border-color:var(--teksti);box-shadow:0 0 0 2px var(--paneeli),0 0 0 4px var(--teksti)}
+.puhvarinappi.lukossa{opacity:.4;cursor:not-allowed}
+.puhvarinappi.lukossa span{display:none}
+
 .viesti-toista{background:var(--paneeli2);border:2px solid var(--reuna2);border-radius:50%;
   width:30px;height:30px;flex:0 0 auto;font-size:14px;cursor:pointer;display:grid;place-items:center}
 .viesti-toista:hover{border-color:var(--neon)}
@@ -1282,7 +1293,30 @@ const TORIVIHJEET=[
  ["Pinnassa ruostetta ja naarmuja. Kunto kohtalainen.",0.75],
  ["Purettu vanhasta autosta. Ei testattu. Ei kuvia, nouto Muhokselta.",0.60]
 ];
+const PUHELINVARIT=[
+ {avain:"musta",nimi:"Alkuperäinen musta",vari:"#ffb32e",kuori:"#232a36"},
+ {avain:"punainen",nimi:"Punainen kuori",vari:"#ff5c4d",kuori:"#5c2422"},
+ {avain:"sininen",nimi:"Sininen kuori",vari:"#4fc3f7",kuori:"#1c3a52"},
+ {avain:"vihrea",nimi:"Vihreä kuori",vari:"#3fd07a",kuori:"#1e4432"},
+ {avain:"violetti",nimi:"Violetti kuori",vari:"#b083f0",kuori:"#3d2f5c"},
+ {avain:"kulta",nimi:"Kultainen kuori",vari:"#e8c468",kuori:"#5c4a22"}
+];
+function paivitaPuhelinVari(){
+  const v=PUHELINVARIT.find(function(x){return x.avain===(S.puhelinVari||"musta")})||PUHELINVARIT[0];
+  const juuri=document.documentElement.style;
+  juuri.setProperty("--keltainen",v.vari);
+  juuri.setProperty("--kuori",v.kuori);
+  juuri.setProperty("--kuorihehku",v.avain==="musta"?"transparent":v.vari+"55");
+}
 function arvoToriValikoima(){
+  // harvinainen kännykkälöytö: vain jos jokin väri on vielä saamatta
+  const puuttuvat=PUHELINVARIT.filter(function(v){
+    return (S.puhelinOmistetut||["musta"]).indexOf(v.avain)<0;
+  });
+  if(!S.toriPuhelin&&puuttuvat.length&&Math.random()<0.15){
+    const v=puuttuvat[Math.floor(Math.random()*puuttuvat.length)];
+    S.toriPuhelin={avain:v.avain,hinta:Math.round((900+Math.random()*700)/10)*10};
+  }
   const spessut=OSAT.filter(o=>o.kaupat.indexOf("tori")>=0).map(o=>o.avain);
   const valittu=[];
   while(valittu.length<3&&valittu.length<spessut.length){
@@ -2232,6 +2266,7 @@ function tuoTiedostosta(tiedosto){
     try{ const o=JSON.parse(r.result);
       Object.keys(o).forEach(function(k){S[k]=o[k]});
       tallenna(); lataaKuvat().then(function(n){ if(n)piirra() });
+      paivitaPuhelinVari();
 if(!S.opastusNahty)setTimeout(function(){
   if(!S.opastusNahty&&!INTRO.paalla)$("opastus").classList.add("on");
 },1400);
@@ -2259,6 +2294,7 @@ function uusiAuto(malli,kunto,km,ostohinta){
 let S={raha:400,epailys:0,voitot:0,tappiot:0,
        autot:[uusiAuto("corolla94",78,243000)], auto:0,
        tori:{}, nettiauto:[], huuto:null,
+       toriPuhelin:null, puhelinVari:"musta", puhelinOmistetut:["musta"],
        pysaytykset:0, sakot:0, huomautukset:0, cred:0,
        paiva:1, energia:100, palkkakertyma:0,
        naytt:{hotsi:105,asc:345,rideinoulu:75}, naytViilaus:null, paikka:"koti",
@@ -3717,6 +3753,11 @@ const SALAKOODIT={
 ,
  "BLAST ME":{nimi:"stoori",musiikki:"stoori",toistuva:true,
    viesti:"Kaiuttimet räjähtävät täyteen lukemaan."}
+,
+ "ALL CARS":{nimi:"koko katalogi",kaikkiAutot:true,toistuva:true,
+   viesti:"Tallin portti jää auki. Sinne ilmestyy joka ikinen malli mitä ei vielä omista."},
+ "ALL PHONES":{nimi:"värikartta",kaikkiPuhelimet:true,toistuva:true,
+   viesti:"Kuoret sadelevat pöydälle. Kaikki värit ovat nyt sinun valittavissasi."}
 };
 const SALAAUTOT={
  charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
@@ -3783,6 +3824,40 @@ function kokeileKoodi(teksti){
     aani("taso");
     kirjaa("<b class='v'>🔊 "+koodi+"</b> — musiikki käynnistyi.","v");
     naytaTulos("🔊 "+koodi, s.viesti,"var(--neon)");
+    piirra();
+    return true;
+  }
+  // kaikki autot
+  if(s.kaikkiAutot){
+    const lisatyt=[];
+    Object.keys(AUTOMALLIT).filter(eiSalainen).forEach(function(malli){
+      if(!S.autot.some(function(a){return a.malli===malli})){
+        S.autot.push(uusiAuto(malli,88,Math.round(30000+Math.random()*110000),0));
+        lisatyt.push(malli);
+      }
+    });
+    NOPEUSINDEKSI=null;
+    aani("taso");
+    kirjaa("<b class='v'>🔓 "+koodi+"</b> — "+lisatyt.length+" autoa lisää talliin.","v");
+    naytaTulos("🔓 "+koodi, s.viesti+(lisatyt.length?
+      "<br><br>Lisättiin <b>"+lisatyt.length+"</b> autoa.":
+      "<br><br>Sinulla oli jo jokainen malli."),"var(--violetti)");
+    piirra();
+    return true;
+  }
+  // kaikki puhelinvarit
+  if(s.kaikkiPuhelimet){
+    S.puhelinOmistetut=S.puhelinOmistetut||["musta"];
+    let lisatty=0;
+    PUHELINVARIT.forEach(function(v){
+      if(S.puhelinOmistetut.indexOf(v.avain)<0){ S.puhelinOmistetut.push(v.avain); lisatty++ }
+    });
+    S.toriPuhelin=null;
+    aani("taso");
+    kirjaa("<b class='v'>📱 "+koodi+"</b> — kaikki puhelinvärit avattu.","v");
+    naytaTulos("📱 "+koodi, s.viesti+(lisatty?
+      "<br><br>Avattiin <b>"+lisatty+"</b> uutta väriä. Vaihda niitä Asetuksista.":
+      "<br><br>Sinulla oli jo jokainen väri."),"var(--keltainen)");
     piirra();
     return true;
   }
@@ -3973,6 +4048,9 @@ function pAsetukset(p){
     '<button class="btn haamu wide" id="a-ohjeet">Avaa ohjeet</button></div>'+
     '<div class="kortti"><div class="nm">📞 Testaa puhelu</div><div class="ds">Soita itsellesi satunnainen puhelu.</div>'+
     '<button class="btn haamu wide" id="a-soitto">Soita</button></div>'+
+    '<div class="kortti" style="border-color:var(--keltainen)"><div class="nm">📱 Puhelimen väri</div>'+
+    '<div class="ds" id="puhvaritila">—</div>'+
+    '<div class="puhvarit" id="puhvarit"></div></div>'+
     '<div class="kortti" style="border-color:var(--punainen)"><div class="nm">🔄 Aloita alusta</div>'+
     '<div class="ds">Nykyinen peli katoaa lopullisesti.</div>'+
     '<button class="btn haamu wide" id="a-alusta">Aloita alusta</button></div>';
@@ -3990,6 +4068,24 @@ function pAsetukset(p){
     "repliikkejä, joten niille tarvitaan oma tiedosto per rivi: <b>SetaErkki1.mp3</b> … "+
     "<b>SetaErkki5.mp3</b> ja <b>Aiti1.mp3</b> … <b>Aiti4.mp3</b> — numero täsmää siihen "+
     "mikä rivi kulloinkin arvotaan, joten ääni ja teksti täsmäävät aina.";
+  const omat=S.puhelinOmistetut||["musta"];
+  $("puhvaritila").innerHTML=omat.length>1?
+    "Löytyneitä värejä <b>"+omat.length+" / "+PUHELINVARIT.length+"</b>. Loput löytyvät "+
+    "satunnaisesti harvinaisina löytöinä Torilta.":
+    "Muita värejä saattaa löytyä harvinaisina löytöinä Torilta.";
+  $("puhvarit").innerHTML=PUHELINVARIT.map(function(v){
+    const omistaa=omat.indexOf(v.avain)>=0;
+    const valittu=(S.puhelinVari||"musta")===v.avain;
+    return "<button class='puhvarinappi"+(valittu?" on":"")+(omistaa?"":" lukossa")+"' "+
+      "data-vari='"+v.avain+"'" +(omistaa?"":" disabled")+" title='"+v.nimi+"'>"+
+      "<span style='background:"+v.vari+"'></span>"+(omistaa?"":"🔒")+"</button>";
+  }).join("");
+  $("puhvarit").querySelectorAll("[data-vari]").forEach(function(b){
+    b.onclick=function(){
+      S.puhelinVari=b.dataset.vari; paivitaPuhelinVari();
+      avaaAppi("asetukset");
+    };
+  });
   $("a-kuvat").onchange=function(e){
     if(e.target.files.length)tuoKuvat(e.target.files).then(function(){avaaAppi("asetukset")});
     e.target.value="";
@@ -5401,6 +5497,23 @@ function kauppaNakyma(p){
 
   if(KAUPPA==="tori"){
     const tg=teeRuudukko();
+    if(S.toriPuhelin){
+      const pv=PUHELINVARIT.find(function(v){return v.avain===S.toriPuhelin.avain});
+      const hinta=S.toriPuhelin.hinta, eiVaraa=S.raha<hinta;
+      const el=teeRuutu({
+        kuva:"puhelin_"+pv.avain, ikoni:"📱", nimi:pv.nimi,
+        alle:"Harvinainen löytö", hinta:raha(hinta), eiVaraa:eiVaraa,
+        merkki:"RARE", merkkiLk:"kelt",
+        klik:function(){
+          naytaTiedot("📱 "+pv.nimi,"puhelin_"+pv.avain,
+            [["Hinta",raha(hinta)],["Vaikutus","Vaihtaa puhelimen väriteeman pysyvästi"],
+             ["Huom","Harvinainen — tuskin näet tätä väriä uudestaan Torilla"]],
+            [{teksti:"Osta",lk:"vihrea",disabled:eiVaraa,toiminto:function(){ostaPuhelin()}},
+             {teksti:"Takaisin",lk:"kelt",toiminto:null}],"var(--keltainen)");
+        }});
+      el.style.borderColor="var(--keltainen)"; el.style.boxShadow="0 0 0 1px var(--keltainen) inset";
+      tg.appendChild(el);
+    }
     OSAT.forEach(function(o){
       const t=S.tori&&S.tori[o.avain];
       if(!t)return;
@@ -5475,6 +5588,24 @@ function kauppaNakyma(p){
     "<div class='kortti'><div class='ds'>Tässä liikkeessä ei ole osia sinulle.</div></div>");
 }
 
+function ostaPuhelin(){
+  if(!S.toriPuhelin)return;
+  const hinta=S.toriPuhelin.hinta;
+  if(S.raha<hinta)return;
+  const pv=PUHELINVARIT.find(function(v){return v.avain===S.toriPuhelin.avain});
+  S.raha-=hinta; rahaPop(-hinta,"puhelinkuori");
+  S.puhelinOmistetut=S.puhelinOmistetut||["musta"];
+  S.puhelinOmistetut.push(pv.avain);
+  S.puhelinVari=pv.avain; paivitaPuhelinVari();
+  S.toriPuhelin=null;
+  aani("taso");
+  kirjaa("<b class='v'>📱 Löysit harvinaisen "+pv.nimi+"in.</b>","v");
+  naytaTulos("📱 HARVINAINEN LÖYTÖ",
+    "Ostit <b>"+pv.nimi+"</b> Torilta. Puhelimesi väriteema vaihtui heti — "+
+    "voit vaihtaa sen takaisin milloin vain Asetuksista, jos joskus löydät lisää värejä.",
+    "var(--keltainen)");
+  avaaAppi("kaupat",true);
+}
 function ostaSala(avain){
   const lista=SALA.concat(VERKKOKAUPPA);
   const s=lista.find(function(x){return x.avain===avain});
@@ -6385,6 +6516,7 @@ document.addEventListener("touchcancel",pohjaanYlos);
 document.addEventListener("mouseup",()=>{if(K&&(K.laji==="kuminpoltto"||K.laji==="linttaus"))K.pohjassa=false});
 
 if(!lataaTallennus()){ arvoToriValikoima(); arvoNettiauto(); arvoHuutokauppa(); arvoVastustajat(); }
+paivitaPuhelinVari();
 /* ---------- CINEMATIC INTRO ---------- */
 var INTRO={ajastimet:[],paalla:false};
 const INTRORIVIT=[
