@@ -338,6 +338,7 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .pako-ohjaus{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0 10px}
 .pako-in{max-height:92vh;overflow-y:auto}
 .pako-nappaimet{flex-wrap:wrap;justify-content:center}
+.pako-ohjaus.virhe .pako-ratti{border-color:var(--punainen);background:#3d1414}
 .pako-ratti{background:#12253d;border:3px solid var(--neon);border-radius:14px;
   min-height:70px;font-size:32px;color:var(--teksti);cursor:pointer;font-family:inherit;
   transition:transform .08s;box-shadow:0 4px 0 rgba(0,0,0,.35)}
@@ -5994,13 +5995,14 @@ var PAKO=null;
 function aloitaPako(syy){
   const a=auto();
   // nopea auto antaa hieman enemmän aikaa
-  const lisa=Math.min(0.5,(a.hv-100)/600);
+  const lisa=Math.min(0.6,(a.hv-100)/500);
   const merkit=["⬆","⬇","⬅","➡"];
   const sarja=[];
-  for(let i=0;i<6;i++)sarja.push(merkit[Math.floor(Math.random()*merkit.length)]);
-  PAKO={sarja:sarja,kohta:0,aika:0.95+lisa,kesto:0.95+lisa,syy:syy};
+  for(let i=0;i<5;i++)sarja.push(merkit[Math.floor(Math.random()*merkit.length)]);
+  PAKO={sarja:sarja,kohta:0,aika:1.25+lisa,kesto:1.25+lisa,syy:syy,virheet:0};
   $("pako-teksti").innerHTML="Kaasu pohjaan ja käännös Toppilan suuntaan.<br>"+
-    "<b>Napauta nuolia samassa järjestyksessä.</b> Yksikin väärin ja jäät kiinni.";
+    "<b>Napauta nuolia samassa järjestyksessä.</b> Yhden hätänapautuksen sallii, "+
+    "mutta toinen virhe jättää sinut kiinni.";
   $("pako").classList.add("on");
   aani("poliisi");
   piirraPako();
@@ -6043,6 +6045,13 @@ function pakoNappain(merkki){
     if(PAKO.kohta>=PAKO.sarja.length){ pakoPaattyy(true); return }
     PAKO.aika=PAKO.kesto;
     piirraPako();
+  }else if(PAKO.virheet<1){
+    // ensimmäinen väärä napautus sallitaan — kosketusnäytöllä sattuu helposti
+    PAKO.virheet++;
+    aani("ohi");
+    const el=$("pako-ohjaus"); if(el){ el.classList.add("virhe");
+      setTimeout(function(){ el.classList.remove("virhe") },220); }
+    $("pako-vaihe").textContent="Väärin! Vielä yksi virhe ja jäät kiinni.";
   }else pakoPaattyy(false);
 }
 function pakoPaattyy(onnistui){
