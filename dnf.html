@@ -111,8 +111,8 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
   -webkit-backdrop-filter:blur(3px);border:1.5px solid rgba(255,255,255,.25);color:#fff;
   font-size:19px;font-weight:800;cursor:pointer;display:grid;place-items:center;line-height:1}
 .kuvanuoli:hover{border-color:var(--keltainen);color:var(--keltainen)}
-.kuvanuoli.vas{left:8px}
-.kuvanuoli.oik{right:8px}
+.kuvanuoli.vas{left:13px}
+.kuvanuoli.oik{right:13px}
 .ak-sivulaskuri{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);z-index:3;
   background:rgba(10,13,18,.7);border-radius:99px;padding:2px 10px;font-size:11px;
   font-weight:800;color:#fff}
@@ -2511,7 +2511,7 @@ function pTalliAutot(p){
   otsikko.innerHTML="<h2>🔧 Talli <span class='pikku'>— "+S.autot.length+
     " auto"+(S.autot.length===1?"":"a")+"</span></h2>"+
     (S.autot.length>1?"<div class='karttavalinta' id='autonakyma' style='width:auto'>"+
-      "<button data-an='kortit' class='"+(S.autoNakyma==="kortit"?"on":"")+"'>🎠 Kortit</button>"+
+      "<button data-an='kortit' class='"+(S.autoNakyma==="kortit"?"on":"")+"'>Kortit</button>"+
       "<button data-an='lista' class='"+(S.autoNakyma==="lista"?"on":"")+"'>☰ Lista</button></div>":"");
   p.appendChild(otsikko);
   const an=otsikko.querySelector("#autonakyma");
@@ -2656,7 +2656,7 @@ function piirraAutolista(p){
         (a.korjaamossa?'<span class="lappu huono">korjaamolla</span>':
         (a.laina?'<span class="lappu neon">sijaisauto</span>':'<span class="al-nuoli">›</span>')));
     el.onclick=function(){
-      S.auto=i; S.autoNakyma="kortit";
+      S.auto=i;
       if(!kaytossa&&!a.korjaamossa)kirjaa("Vaihdoit ajoon: <b>"+m.nimi+"</b>.","g");
       avaaAppi("talli",true);
     };
@@ -3259,17 +3259,24 @@ function aaniPolku(nimi){
   return AANIKANSIO+encodeURIComponent(nimi)+".mp3";
 }
 
-function soitaKlippi(url,nimi){
+/* Tiedostopalvelimet (mm. GitHub) ovat kirjainkokoherkkiä — jos tarkka polku ei löydy,
+   yritetään automaattisesti pelkkinä pieninä kirjaimina ennen kuin luovutetaan. */
+function soitaKlippi(url,nimi,yritettyPienena){
   const a=$("puheluaani"); a.src=url;
   a.onerror=function(){
+    const pieni=url.toLowerCase();
+    if(!yritettyPienena&&pieni!==url){ soitaKlippi(pieni,nimi,true); return }
     ilmoita({ico:"🔇",lk:"",otsikko:"Ääntä ei löytynyt",
       teksti:"Tiedostoa “"+url+"” ei löytynyt palvelimelta."});
   };
   const p=a.play();
   if(p&&p.catch)p.catch(function(e){
-    ilmoita({ico:"🔇",lk:"",otsikko:"Ääntä ei saatu soimaan",
-      teksti:(e&&e.name==="NotAllowedError")?"Selain esti automaattisen toiston.":
-        "Tiedostoa “"+url+"” ei voitu toistaa."});
+    if(e&&e.name==="NotAllowedError"){
+      ilmoita({ico:"🔇",lk:"",otsikko:"Ääntä ei saatu soimaan",
+        teksti:"Selain esti automaattisen toiston."});
+      return;
+    }
+    // muu virhe (esim. 404) hoidetaan jo onerror-kuuntelijassa
   });
 }
 function tuoKuvat(tiedostot){
@@ -3824,10 +3831,19 @@ function soittoTeksti(s){
   }
   return {klippi:null, teksti:TURHAT[Math.floor(Math.random()*TURHAT.length)]};
 }
+let VIIME_SOITTAJA=-1;
+/* arpoo soittajan niin ettei sama henkilö soita kahdesti peräkkäin */
+function satunnainenSoittaja(){
+  if(SOITTAJAT.length<=1)return 0;
+  let i;
+  do{ i=Math.floor(Math.random()*SOITTAJAT.length) }while(i===VIIME_SOITTAJA);
+  return i;
+}
 function soi(i){
   if(K||puhelussa)return;
-  const s=SOITTAJAT[i%SOITTAJAT.length];
-  puhelussa=s;
+  const idx=i%SOITTAJAT.length;
+  const s=SOITTAJAT[idx];
+  puhelussa=s; VIIME_SOITTAJA=idx;
   $("s-kuva").innerHTML=hahmoKuva(s.hahmo,s.kuva?"hahmo_"+s.kuva:null);
   $("s-nimi").textContent=s.nm;
   $("s-tieto").textContent=s.tieto;
@@ -3961,7 +3977,7 @@ function pAsetukset(p){
   $("a-tuo").onchange=function(e){ if(e.target.files[0])tuoTiedostosta(e.target.files[0]); e.target.value="" };
   $("a-aani").onclick=function(){AANET_PAALLA=!AANET_PAALLA;aani("klik");avaaAppi("asetukset")};
   $("a-ohjeet").onclick=function(){$("ohjeet").classList.add("on")};
-  $("a-soitto").onclick=function(){soi(Math.floor(Math.random()*SOITTAJAT.length))};
+  $("a-soitto").onclick=function(){soi(satunnainenSoittaja())};
   $("a-alusta").onclick=function(){ if(confirm("Aloitetaanko alusta? Nykyinen peli katoaa.")){
     localStorage.removeItem(TALLENNUSAVAIN); location.reload() } };
 }
@@ -4735,7 +4751,7 @@ function iltaLoppu(){
     kirjaa("<b class='g'>Palkkapäivä: "+raha(S.palkkakertyma)+"</b>","g");
     S.palkkakertyma=0;
   }
-  if(Math.random()<0.45)setTimeout(function(){soi(Math.floor(Math.random()*SOITTAJAT.length))},2600);
+  if(Math.random()<0.45)setTimeout(function(){soi(satunnainenSoittaja())},2600);
   const oncTeksti=cruisingTanaan()?"🦆 Tänään lähtee Oulu Night Cruising — Kempeleen Biltemalta.":
     "🦆 Seuraava ONC "+(S.seuraavaCruising-S.paiva)+" päivän päästä.";
   const uusiVuodenaika=vuodenaika();
