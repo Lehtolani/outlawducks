@@ -75,6 +75,18 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .pk-ala b{color:var(--teksti)}
 .pk-sleeper{color:var(--violetti);font-weight:800}
 .pk-ala .btn{margin-left:auto;min-height:34px;font-size:13px;padding:0 12px}
+.tapahtumakortit{display:flex;flex-direction:column;gap:9px;margin-bottom:4px}
+.tapahtumakortti{background:var(--paneeli2);border:2px solid var(--reuna);border-radius:14px;
+  padding:10px 12px;border-left:4px solid var(--tv)}
+.tapahtumakortti.kaynnissa{border-color:var(--tv);box-shadow:0 0 0 1px var(--tv) inset}
+.tk-ylä{display:flex;align-items:center;gap:9px}
+.tk-ikoni{font-size:22px;flex:0 0 auto}
+.tk-nimi{flex:1;min-width:0;font-weight:800;font-size:14px;display:flex;flex-direction:column;gap:1px}
+.tk-nimi small{font-weight:600;font-size:11.5px;color:var(--himmea)}
+.tk-nyt{background:var(--tv);color:#0d1017;font-weight:800;font-size:11px;padding:3px 9px;
+  border-radius:99px;flex:0 0 auto}
+.tk-paivia{color:var(--himmea);font-weight:800;font-size:12px;flex:0 0 auto;white-space:nowrap}
+.tk-ds{color:var(--himmea);font-size:12px;margin-top:5px;line-height:1.4}
 .ak-otsikkorivi{display:flex;align-items:center;gap:9px;margin-bottom:11px;flex-wrap:wrap}
 .ak-otsikkorivi h2{margin:0;font-size:19px;flex:1;min-width:0}
 .ak-otsikkorivi .karttavalinta{flex:0 0 auto}
@@ -337,6 +349,7 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .hl-in{background:var(--paneeli);border:3px solid var(--keltainen);border-radius:16px;padding:20px 18px;width:min(440px,94vw);max-height:92vh;overflow-y:auto;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.8)}
 .hl-otsikko{font-size:15px;font-weight:800;color:var(--keltainen);letter-spacing:.08em}
 .hl-kohde{font-size:20px;font-weight:800;margin:8px 0 4px;line-height:1.25}
+.hl-kohde .kuvapaikka{height:150px;aspect-ratio:auto;font-size:9px;margin:0}
 .hl-vihje{font-size:13.5px;color:var(--neon);font-style:italic;margin-bottom:12px}
 .hl-hinta{font-size:38px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
 .hl-tila{font-size:15px;font-weight:800;margin:8px 0 12px;min-height:24px}
@@ -2447,6 +2460,11 @@ function arvoNettiauto(){
   S.nettiauto.sort(function(a,b){return a.hinta-b.hinta});
 }
 
+const HUUTOBONUKSET=[
+ "Takakontissa laatikollinen varaosia.",
+ "Vanteet mukana vaihtosarjana, kesä ja talvi.",
+ "Peräkärry tulee kaupan päälle."
+];
 const HUUTOVIHJEET=[
  ["Myyjä sanoo että ”käy hyvin”.",1.0],
  ["Konepellin alla näyttää siistiltä.",1.15],
@@ -2470,14 +2488,12 @@ function arvoHuutokauppa(){
   for(let i=0;i<kpl;i++)kilpailijat.push({nimi:nimet[Math.floor(Math.random()*nimet.length)],
     katto:Math.round(arvo*(0.35+Math.random()*0.6))});
   const lahto=Math.round(arvo*(0.15+Math.random()*0.12)/10)*10;
-  S.huuto={malli:malli,kunto:kunto,km:km,arvo:arvo,vihje:vihje[0],
+  const bonus=Math.random()<0.3?HUUTOBONUKSET[Math.floor(Math.random()*HUUTOBONUKSET.length)]:null;
+  S.huuto={malli:malli,kunto:kunto,km:km,arvo:arvo,bonus:bonus,
     huuto:lahto,askel:Math.max(20,Math.round(arvo*0.05/10)*10),
     johtaja:null,omaHuuto:false,vasara:0,raja:0,myyty:false,kaynnissa:false,
     loki:["Meklari: lähtöhinta "+Math.round(lahto).toLocaleString("fi-FI")+" €"],
-    kilpailijat:kilpailijat,
-    kuvaus:(m.vuosi<1995?"Vanha ":m.vuosi<2010?"Käytetty ":"Uudehko ")+
-      (m.veto==="taka"?"takavetoinen":m.veto==="neli"?"nelivetoinen":"etuvetoinen")+" "+
-      (m.paino>1500?"iso auto":m.paino>1200?"keskikokoinen auto":"pieni auto")};
+    kilpailijat:kilpailijat};
 }
 
 function pTalliAutot(p){
@@ -2760,21 +2776,23 @@ function pNettiauto(p){
 
 function pHuutokauppa(p){
   p.insertAdjacentHTML("beforeend","<h2>🔨 Huutokauppa</h2>"+
-    "<p style='color:var(--himmea);margin:4px 0 12px'>Yksi kohde illassa. Merkki ja kunto selviävät vasta vasaran jälkeen.</p>");
+    "<p style='color:var(--himmea);margin:4px 0 12px'>Yksi kohde illassa. Näet kuvan, mutta kunto ja tarkka historia selviävät vasta vasaran jälkeen.</p>");
   if(!S.huuto){
     p.insertAdjacentHTML("beforeend","<div class='kortti'><div class='ds'>"+
       "Tämän illan kohde on myyty. Uusi tulee huomenna.</div></div>");
     return;
   }
   const x=S.huuto;
-  p.insertAdjacentHTML("beforeend",
-    "<div class='kortti' style='border-color:var(--keltainen)'>"+
-    "<div class='nm'>❓ "+x.kuvaus+"</div>"+
-    "<div class='lappu neon' style='align-self:flex-start'>"+x.vihje+"</div>"+
-    "<div class='tiedot'>Mittarissa noin "+(Math.round(x.km/50000)*50).toLocaleString("fi-FI")+
-    " tuhatta kilometriä.<br><b>Lähtöhinta "+raha(x.huuto)+"</b> · korotus "+raha(x.askel)+"</div>"+
+  const kortti=document.createElement("div");
+  kortti.className="kortti"; kortti.style.borderColor="var(--keltainen)";
+  kortti.innerHTML=
+    "<div class='nm'>❓ Tuntematon kohde</div>"+
+    kuvapaikka("auto_"+x.malli,"")+
+    (x.bonus?"<div class='lappu neon' style='margin-top:8px'>"+x.bonus+"</div>":"")+
+    "<div class='tiedot' style='margin-top:8px'><b>Lähtöhinta "+raha(x.huuto)+"</b> · korotus "+raha(x.askel)+"</div>"+
     "<button class='btn wide' id='huutoon' "+(S.raha<x.huuto?"disabled":"")+">"+
-    (S.raha<x.huuto?"Ei varaa lähtöhintaan":(x.kaynnissa?"🔨 Palaa saliin":"🔨 Astu saliin"))+"</button></div>");
+    (S.raha<x.huuto?"Ei varaa lähtöhintaan":(x.kaynnissa?"🔨 Palaa saliin":"🔨 Astu saliin"))+"</button>";
+  p.appendChild(kortti);
   const hn=$("huutoon");
   if(hn)hn.onclick=function(){ avaaHuutolava() };
 }
@@ -2792,8 +2810,10 @@ function suljeHuutolava(){ $("huutolava").classList.remove("on") }
 function paivitaHuutolava(){
   const x=S.huuto;
   if(!x){ suljeHuutolava(); return }
-  $("hl-kohde").textContent="❓ "+x.kuvaus;
-  $("hl-vihje").textContent="“"+x.vihje+"”";
+  const kohde=$("hl-kohde");
+  if(!kohde.querySelector(".kuvapaikka"))kohde.innerHTML=kuvapaikka("auto_"+x.malli,"");
+  $("hl-vihje").innerHTML=x.bonus?"“"+x.bonus+"”":"";
+  $("hl-vihje").style.display=x.bonus?"block":"none";
   $("hl-hinta").textContent=raha(x.huuto);
   $("hl-hinta").style.color=x.omaHuuto?"var(--vihrea)":"var(--teksti)";
   const j=Math.max(0,(x.raja-Date.now())/1000);
@@ -3726,8 +3746,9 @@ let VIESTIT=[];
 let puhelussa=null;
 function soittoTeksti(s){
   if(s.aihe==="huutokauppa"&&S.huuto)
-    return "Moi! Huutokaupassa on nyt "+S.huuto.kuvaus.toLowerCase()+". Myyjä sanoi: “"+S.huuto.vihje+"” "+
-      "Kannattaa käydä katsomassa, lähtöhinta on vasta "+raha(S.huuto.huuto)+".";
+    return "Moi! Huutokaupassa on nyt yksi kohde tarjolla."+
+      (S.huuto.bonus?" Myyjä mainitsi: “"+S.huuto.bonus+"”":"")+
+      " Kannattaa käydä katsomassa, lähtöhinta on vasta "+raha(S.huuto.huuto)+".";
   if(s.aihe==="vastustaja"){
     const lista=vastustajaLista();
     const o=lista[Math.floor(Math.random()*lista.length)];
@@ -3798,8 +3819,37 @@ function pViestit(p){
 }
 
 function pLoki(p){
-  p.innerHTML='<div class="loki" style="max-height:none">'+LOKI.map(function(l){
-    return '<div class="'+(l.lk||"")+'">'+l.t+'</div>'}).join("")+'</div>';
+  // ---- toistuvat tapahtumat: ONC + kolme näyttelyä, tilanne ja seuraava ajankohta ----
+  const kortit=[
+    {ikoni:"🦆",nimi:"Oulu Night Cruising",paikka:"Kempeleen Biltema",vari:"var(--vihrea)",
+     kaynnissa:cruisingTanaan(), seuraava:S.seuraavaCruising, jakso:21,
+     ds:"Kruisailu ja kolehti. Toistuu 21 päivän välein."}
+  ].concat(NAYTTELYT.map(function(n){
+    return {ikoni:n.ikoni,nimi:n.nimi,paikka:paikka(n.paikka).nimi,vari:n.vari,
+      kaynnissa:naytteluTanaan(n.avain), seuraava:S.naytt[n.avain], jakso:360, ds:n.ds};
+  }));
+  p.insertAdjacentHTML("beforeend","<h2>📅 Toistuvat tapahtumat</h2>");
+  const g=document.createElement("div"); g.className="tapahtumakortit";
+  kortit.forEach(function(k){
+    const jaljella=k.seuraava-S.paiva;
+    const el=document.createElement("div");
+    el.className="tapahtumakortti"+(k.kaynnissa?" kaynnissa":"");
+    el.style.setProperty("--tv",k.vari);
+    el.innerHTML=
+      '<div class="tk-ylä"><span class="tk-ikoni">'+k.ikoni+'</span>'+
+        '<div class="tk-nimi">'+k.nimi+'<small>'+k.paikka+'</small></div>'+
+        (k.kaynnissa?'<span class="tk-nyt">NYT</span>':
+          '<span class="tk-paivia">'+(jaljella<=0?"pian":jaljella+" pv")+'</span>')+'</div>'+
+      '<div class="tk-ds">'+k.ds+'</div>';
+    g.appendChild(el);
+  });
+  p.appendChild(g);
+  p.insertAdjacentHTML("beforeend","<div class='sep'></div><h2>📋 Loki</h2>");
+  const lokiDiv=document.createElement("div");
+  lokiDiv.className="loki"; lokiDiv.style.maxHeight="none";
+  lokiDiv.innerHTML=LOKI.map(function(l){
+    return '<div class="'+(l.lk||"")+'">'+l.t+'</div>'}).join("");
+  p.appendChild(lokiDiv);
 }
 function pAsetukset(p){
   p.innerHTML=
