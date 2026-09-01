@@ -3258,6 +3258,20 @@ function aaniPolku(nimi){
   if(KUVAT["aani_"+nimi])return KUVAT["aani_"+nimi];
   return AANIKANSIO+encodeURIComponent(nimi)+".mp3";
 }
+
+function soitaKlippi(url,nimi){
+  const a=$("puheluaani"); a.src=url;
+  a.onerror=function(){
+    ilmoita({ico:"🔇",lk:"",otsikko:"Ääntä ei löytynyt",
+      teksti:"Tiedostoa “"+url+"” ei löytynyt palvelimelta."});
+  };
+  const p=a.play();
+  if(p&&p.catch)p.catch(function(e){
+    ilmoita({ico:"🔇",lk:"",otsikko:"Ääntä ei saatu soimaan",
+      teksti:(e&&e.name==="NotAllowedError")?"Selain esti automaattisen toiston.":
+        "Tiedostoa “"+url+"” ei voitu toistaa."});
+  });
+}
 function tuoKuvat(tiedostot){
   const lista=Array.prototype.slice.call(tiedostot);
   let n=0;
@@ -3841,8 +3855,7 @@ function pViestit(p){
   });
   p.querySelectorAll("[data-toista]").forEach(function(b){
     b.onclick=function(){
-      const a=$("puheluaani"); a.src=b.dataset.toista;
-      const p=a.play(); if(p&&p.catch)p.catch(function(){});
+      soitaKlippi(b.dataset.toista,puhelussa?puhelussa.nm:"");
     };
   });
   p.querySelectorAll("[data-laheta]").forEach(function(b){
@@ -6404,10 +6417,7 @@ $("s-vastaa").onclick=function(){
     aika:"päivä "+S.paiva,vastattu:true,luettu:false});
   ilmoita({ico:s.ico,lk:s.lk==="vinkki"?"paiva":"",otsikko:s.nm,
     teksti:r.teksti.slice(0,72)+"…",kesto:6500,toiminto:function(){avaaAppi("viestit")}});
-  if(klippi&&AANET_PAALLA){
-    const a=$("puheluaani"); a.src=klippi;
-    const p=a.play(); if(p&&p.catch)p.catch(function(){});
-  }
+  if(klippi&&AANET_PAALLA)soitaKlippi(klippi,s.nm);
   aani("klik"); piirra();
 };
 $("s-hylkaa").onclick=function(){
