@@ -1071,6 +1071,13 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,var(--kuori
 .btn.valinta.vihrea{background:var(--vihrea);color:#08210f}
 .btn.valinta.kelt{background:var(--keltainen);color:#161a22}
 .btn.valinta.puna{background:var(--punainen);color:#fff}
+.puhelu-nayta{width:100%;background:var(--paneeli2);border:2px solid var(--reuna2);
+  color:var(--teksti);border-radius:10px;padding:9px;font-weight:800;font-size:13px;
+  cursor:pointer;margin-top:10px}
+.puhelu-nayta:hover{border-color:var(--keltainen)}
+.puhelu-teksti{margin-top:9px;text-align:left;font-size:13.5px;line-height:1.5;
+  background:var(--paneeli2);border-radius:10px;padding:10px 12px}
+.puhelu-teksti.piilotettu{display:none}
 .tulos-sulje{margin-top:14px;width:100%;background:var(--keltainen);color:#161a22;border:0;
   border-radius:11px;min-height:46px;font-weight:800;font-size:15px;cursor:pointer}
 </style>
@@ -3948,6 +3955,11 @@ function soittoTeksti(s){
     const i=Math.floor(Math.random()*ERKIT.length);
     return {klippi:"SetaErkki"+(i+1), teksti:ERKIT[i]};
   }
+  if(s.aihe==="turha"){
+    // Tuntematon numero: 25 valmista pätkää, ei koskaan tekstiä —
+    // sisältö on mitä on, eikä sitä yritetä sanoittaa.
+    return {klippi:"Tuntematon"+(1+Math.floor(Math.random()*25)), teksti:""};
+  }
   return {klippi:null, teksti:TURHAT[Math.floor(Math.random()*TURHAT.length)]};
 }
 let VIIME_SOITTAJA=-1;
@@ -3958,6 +3970,7 @@ function satunnainenSoittaja(){
   do{ i=Math.floor(Math.random()*SOITTAJAT.length) }while(i===VIIME_SOITTAJA);
   return i;
 }
+let SOITTOAANI=null;
 function soi(i){
   if(K||puhelussa)return;
   const idx=i%SOITTAJAT.length;
@@ -3968,7 +3981,10 @@ function soi(i){
   $("s-tieto").textContent=s.tieto;
   $("soitto").classList.add("on");
   aani("varoitus");
+  clearInterval(SOITTOAANI);
+  SOITTOAANI=setInterval(function(){ aani("varoitus") },1700);
 }
+function pysaytaSoittoaani(){ clearInterval(SOITTOAANI); SOITTOAANI=null }
 function pViestit(p){
   VIESTIT.forEach(function(v){v.luettu=true});
   p.insertAdjacentHTML("beforeend", VIESTIT.length?"":
@@ -4615,12 +4631,13 @@ function avaaTapahtuma(av){
      {teksti:"🏆 Ilmoittaudu kilpailuun",lk:"vihrea",toiminto:function(){ avaaNayttely(av) }},
      {teksti:"Poistu tapahtumasta",lk:"kelt",toiminto:null}]);
 }
-function tapNaytaHahmo(av,otsikko,teksti,vari,napit){
+function tapNaytaHahmo(av,otsikko,teksti,vari,napit,klippi){
   const h=TAPAHTUMAHAHMOT[av];
   naytaValinta(otsikko,
     "<div class='haastekortti'>"+tapahtumaHahmoKuva(av)+
     "<div class='hk-tiedot'><b>"+h.nm+"</b></div></div>"+teksti,
     vari,napit);
+  if(klippi&&AANET_PAALLA)soitaKlippi(aaniPolku(klippi),h.nm);
 }
 const SPIIKKERI_RIVIT=[
  "Jäbä, tuo auto näyttää siistiltä! Annetaan sille vähän ääntä täällä lavalla.",
@@ -4633,11 +4650,13 @@ function tapEsittely(av){
   const a=auto();
   const cred=Math.round(15+a.tyyli*0.15+Math.random()*8);
   S.cred+=cred;
-  const rivi=SPIIKKERI_RIVIT[Math.floor(Math.random()*SPIIKKERI_RIVIT.length)];
+  const idx=Math.floor(Math.random()*SPIIKKERI_RIVIT.length);
+  const rivi=SPIIKKERI_RIVIT[idx];
   kirjaa("<b class='v'>🎤 Spiikkeri Jussi esitteli autosi yleisölle.</b> Uskottavuutta +"+cred+".","v");
   tapNaytaHahmo("spiikkeri","🎤 ESITTELY",
     "“"+rivi+"”<br><br>Katu-uskottavuutta +<b>"+cred+"</b>.","var(--keltainen)",
-    [{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}]);
+    [{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}],
+    "SpiikkeriJussi"+(idx+1));
   piirra();
 }
 const SPONSORI_OK=[
@@ -4657,16 +4676,20 @@ function tapSponsori(av){
   if(onnistui){
     const cred=Math.round(40+Math.random()*30);
     S.cred+=cred;
-    const rivi=SPONSORI_OK[Math.floor(Math.random()*SPONSORI_OK.length)];
+    const idx=Math.floor(Math.random()*SPONSORI_OK.length);
+    const rivi=SPONSORI_OK[idx];
     kirjaa("<b class='v'>🤝 Timo Ketola kiinnostui autostasi.</b> Uskottavuutta +"+cred+".","v");
     tapNaytaHahmo("sponsori","🤝 SPONSORIKESKUSTELU","“"+rivi+"”<br><br>Katu-uskottavuutta +<b>"+cred+
-      "</b>.","var(--vihrea)",[{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}]);
+      "</b>.","var(--vihrea)",[{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}],
+      "TimoKetolaOk"+(idx+1));
   }else{
-    const rivi=SPONSORI_EI[Math.floor(Math.random()*SPONSORI_EI.length)];
+    const idx=Math.floor(Math.random()*SPONSORI_EI.length);
+    const rivi=SPONSORI_EI[idx];
     kirjaa("Timo Ketola ei kiinnostunut tällä kertaa.","");
     tapNaytaHahmo("sponsori","🤝 SPONSORIKESKUSTELU","“"+rivi+"”<br><br>Ei tällä kertaa. "+
       "Tyylikkäämpi tai siistimpi auto voisi vakuuttaa paremmin.","var(--himmea)",
-      [{teksti:"Takaisin",lk:"kelt",toiminto:function(){ avaaTapahtuma(av) }}]);
+      [{teksti:"Takaisin",lk:"kelt",toiminto:function(){ avaaTapahtuma(av) }}],
+      "TimoKetolaEi"+(idx+1));
   }
   piirra();
 }
@@ -4676,13 +4699,14 @@ function tapVertailu(av){
   const n=NAYTTELYT.find(function(x){return x.avain===av});
   const a=auto();
   const omaKesk=n.kategoriat.reduce(function(s,k){return s+k.pisteet(a)},0)/n.kategoriat.length;
-  let arvio,vari;
-  if(omaKesk>170){ arvio="Tällä pärjäät varmasti kärkisijoille asti. Näytät hyvältä."; vari="var(--vihrea)" }
-  else if(omaKesk>90){ arvio="Ihan keskikastia porukkaa. Voisi mennä miten vaan."; vari="var(--keltainen)" }
-  else{ arvio="Aika kovaa väkeä täällä tänä vuonna. Podium taitaa jäädä kaukaiseksi."; vari="#ff8a3d" }
+  let arvio,vari,idx;
+  if(omaKesk>170){ arvio="Tällä pärjäät varmasti kärkisijoille asti. Näytät hyvältä."; vari="var(--vihrea)"; idx=1 }
+  else if(omaKesk>90){ arvio="Ihan keskikastia porukkaa. Voisi mennä miten vaan."; vari="var(--keltainen)"; idx=2 }
+  else{ arvio="Aika kovaa väkeä täällä tänä vuonna. Podium taitaa jäädä kaukaiseksi."; vari="#ff8a3d"; idx=3 }
   kirjaa("Vertailija-Ville kertoi arvionsa kilpailutilanteesta.","");
   tapNaytaHahmo("vertailija","👀 KILPAILIJAKATSAUS","“"+arvio+"”","var(--neon)",
-    [{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}]);
+    [{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}],
+    "VertailijaVille"+idx);
 }
 const DUKE_RIVIT=[
  "Hey buddy, I got some sweet parts in the trunk if you're interested.",
@@ -4698,12 +4722,14 @@ function tapHarvinaisuudet(av,amerikkalainen){
   const hinta=Math.round((60+Math.random()*180)/10)*10;
   const avain=amerikkalainen?"duke":"reiska";
   const rivit=amerikkalainen?DUKE_RIVIT:REISKA_RIVIT;
-  const rivi=rivit[Math.floor(Math.random()*rivit.length)];
+  const idx=Math.floor(Math.random()*rivit.length);
+  const rivi=rivit[idx];
   tapNaytaHahmo(avain,"💰 "+(amerikkalainen?"DUKE'S STASH":"REISKAN VARASTO"),
     "“"+rivi+"”<br><br>Tavara maksaa <b>"+raha(hinta)+"</b>. Ei tiedä mitä saa ennen kuin maksaa.",
     "var(--neon)",
     [{teksti:"Osta ("+raha(hinta)+")",lk:"vihrea",toiminto:function(){ tapOstaHarvinaisuus(av,avain,hinta) }},
-     {teksti:"Ei kiitos",lk:"kelt",toiminto:function(){ avaaTapahtuma(av) }}]);
+     {teksti:"Ei kiitos",lk:"kelt",toiminto:function(){ avaaTapahtuma(av) }}],
+    (amerikkalainen?"Duke":"Reiska")+(idx+1));
 }
 function tapOstaHarvinaisuus(av,hahmoavain,hinta){
   if(S.raha<hinta){naytaTulos("EI RAHAA","Kaupat eivät onnistu ilman käteistä.","var(--punainen)");return}
@@ -6700,21 +6726,44 @@ document.addEventListener("keydown",function(e){
   if(INTRO.paalla&&(e.key==="Escape"||e.key===" ")){ e.preventDefault(); lopetaIntro() }
 });
 
+function naytaPuheluSplash(s,teksti,klippi){
+  const el=$("viimeisin");
+  el.className="tulos on";
+  el.style.borderColor="var(--keltainen)";
+  const onTeksti=!!teksti;
+  el.innerHTML='<div class="tulos-laatikko">'+
+    '<div class="haastekortti" style="margin-bottom:2px">'+
+      hahmoKuva(s.hahmo,s.kuva?"hahmo_"+s.kuva:null)+
+      '<div class="hk-tiedot"><b>'+s.nm+'</b><small>'+s.tieto+'</small></div></div>'+
+    (onTeksti?
+      '<button class="puhelu-nayta" id="puhelu-nayta">Näytä viesti</button>'+
+      '<div class="puhelu-teksti piilotettu" id="puhelu-teksti">'+teksti+'</div>':
+      '')+
+    '<button class="tulos-sulje" id="tulos-sulje">Selvä</button></div>';
+  const nappi=$("puhelu-nayta");
+  if(nappi)nappi.onclick=function(){
+    const t=$("puhelu-teksti");
+    const piilossa=t.classList.toggle("piilotettu");
+    nappi.textContent=piilossa?"Näytä viesti":"Piilota viesti";
+  };
+  $("tulos-sulje").onclick=function(){ el.className="tulos" };
+  if(klippi&&AANET_PAALLA)soitaKlippi(klippi,s.nm);
+}
 $("s-vastaa").onclick=function(){
   const s=puhelussa; puhelussa=null;
   $("soitto").classList.remove("on");
+  pysaytaSoittoaani();
   const r=soittoTeksti(s);
   const klippi=aaniPolku(r.klippi);
   VIESTIT.unshift({nm:s.nm,ico:s.ico,teksti:r.teksti,klippi:r.klippi,lk:s.lk,
     aika:"päivä "+S.paiva,vastattu:true,luettu:false});
-  ilmoita({ico:s.ico,lk:s.lk==="vinkki"?"paiva":"",otsikko:s.nm,
-    teksti:r.teksti.slice(0,72)+"…",kesto:6500,toiminto:function(){avaaAppi("viestit")}});
-  if(klippi&&AANET_PAALLA)soitaKlippi(klippi,s.nm);
+  naytaPuheluSplash(s,r.teksti,klippi);
   aani("klik"); piirra();
 };
 $("s-hylkaa").onclick=function(){
   const s=puhelussa; puhelussa=null;
   $("soitto").classList.remove("on");
+  pysaytaSoittoaani();
   VIESTIT.unshift({nm:s.nm,ico:s.ico,lk:s.lk,aika:"vastaamaton",vastattu:false,luettu:false,
     teksti:"Et vastannut. "+(s.lk==="vinkki"?"Ehkä siinä oli jotain asiaa.":"Tuskin siinä oli mitään.")});
   ilmoita({ico:"📵",otsikko:"Vastaamaton puhelu",teksti:s.nm});
