@@ -91,6 +91,7 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .ak-otsikkorivi h2{margin:0;font-size:19px;flex:1;min-width:0}
 .ak-otsikkorivi .karttavalinta{flex:0 0 auto}
 .autolista{display:flex;flex-direction:column;gap:8px}
+.autolista-vieritys{max-height:472px;overflow-y:auto;padding-right:2px}
 .autolistarivi{display:flex;align-items:center;gap:11px;width:100%;text-align:left;
   background:var(--paneeli2);border:2px solid var(--reuna);border-radius:14px;padding:8px 12px;
   color:var(--teksti);font-family:inherit;cursor:pointer}
@@ -1257,7 +1258,7 @@ const OSAT=[
  {avain:"alusta",osakuva:"coiloverit",sek:240,ikoni:"🛞",nimi:"Jouset ja leveämmät renkaat",hinta:520,kaupat:["motonet","tarviketori","biltema"],
   kuntokatto:90,
   ds:"Pito paranee, mutta laikkamadallettu alusta ei kestä. Kunto enintään 90 %.",pito:0.14,melu:0,tyyli:10,luotto:0},
- {avain:"nitro",sek:120,ikoni:"💨",nimi:"Nitrojärjestelmä",hinta:450,kaupat:["motonet","muhos"],
+ {avain:"nitro",sek:120,ikoni:"💨",nimi:"Nitrojärjestelmä",hinta:450,kaupat:[],
   ds:"Pullo takakonttiin ja suutin imusarjaan. Yksi käyttö kisassa.",nitro:1,melu:0,tyyli:5,luotto:-4},
  {avain:"kansi",osakuva:"sylinterikansi",sek:300,ikoni:"⚙️",nimi:"Työstetty sylinterikansi",hinta:680,kaupat:["muhos","tori"],
   ds:"Virtaus paranee. Moottori kestää vähemmän.",nm:0.10,melu:2,tyyli:0,luotto:-8},
@@ -1273,7 +1274,7 @@ const OSAT=[
   vetovaatimus:"taka",
   ds:"Molemmat vetävät pyörät vetävät. Lähtö paranee huomattavasti. Vain takavetoisiin.",
   pito:0.20,melu:0,tyyli:2,luotto:0},
- {avain:"isopullo",sek:60,ikoni:"🧪",nimi:"Isompi nitropullo",hinta:900,kaupat:["muhos"],vaatii:"nitro",
+ {avain:"isopullo",sek:60,ikoni:"🧪",nimi:"Isompi nitropullo",hinta:900,kaupat:[],vaatii:"nitro",
   ds:"Toinen käyttö samaan kisaan.",nitro:1,melu:0,tyyli:3,luotto:-6}
 ];
 // kaupat: [nimi, hintakerroin, laatukerroin, luotettavuuslisä, kuvaus]
@@ -1291,7 +1292,9 @@ const KAUPAT=[
  {avain:"verkkokauppa",nimi:"Verkkokauppa",hinta:1.05,laatu:1.0,luotto:0,
   ds:"Kaiuttimia, valoja ja muuta elektroniikkaa."},
  {avain:"tori",nimi:"Tori",hinta:0.45,laatu:0.85,luotto:-6,
-  ds:"Käytettyjä spessuosia yksityisiltä. Valikoima vaihtuu joka ilta, kunto on arvoitus."}
+  ds:"Käytettyjä spessuosia yksityisiltä. Valikoima vaihtuu joka ilta, kunto on arvoitus."},
+ {avain:"kaasukalle",nimi:"Kaasu-Kalle",hinta:1.0,laatu:1.0,luotto:-10,
+  ds:"Marjaniemen tuntematon nitromyyjä. Ei kysytä liikaa."}
 ];
 /* Torin valikoima arvotaan joka illalle, ja osien kunto on epävarma */
 const TORIVIHJEET=[
@@ -2310,13 +2313,14 @@ function tankki(malli){
 function uusiAuto(malli,kunto,km,ostohinta){
   return {malli:malli,osat:{},toriLaatu:{},kunto:kunto===undefined?100:kunto,renkaat:100,
           km:km===undefined?185000:km,bensa:tankki(malli)*0.6,ajokielto:false,rengas:"kesa",vanne:"vakio",
-          ostohinta:ostohinta||0,modeihin:0,omaNimi:null};
+          ostohinta:ostohinta||0,modeihin:0,omaNimi:null,viimeksiAjettu:0};
 }
 function autonNimi(a){ return a.omaNimi||AUTOMALLIT[a.malli].nimi }
 let S={raha:400,epailys:0,voitot:0,tappiot:0,
        autot:[uusiAuto("corolla94",78,243000)], auto:0,
        tori:{}, nettiauto:[], huuto:null,
        toriPuhelin:null, puhelinVari:"musta", puhelinOmistetut:["musta"],
+       nitroAvattu:false, nukuOhitaVaroitus:false,
        pysaytykset:0, sakot:0, huomautukset:0, cred:0,
        paiva:1, energia:100, palkkakertyma:0,
        naytt:{hotsi:105,asc:345,rideinoulu:75}, naytViilaus:null, paikka:"koti",
@@ -2701,7 +2705,11 @@ function pTalliAutot(p){
 function piirraAutolista(p){
   const g=document.createElement("div");
   g.className="autolista";
-  S.autot.forEach(function(a,i){
+  // uusin käytetty ensin — alkuperäinen indeksi säilyy S.auto:a varten
+  const jarjestys=S.autot.map(function(a,i){return i})
+    .sort(function(x,y){return (S.autot[y].viimeksiAjettu||0)-(S.autot[x].viimeksiAjettu||0)});
+  jarjestys.forEach(function(i){
+    const a=S.autot[i];
     const m=AUTOMALLIT[a.malli], kaytossa=i===S.auto;
     const kv=a.kunto<25?"var(--punainen)":a.kunto<50?"#ff8a3d":a.kunto<75?"var(--keltainen)":"var(--vihrea)";
     const el=document.createElement("button");
@@ -2718,12 +2726,23 @@ function piirraAutolista(p){
         (a.laina?'<span class="lappu neon">sijaisauto</span>':'<span class="al-nuoli">›</span>')));
     el.onclick=function(){
       S.auto=i;
+      nyk().viimeksiAjettu=S.paiva;
       if(!kaytossa&&!a.korjaamossa)kirjaa("Vaihdoit ajoon: <b>"+m.nimi+"</b>.","g");
       avaaAppi("talli",true);
     };
     g.appendChild(el);
   });
-  p.appendChild(g);
+  if(S.autot.length>5){
+    const kelluri=document.createElement("div");
+    kelluri.className="autolista-vieritys";
+    kelluri.appendChild(g);
+    p.appendChild(kelluri);
+    p.insertAdjacentHTML("beforeend",
+      "<div class='ds' style='text-align:center;margin-top:6px'>Näytä kaikki "+S.autot.length+
+      " autoa vieritämällä listaa — uusimmat käytetyt yläreunassa.</div>");
+  }else{
+    p.appendChild(g);
+  }
 }
 
 function avaaNimeaAuto(i){
@@ -2755,6 +2774,7 @@ function sidoAutokortit(p){
   }});
   p.querySelectorAll("[data-vaihda]").forEach(function(b){b.onclick=function(){
     S.auto=parseInt(b.dataset.vaihda,10);
+    nyk().viimeksiAjettu=S.paiva;
     kirjaa("Vaihdoit ajoon: <b>"+AUTOMALLIT[nyk().malli].nimi+"</b>.","g");
     avaaAppi("talli",true);
   }});
@@ -2886,7 +2906,7 @@ function pHuutokauppa(p){
     (x.bonus?"<div class='lappu neon' style='margin-top:8px'>"+x.bonus+"</div>":"")+
     "<div class='tiedot' style='margin-top:8px'><b>Lähtöhinta "+raha(x.huuto)+"</b> · korotus "+raha(x.askel)+"</div>"+
     "<button class='btn wide' id='huutoon' "+(S.raha<x.huuto?"disabled":"")+">"+
-    (S.raha<x.huuto?"Ei varaa lähtöhintaan":(x.kaynnissa?"🔨 Palaa saliin":"🔨 Astu saliin"))+"</button>";
+    (S.raha<x.huuto?"Ei varaa lähtöhintaan":(x.kaynnissa?"🔨 Palaa saliin":"🔨 Tee tarjous"))+"</button>";
   p.appendChild(kortti);
   const hn=$("huutoon");
   if(hn)hn.onclick=function(){ avaaHuutolava() };
@@ -3506,6 +3526,7 @@ const APPIT=[
   {id:"nettiauto",ico:"💻",nm:"Nettiauto",fn:function(){return pNettiauto}},
   {id:"tori",ico:"🏷️",nm:"Tori",fn:function(){return pTori}},
   {id:"huuto",ico:"🔨",nm:"Huutokauppa",fn:function(){return pHuutokauppa}},
+  {id:"kaasukalle",ico:"💨",nm:"Kaasu-Kalle",piilotettu:true,fn:function(){return avaaKaasuKalle}},
   {id:"wiki",ico:"📖",nm:"CarWiki",fn:function(){return pWiki}},
   {id:"maine",ico:"🌟",nm:"Maine",fn:function(){return pMaine}},
   {id:"viestit",ico:"💬",nm:"Viestit",fn:function(){return pViestit}},
@@ -3528,7 +3549,7 @@ function merkki(id){
 }
 function koti(){
   VL=null; KAUPPANAKYMA=null;
-  $("naytto").innerHTML='<div class="appit">'+APPIT.map(function(a){
+  $("naytto").innerHTML='<div class="appit">'+APPIT.filter(function(a){return !a.piilotettu}).map(function(a){
     const m=merkki(a.id);
     return '<button class="appi'+(a.haamu?" haamuappi":"")+'" data-app="'+a.id+'">'+
       (m?'<span class="pallukka">'+m+'</span>':'')+
@@ -3613,6 +3634,7 @@ function paivitaTila(){
   if(puh)puh.style.background=
     "radial-gradient(120% 55% at 50% -10%,"+hehkuvari+"55,transparent 60%),"+
     "linear-gradient(180deg,"+vv[0]+"22,#12161e 55%)";
+  tarkistaNitroPuhelu();
   const n=nyk(), a=auto();
   const kv=function(v){return v<25?"var(--punainen)":v<50?"#ff8a3d":v<75?"var(--keltainen)":"var(--vihrea)"};
   $("m-raha").textContent=raha(S.raha);
@@ -3816,6 +3838,9 @@ const SALAKOODIT={
    viesti:"Tallin portti jää auki. Sinne ilmestyy joka ikinen malli mitä ei vielä omista."},
  "ALL PHONES":{nimi:"värikartta",kaikkiPuhelimet:true,toistuva:true,
    viesti:"Kuoret sadelevat pöydälle. Kaikki värit ovat nyt sinun valittavissasi."}
+,
+ "EVENT":{nimi:"testiportti",avaaTapahtuma:true,toistuva:true,
+   viesti:"Kalenteri kiepsahtaa hetkeksi eteenpäin."}
 };
 const SALAAUTOT={
  charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
@@ -3885,6 +3910,20 @@ function kokeileKoodi(teksti){
     piirra();
     return true;
   }
+  // testikoodi: hyppy suoraan johonkin tapahtumaan
+  if(s.avaaTapahtuma){
+    kirjaa("<b class='v'>🔓 "+koodi+"</b> — testiportti avattu.","v");
+    naytaValinta("🔓 "+koodi, s.viesti+"<br><br>Valitse mihin hypätään testaamaan:",
+      "var(--violetti)",
+      NAYTTELYT.map(function(n){
+        return {teksti:n.ikoni+" "+n.nimi.split(" ")[0],lk:"vihrea",toiminto:function(){
+          S.naytt[n.avain]=S.paiva;
+          S.paikka=n.paikka;
+          avaaTapahtuma(n.avain);
+        }};
+      }).concat([{teksti:"Peruuta",lk:"kelt",toiminto:null}]));
+    return true;
+  }
   // kaikki autot
   if(s.kaikkiAutot){
     const lisatyt=[];
@@ -3946,6 +3985,9 @@ const SOITTAJAT=[
  {nm:"Jonne",tieto:"kaveri",ico:"🧑",lk:"vinkki",aihe:"poliisi",hahmo:"nuorimies",kuva:"Jonne"}
 ,
  {nm:"Vampyyri",tieto:"tuntematon",ico:"🧛",lk:"turha",aihe:"vampyyri",hahmo:"nuorimies",kuva:"Vampyyri"}
+,
+ {nm:"Kaasu-Kalle",tieto:"tuntematon numero",ico:"👤",lk:"vinkki",aihe:"nitro",
+   hahmo:"nuorimies",kuva:"KaasuKalle",piilotettu:true}
 ];
 let VIESTIT=[];
 let puhelussa=null;
@@ -3967,6 +4009,7 @@ const SOITTOKLIPIT={
   erkki:{nimi:"SetaErkki",maara:5},
   vampyyri:{nimi:"Vampyyri",maara:5},
   klubi:{kiintea:true},
+  nitro:{kiintea:true},
   turha:{nimi:"Tuntematon",maara:25}
 };
 function valitseKlippi(s){
@@ -3978,9 +4021,11 @@ function valitseKlippi(s){
 let VIIME_SOITTAJA=-1;
 /* arpoo soittajan niin ettei sama henkilö soita kahdesti peräkkäin */
 function satunnainenSoittaja(){
-  if(SOITTAJAT.length<=1)return 0;
+  const ehdokkaat=SOITTAJAT.map(function(s,i){return i})
+    .filter(function(i){return !SOITTAJAT[i].piilotettu});
+  if(ehdokkaat.length<=1)return ehdokkaat[0]||0;
   let i;
-  do{ i=Math.floor(Math.random()*SOITTAJAT.length) }while(i===VIIME_SOITTAJA);
+  do{ i=ehdokkaat[Math.floor(Math.random()*ehdokkaat.length)] }while(i===VIIME_SOITTAJA);
   return i;
 }
 function soi(i){
@@ -4142,6 +4187,8 @@ function paikkaToiminnot(pk){
     t.push({ico:"🛏️",nm:"Nuku yön yli",lk:"",toiminto:function(){ajaNukkumaan()}});
   }
   if(pk.tyyppi==="parkki")t.push({ico:"😎",nm:"Esittele autoa",lk:"",toiminto:function(){esittele()}});
+  if(pk.avain==="marjaniemi"&&S.nitroAvattu)
+    t.push({ico:"💨",nm:"Tapaa Kaasu-Kalle",lk:"",toiminto:function(){avaaAppi("kaasukalle")}});
   if(pk.tyyppi==="parkki"||pk.avain==="tupos"){
     const tila=Math.round(tankki(n.malli)-n.bensa);
     if(tila>0)t.push({ico:"⛽",nm:"Tankkaa "+raha(Math.round(tila*1.89*(onEtu("bensa")?0.5:1))),
@@ -4410,6 +4457,7 @@ function aja(kohde){
   n.bensa-=tarve; S.energia=Math.max(0,S.energia-2);
   n.km+=Math.round(km);
   S.paikka=kohde;
+  n.viimeksiAjettu=S.paiva;
   aani("kaynnistys");
   if(n.osat.pakoputki)soitaSatunnainen("Drivingloud",11); else soitaSatunnainen("Driving",9);
   kirjaa("Ajoit "+paikka(kohde).nimi+"lle — "+km.toFixed(1)+" km, "+tarve.toFixed(1)+" l.","");
@@ -4972,11 +5020,63 @@ function aloitaCruising(){
   aani("voitto");
   paivitaStatit(); piirra();
 }
+const NITROKYNNYS=200;
+function tarkistaNitroPuhelu(){
+  if(S.nitroAvattu||puhelussa||K)return;
+  if((S.cred||0)>=NITROKYNNYS){
+    S.nitroAvattu=true;
+    soi(SOITTAJAT.findIndex(function(s){return s.nm==="Kaasu-Kalle"}));
+  }
+}
+function avaaKaasuKalle(p){
+  const nitroA=OSAT.find(function(o){return o.avain==="nitro"});
+  const isoA=OSAT.find(function(o){return o.avain==="isopullo"});
+  const n=nyk();
+  const g=teeRuudukko();
+  [nitroA,isoA].forEach(function(o){
+    if(o.avain==="isopullo"&&!n.osat.nitro)return; // isompi pullo vaatii perusnitron ensin
+    const omistaa=!!n.osat[o.avain];
+    const el=teeRuutu({
+      kuva:"osa_"+(o.osakuva||o.avain), ikoni:o.ikoni, nimi:o.nimi,
+      alle:omistaa?"jo asennettu":"Kaasu-Kallen erikoiserä", hinta:raha(o.hinta),
+      eiVaraa:omistaa||S.raha<o.hinta,
+      klik:function(){
+        if(omistaa||S.raha<o.hinta)return;
+        S.raha-=o.hinta; rahaPop(-o.hinta,"kaasu-kalle");
+        n.osat[o.avain]="kaasukalle";
+        n.toriLaatu=n.toriLaatu||{}; n.toriLaatu[o.avain]=1;
+        kirjaa("<b class='v'>"+o.nimi+" ostettu Kaasu-Kallelta.</b> Asennettu heti.","v");
+        naytaTulos("💨 KAUPAT TEHTY",o.nimi+" on nyt autossasi. Kalle katosi yöhön.","var(--vihrea)");
+        avaaAppi("kartta",true);
+        piirra();
+      }});
+    g.appendChild(el);
+  });
+  p.appendChild(g);
+}
+function tapahtumaTanaanNimi(){
+  const n=NAYTTELYT.find(function(x){return naytteluTanaan(x.avain)});
+  if(n)return n.ikoni+" "+n.nimi.split(" — ")[0];
+  if(cruisingTanaan())return "🦆 Oulu Night Cruising";
+  return null;
+}
 function ajaNukkumaan(){
   if(S.paikka!=="koti"){
     naytaTulos("🏠 EI VIELÄ KOTONA","Nukkumaan pääsee vasta kotona. Aja ensin kotiin.","var(--keltainen)");
     return;
   }
+  const tapahtuma=tapahtumaTanaanNimi();
+  if(tapahtuma&&!S.nukuOhitaVaroitus){
+    naytaValinta("💤 OLETKO VARMA?",
+      "Tänään on <b>"+tapahtuma+"</b>. Jos nukut nyt, päivä vaihtuu etkä ehdi enää mukaan.",
+      "var(--keltainen)",
+      [{teksti:"Nuku silti",lk:"kelt",toiminto:function(){ jatkaNukkumista() }},
+       {teksti:"Peruuta, menen tapahtumaan",lk:"vihrea",toiminto:null}]);
+    return;
+  }
+  jatkaNukkumista();
+}
+function jatkaNukkumista(){
   const n=nyk(), matka=0;
   iltaLoppu(); return;
   // väsyneenä kotimatka on riski (siirretty ajamiseen)
