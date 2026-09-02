@@ -338,7 +338,6 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .pako-ohjaus{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0 10px}
 .pako-in{max-height:92vh;overflow-y:auto}
 .pako-nappaimet{flex-wrap:wrap;justify-content:center}
-.pako-ohjaus.virhe .pako-ratti{border-color:var(--punainen);background:#3d1414}
 .pako-ratti{background:#12253d;border:3px solid var(--neon);border-radius:14px;
   min-height:70px;font-size:32px;color:var(--teksti);cursor:pointer;font-family:inherit;
   transition:transform .08s;box-shadow:0 4px 0 rgba(0,0,0,.35)}
@@ -639,9 +638,9 @@ h2 .pikku{font-size:14px;font-weight:600;color:var(--himmea)}
   box-shadow:0 0 10px #fff;border-radius:3px}
 
 /* ================= PUHELIN-UI ================= */
-body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,var(--kuori,#1e2c3e),#0a0d13 70%);
+body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,#1e2c3e,#0a0d13 70%);
   color:var(--teksti);font-family:"Inter",system-ui,Arial,sans-serif;font-size:16px;
-  min-height:100vh;display:grid;place-items:center;transition:background .4s}
+  min-height:100vh;display:grid;place-items:center}
 .maisema{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .maisema::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;
   background:linear-gradient(180deg,#1a1f28,#0d1015);border-top:3px solid #39424f}
@@ -954,8 +953,6 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,var(--kuori
 .pk-ds{font-size:13px;color:var(--himmea);line-height:1.45;margin-bottom:4px}
 .karttaselite{display:flex;gap:11px;flex-wrap:wrap;font-size:11.5px;color:var(--himmea);margin-top:9px}
 .naytto .kartta{aspect-ratio:1/1;cursor:default;margin-bottom:0;position:relative}
-.karttanappi{margin-bottom:12px;font-size:15px;display:flex;align-items:center;
-  justify-content:center;gap:8px}
 .karttasuurenna{position:absolute;right:6px;bottom:6px;z-index:4;width:32px;height:32px;
   border-radius:9px;background:rgba(18,22,30,.9);border:2px solid var(--reuna2);
   color:var(--teksti);font-size:15px;cursor:pointer;line-height:1}
@@ -1044,7 +1041,6 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,var(--kuori
 .viesti-toista{background:var(--paneeli2);border:2px solid var(--reuna2);border-radius:50%;
   width:30px;height:30px;flex:0 0 auto;font-size:14px;cursor:pointer;display:grid;place-items:center}
 .viesti-toista:hover{border-color:var(--neon)}
-.viesti .hahmo{width:38px;height:38px;font-size:19px;flex:0 0 auto}
 .viesti .kuva{width:38px;height:38px;border-radius:50%;border:2px dashed var(--reuna2);background:#141922;
   display:grid;place-items:center;font-size:18px;flex:0 0 auto}
 .viesti .nm{font-weight:800;font-size:14.5px}
@@ -1071,13 +1067,6 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,var(--kuori
 .btn.valinta.vihrea{background:var(--vihrea);color:#08210f}
 .btn.valinta.kelt{background:var(--keltainen);color:#161a22}
 .btn.valinta.puna{background:var(--punainen);color:#fff}
-.puhelu-nayta{width:100%;background:var(--paneeli2);border:2px solid var(--reuna2);
-  color:var(--teksti);border-radius:10px;padding:9px;font-weight:800;font-size:13px;
-  cursor:pointer;margin-top:10px}
-.puhelu-nayta:hover{border-color:var(--keltainen)}
-.puhelu-teksti{margin-top:9px;text-align:left;font-size:13.5px;line-height:1.5;
-  background:var(--paneeli2);border-radius:10px;padding:10px 12px}
-.puhelu-teksti.piilotettu{display:none}
 .tulos-sulje{margin-top:14px;width:100%;background:var(--keltainen);color:#161a22;border:0;
   border-radius:11px;min-height:46px;font-weight:800;font-size:15px;cursor:pointer}
 </style>
@@ -1178,7 +1167,7 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,var(--kuori
 
 <div class="maisema"><div class="maisema-teksti">olet paikassa<b id="maisema-paikka">—</b></div></div>
 
-<div class="puhelin" id="puhelin">
+<div class="puhelin">
   <div class="tila">
     <span id="tila-vasen">—</span>
     <span id="tila-oikea">—</span>
@@ -3565,16 +3554,7 @@ function vuodenaika(){
 function vuodenaikaVari(){ return vuodenaika().vari }
 function paivitaTila(){
   const vv=vuodenaikaVari();
-  // puhelimen väri saa etusijan hehkussa, vuodenaika pysyy pohjasävynä.
-  // Tämä näytetään itse puhelimen SISäLLÄ (kotinäkymän taustana), koska
-  // kapealla puhelinruudulla itse laite vie lähes koko näytön eikä sen
-  // ympärillä olevaa taustaa juuri näy.
-  const pv=PUHELINVARIT.find(function(x){return x.avain===(S.puhelinVari||"musta")});
-  const hehkuvari=(pv&&pv.avain!=="musta")?pv.vari:vv[0];
-  const puh=$("puhelin");
-  if(puh)puh.style.background=
-    "radial-gradient(120% 55% at 50% -10%,"+hehkuvari+"55,transparent 60%),"+
-    "linear-gradient(180deg,"+vv[0]+"22,#12161e 55%)";
+  document.body.style.background="radial-gradient(90% 70% at 50% 0%,"+vv[0]+","+vv[1]+" 70%)";
   const n=nyk(), a=auto();
   const kv=function(v){return v<25?"var(--punainen)":v<50?"#ff8a3d":v<75?"var(--keltainen)":"var(--vihrea)"};
   $("m-raha").textContent=raha(S.raha);
@@ -3902,9 +3882,6 @@ const SOITTAJAT=[
  {nm:"Setä Erkki",tieto:"soittaa taas",ico:"👨‍🦳",lk:"turha",aihe:"erkki",hahmo:"ukko",kuva:"SetaErkki"},
  {nm:"Tuntematon numero",tieto:"+358 40 …",ico:"❓",lk:"turha",aihe:"turha",hahmo:"mystery",kuva:null},
  {nm:"Äiti",tieto:"",ico:"👩",lk:"turha",aihe:"aiti",hahmo:"aiti",kuva:"Aiti"}
-,
- {nm:"Duckling",tieto:"Outlaw Ducks",ico:"🦆",lk:"vinkki",aihe:"nayttely",hahmo:"duck",kuva:"Duckling"},
- {nm:"Jonne",tieto:"kaveri",ico:"🧑",lk:"vinkki",aihe:"poliisi",hahmo:"nuorimies",kuva:"Jonne"}
 ];
 const TURHAT=[
  "No terve! Kuule mulla ois semmonen kysymys että osaatko sanoa mikä siinä mun pesukoneessa rutisee. Se on valkoinen. Soitin sulle koska sä osaat autoja.",
@@ -3941,9 +3918,6 @@ const KIINTEAT={
   huutokauppa:"Moi! Kannattaisi käydä kattomassa huutokauppaa, siellä saattaa olla just nyt jotain hyvää tarjolla.",
   vastustaja:"Moi! Yks jäbä väittää olevansa aika kova kuski. Käy kattoo vastustajat kisasovelluksesta, saattaisit yllättyä.",
   tori:"Moi! Torilla pyörii tänään jotain kivaa tavaraa. Kannattaisi käydä kattomassa mitä on tarjolla."
-,
-  nayttely:"Moi! Muistathan että ne isot autonäyttelyt tulee taas jossain vaiheessa vuotta. Käy kattoo Tapahtumat-sivulta milloin seuraava on.",
-  poliisi:"Kuule, kannattaa ajaa nyt vähän rauhallisemmin pariin päivään. Kytät on liikkeellä tavallista enemmän."
 };
 function soittoTeksti(s){
   if(KIINTEAT[s.aihe])return {klippi:s.nm, teksti:KIINTEAT[s.aihe]};
@@ -3955,11 +3929,6 @@ function soittoTeksti(s){
     const i=Math.floor(Math.random()*ERKIT.length);
     return {klippi:"SetaErkki"+(i+1), teksti:ERKIT[i]};
   }
-  if(s.aihe==="turha"){
-    // Tuntematon numero: 25 valmista pätkää, ei koskaan tekstiä —
-    // sisältö on mitä on, eikä sitä yritetä sanoittaa.
-    return {klippi:"Tuntematon"+(1+Math.floor(Math.random()*25)), teksti:""};
-  }
   return {klippi:null, teksti:TURHAT[Math.floor(Math.random()*TURHAT.length)]};
 }
 let VIIME_SOITTAJA=-1;
@@ -3970,7 +3939,6 @@ function satunnainenSoittaja(){
   do{ i=Math.floor(Math.random()*SOITTAJAT.length) }while(i===VIIME_SOITTAJA);
   return i;
 }
-let SOITTOAANI=null;
 function soi(i){
   if(K||puhelussa)return;
   const idx=i%SOITTAJAT.length;
@@ -3981,10 +3949,7 @@ function soi(i){
   $("s-tieto").textContent=s.tieto;
   $("soitto").classList.add("on");
   aani("varoitus");
-  clearInterval(SOITTOAANI);
-  SOITTOAANI=setInterval(function(){ aani("varoitus") },1700);
 }
-function pysaytaSoittoaani(){ clearInterval(SOITTOAANI); SOITTOAANI=null }
 function pViestit(p){
   VIESTIT.forEach(function(v){v.luettu=true});
   p.insertAdjacentHTML("beforeend", VIESTIT.length?"":
@@ -3993,10 +3958,7 @@ function pViestit(p){
     const el=document.createElement("div");
     el.className="viesti "+(v.lk||"");
     const klippi=v.klippi?aaniPolku(v.klippi):null;
-    const soittaja=SOITTAJAT.find(function(s){return s.nm===v.nm});
-    const avatar=soittaja?hahmoKuva(soittaja.hahmo,soittaja.kuva?"hahmo_"+soittaja.kuva:null):
-      "<div class='kuva'>"+v.ico+"</div>";
-    let html="<div class='yla'>"+avatar+
+    let html="<div class='yla'><div class='kuva'>"+v.ico+"</div>"+
       "<div class='nm'>"+v.nm+"</div><div class='aika'>"+v.aika+"</div>"+
       (klippi?"<button class='viesti-toista' data-toista='"+klippi+"'>🔊</button>":"")+"</div>"+
       "<div class='sis'>"+v.teksti+"</div>";
@@ -4061,6 +4023,12 @@ function pLoki(p){
     g.appendChild(el);
   });
   p.appendChild(g);
+  p.insertAdjacentHTML("beforeend","<div class='sep'></div><h2>📋 Loki</h2>");
+  const lokiDiv=document.createElement("div");
+  lokiDiv.className="loki"; lokiDiv.style.maxHeight="none";
+  lokiDiv.innerHTML=LOKI.map(function(l){
+    return '<div class="'+(l.lk||"")+'">'+l.t+'</div>'}).join("");
+  p.appendChild(lokiDiv);
 }
 function pAsetukset(p){
   p.innerHTML=
@@ -4069,6 +4037,11 @@ function pAsetukset(p){
     '<button class="btn wide" id="a-vie">Vie tiedostoon</button>'+
     '<label class="btn haamu wide" style="margin-top:6px;display:flex;cursor:pointer">Lataa tiedostosta'+
     '<input type="file" id="a-tuo" accept="application/json,.json" style="display:none"></label></div>'+
+    '<div class="kortti" style="border-color:var(--neon)"><div class="nm">🖼️ Kuvat ja äänet</div>'+
+    '<div class="ds" id="kuvatila">—</div>'+
+    '<label class="btn wide" style="display:flex;cursor:pointer">Valitse tiedostot koneelta'+
+    '<input type="file" id="a-kuvat" accept="image/*,audio/*" multiple style="display:none"></label>'+
+    '<button class="btn haamu wide" id="a-kuvatpois" style="margin-top:6px">Poista kaikki kuvat ja äänet</button></div>'+
     '<div class="kortti"><div class="nm">🔊 Äänet</div><div class="ds">Nyt: '+(AANET_PAALLA?"päällä":"pois")+'</div>'+
     '<button class="btn haamu wide" id="a-aani">Vaihda</button></div>'+
     '<div class="kortti"><div class="nm">❓ Ohjeet</div><div class="ds">Katso pelin ohjeet uudelleen.</div>'+
@@ -4081,6 +4054,20 @@ function pAsetukset(p){
     '<div class="kortti" style="border-color:var(--punainen)"><div class="nm">🔄 Aloita alusta</div>'+
     '<div class="ds">Nykyinen peli katoaa lopullisesti.</div>'+
     '<button class="btn haamu wide" id="a-alusta">Aloita alusta</button></div>';
+  const kt=kuvatilanne();
+  $("kuvatila").innerHTML="Hahmokuvia löytyy <b>"+kt.loytyi+" / "+kt.kuskeja+"</b>."+
+    (kt.puuttuu.length?"<br>Puuttuu: "+kt.puuttuu.slice(0,10).join(", ")+
+      (kt.puuttuu.length>10?" ja "+(kt.puuttuu.length-10)+" muuta":""):"")+
+    "<br><br>Valitse kaikki kuvat ja äänitiedostot kerralla — selain muistaa ne jatkossa. "+
+    "Tiedostonimi ratkaisee: <b>Aatu.jpg</b> menee Aatulle, <b>auto_mx5.jpg</b> autolle "+
+    "ja <b>paikka_raksila.jpg</b> paikalle."+
+    "<br><br><b>Puheluiden ääniraidat</b> (omassa <code>aanet/</code>-kansiossaan GitHubissa, "+
+    "erillään kuvista): Mallard, Wigeon ja Goosander tarvitsevat vain yhden yleisluontoisen "+
+    "pätkän per henkilö (<b>Mallard.mp3</b>, <b>Wigeon.mp3</b>, <b>Goosander.mp3</b>) — puhe ei "+
+    "riipu siitä mitä viesti tarkalleen sanoo. Setä Erkillä ja Äidillä on useita valmiita "+
+    "repliikkejä, joten niille tarvitaan oma tiedosto per rivi: <b>SetaErkki1.mp3</b> … "+
+    "<b>SetaErkki5.mp3</b> ja <b>Aiti1.mp3</b> … <b>Aiti4.mp3</b> — numero täsmää siihen "+
+    "mikä rivi kulloinkin arvotaan, joten ääni ja teksti täsmäävät aina.";
   const omat=S.puhelinOmistetut||["musta"];
   $("puhvaritila").innerHTML=omat.length>1?
     "Löytyneitä värejä <b>"+omat.length+" / "+PUHELINVARIT.length+"</b>. Loput löytyvät "+
@@ -4099,6 +4086,14 @@ function pAsetukset(p){
       avaaAppi("asetukset");
     };
   });
+  $("a-kuvat").onchange=function(e){
+    if(e.target.files.length)tuoKuvat(e.target.files).then(function(){avaaAppi("asetukset")});
+    e.target.value="";
+  };
+  $("a-kuvatpois").onclick=function(){
+    if(confirm("Poistetaanko kaikki tallennetut kuvat?"))
+      tyhjennaKuvat().then(function(){avaaAppi("asetukset")});
+  };
   $("a-vie").onclick=vieTiedostoon;
   $("a-tuo").onchange=function(e){ if(e.target.files[0])tuoTiedostosta(e.target.files[0]); e.target.value="" };
   $("a-aani").onclick=function(){AANET_PAALLA=!AANET_PAALLA;aani("klik");avaaAppi("asetukset")};
@@ -4133,7 +4128,7 @@ function paikkaToiminnot(pk){
   (function(){
     const n=NAYTTELYT.find(function(x){return x.paikka===pk.avain&&naytteluTanaan(x.avain)});
     if(n)t.push({ico:n.ikoni,nm:n.nimi.split(" — ")[0]+" käynnissä",lk:"duck",
-      toiminto:function(){ avaaTapahtuma(n.avain) }});
+      toiminto:function(){ avaaNayttely(n.avain) }});
   })();
   if(cruisingTanaan()&&pk.avain==="biltema")
     t.push({ico:"🦆",nm:"Night Cruising",lk:"duck",toiminto:function(){aloitaCruising()}});
@@ -4290,11 +4285,18 @@ function piirraPelikartta(p){
 function pKartta(p){
   const nyt=paikka(S.paikka);
   p.innerHTML="";
-  const karttanappi=document.createElement("button");
-  karttanappi.className="btn wide karttanappi";
-  karttanappi.innerHTML="🗺️ Kartta";
-  karttanappi.onclick=function(){ avaaIsoKartta() };
-  p.appendChild(karttanappi);
+  const ylaosa=document.createElement("div");
+  ylaosa.className="karttaylaosa";
+  p.appendChild(ylaosa);
+  piirraPelikartta(ylaosa);
+  const kw=ylaosa.querySelector(".kartta");
+  if(kw){
+    const suurenna=document.createElement("button");
+    suurenna.className="karttasuurenna"; suurenna.innerHTML="⤢";
+    suurenna.title="Suurenna kartta";
+    suurenna.onclick=function(e){ e.stopPropagation(); avaaIsoKartta() };
+    kw.appendChild(suurenna);
+  }
   const kortti=document.createElement("div");
   kortti.className="paikkakortti";
   kortti.innerHTML=kuvapaikka("paikka_"+nyt.avain,"paikan kuva")+
@@ -4312,7 +4314,7 @@ function pKartta(p){
     });
     kortti.appendChild(rivi);
   }
-  p.appendChild(kortti);
+  ylaosa.appendChild(kortti);
   p.insertAdjacentHTML("beforeend","<div class='sep'></div>");
   piirraPaikkalista(p);
 }
@@ -4603,145 +4605,6 @@ function naytteluTanaan(av){
   return S.paiva>=alku&&S.paiva<alku+2;
 }
 function paikanNayttely(){ return NAYTTELYT.find(function(n){return n.paikka===S.paikka&&naytteluTanaan(n.avain)}) }
-/* ============ TAPAHTUMAHAHMOT: toimintavalikko paikan päällä ============ */
-const TAPAHTUMAHAHMOT={
- spiikkeri:{nm:"Spiikkeri Jussi",hahmo:"nuorimies",kuva:"SpiikkeriJussi"},
- sponsori:{nm:"Timo Ketola",hahmo:"isa",kuva:"TimoKetola"},
- vertailija:{nm:"Vertailija-Ville",hahmo:"nuorimies",kuva:"VertailijaVille"},
- duke:{nm:"Duke",hahmo:"nuorimies",kuva:"Duke"},
- reiska:{nm:"Reiska",hahmo:"ukko",kuva:"Reiska"}
-};
-function tapahtumaHahmoKuva(av){
-  const h=TAPAHTUMAHAHMOT[av];
-  return hahmoKuva(h.hahmo,h.kuva?"hahmo_"+h.kuva:null);
-}
-function avaaTapahtuma(av){
-  const n=NAYTTELYT.find(function(x){return x.avain===av});
-  if(!naytteluTanaan(av)){
-    naytaTulos(n.ikoni+" "+n.nimi.split(" ")[0].toUpperCase()+" OHI",
-      "Tämän vuoden tapahtuma on jo pidetty. Seuraava on vuoden päästä.","var(--himmea)");
-    return;
-  }
-  const amerikkalainen=!!n.amerikkalainen;
-  naytaValinta(n.ikoni+" "+n.nimi, n.ds, n.vari,
-    [{teksti:"🎤 Esittele yleisölle",lk:"",toiminto:function(){ tapEsittely(av) }},
-     {teksti:"🤝 Jututa sponsoria",lk:"",toiminto:function(){ tapSponsori(av) }},
-     {teksti:"👀 Kierrä kilpailijat",lk:"",toiminto:function(){ tapVertailu(av) }},
-     {teksti:"💰 Etsi harvinaisuuksia",lk:"",toiminto:function(){ tapHarvinaisuudet(av,amerikkalainen) }},
-     {teksti:"🏆 Ilmoittaudu kilpailuun",lk:"vihrea",toiminto:function(){ avaaNayttely(av) }},
-     {teksti:"Poistu tapahtumasta",lk:"kelt",toiminto:null}]);
-}
-function tapNaytaHahmo(av,otsikko,teksti,vari,napit,klippi){
-  const h=TAPAHTUMAHAHMOT[av];
-  naytaValinta(otsikko,
-    "<div class='haastekortti'>"+tapahtumaHahmoKuva(av)+
-    "<div class='hk-tiedot'><b>"+h.nm+"</b></div></div>"+teksti,
-    vari,napit);
-  if(klippi&&AANET_PAALLA)soitaKlippi(aaniPolku(klippi),h.nm);
-}
-const SPIIKKERI_RIVIT=[
- "Jäbä, tuo auto näyttää siistiltä! Annetaan sille vähän ääntä täällä lavalla.",
- "No niin porukka, seuraavaksi meillä on yksi mielenkiintoinen kokonaisuus...",
- "Kappas vain, tässä on harrastaja joka tietää mitä tekee. Anna kuulua!"
-];
-function tapEsittely(av){
-  if(S.energia<5){naytaTulos("🔋 EI JAKSA","Esittelyyn tarvitaan 5 energiaa.","var(--keltainen)");return}
-  S.energia-=5;
-  const a=auto();
-  const cred=Math.round(15+a.tyyli*0.15+Math.random()*8);
-  S.cred+=cred;
-  const idx=Math.floor(Math.random()*SPIIKKERI_RIVIT.length);
-  const rivi=SPIIKKERI_RIVIT[idx];
-  kirjaa("<b class='v'>🎤 Spiikkeri Jussi esitteli autosi yleisölle.</b> Uskottavuutta +"+cred+".","v");
-  tapNaytaHahmo("spiikkeri","🎤 ESITTELY",
-    "“"+rivi+"”<br><br>Katu-uskottavuutta +<b>"+cred+"</b>.","var(--keltainen)",
-    [{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}],
-    "SpiikkeriJussi"+(idx+1));
-  piirra();
-}
-const SPONSORI_OK=[
- "Kiva rakennelma. Meillä olisi tarvetta muutamalle uudelle kasvolle ensi kauden kampanjaan.",
- "Tää on just sitä mitä etsimme. Ollaan sinuun yhteydessä."
-];
-const SPONSORI_EI=[
- "Hmm, ei oikein osu meidän linjaan tällä hetkellä. Ehkä myöhemmin.",
- "Kiitos ajasta, mutta jatketaan etsimistä toisaalta."
-];
-function tapSponsori(av){
-  if(S.energia<8){naytaTulos("🔋 EI JAKSA","Sponsorin jututtaminen vaatii 8 energiaa.","var(--keltainen)");return}
-  S.energia-=8;
-  const a=auto();
-  const mahd=Math.min(0.85,0.15+a.tyyli/140+S.cred/900);
-  const onnistui=Math.random()<mahd;
-  if(onnistui){
-    const cred=Math.round(40+Math.random()*30);
-    S.cred+=cred;
-    const idx=Math.floor(Math.random()*SPONSORI_OK.length);
-    const rivi=SPONSORI_OK[idx];
-    kirjaa("<b class='v'>🤝 Timo Ketola kiinnostui autostasi.</b> Uskottavuutta +"+cred+".","v");
-    tapNaytaHahmo("sponsori","🤝 SPONSORIKESKUSTELU","“"+rivi+"”<br><br>Katu-uskottavuutta +<b>"+cred+
-      "</b>.","var(--vihrea)",[{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}],
-      "TimoKetolaOk"+(idx+1));
-  }else{
-    const idx=Math.floor(Math.random()*SPONSORI_EI.length);
-    const rivi=SPONSORI_EI[idx];
-    kirjaa("Timo Ketola ei kiinnostunut tällä kertaa.","");
-    tapNaytaHahmo("sponsori","🤝 SPONSORIKESKUSTELU","“"+rivi+"”<br><br>Ei tällä kertaa. "+
-      "Tyylikkäämpi tai siistimpi auto voisi vakuuttaa paremmin.","var(--himmea)",
-      [{teksti:"Takaisin",lk:"kelt",toiminto:function(){ avaaTapahtuma(av) }}],
-      "TimoKetolaEi"+(idx+1));
-  }
-  piirra();
-}
-function tapVertailu(av){
-  if(S.energia<5){naytaTulos("🔋 EI JAKSA","Kierros vaatii 5 energiaa.","var(--keltainen)");return}
-  S.energia-=5;
-  const n=NAYTTELYT.find(function(x){return x.avain===av});
-  const a=auto();
-  const omaKesk=n.kategoriat.reduce(function(s,k){return s+k.pisteet(a)},0)/n.kategoriat.length;
-  let arvio,vari,idx;
-  if(omaKesk>170){ arvio="Tällä pärjäät varmasti kärkisijoille asti. Näytät hyvältä."; vari="var(--vihrea)"; idx=1 }
-  else if(omaKesk>90){ arvio="Ihan keskikastia porukkaa. Voisi mennä miten vaan."; vari="var(--keltainen)"; idx=2 }
-  else{ arvio="Aika kovaa väkeä täällä tänä vuonna. Podium taitaa jäädä kaukaiseksi."; vari="#ff8a3d"; idx=3 }
-  kirjaa("Vertailija-Ville kertoi arvionsa kilpailutilanteesta.","");
-  tapNaytaHahmo("vertailija","👀 KILPAILIJAKATSAUS","“"+arvio+"”","var(--neon)",
-    [{teksti:"Takaisin",lk:"vihrea",toiminto:function(){ avaaTapahtuma(av) }}],
-    "VertailijaVille"+idx);
-}
-const DUKE_RIVIT=[
- "Hey buddy, I got some sweet parts in the trunk if you're interested.",
- "You picked a good show to come to. Best iron in the state right here.",
- "Take a look, might be exactly what your ride needs."
-];
-const REISKA_RIVIT=[
- "Mulla on täällä pari kamaa jos kiinnostaa. Ei kysytä mistä ne tuli.",
- "Kattoin sun konepeltiä äsken, taidat tarvita jotain tommosta.",
- "Hyvä kamaa liikkuu käsistä käsiin, jos tunnet oikeat ihmiset."
-];
-function tapHarvinaisuudet(av,amerikkalainen){
-  const hinta=Math.round((60+Math.random()*180)/10)*10;
-  const avain=amerikkalainen?"duke":"reiska";
-  const rivit=amerikkalainen?DUKE_RIVIT:REISKA_RIVIT;
-  const idx=Math.floor(Math.random()*rivit.length);
-  const rivi=rivit[idx];
-  tapNaytaHahmo(avain,"💰 "+(amerikkalainen?"DUKE'S STASH":"REISKAN VARASTO"),
-    "“"+rivi+"”<br><br>Tavara maksaa <b>"+raha(hinta)+"</b>. Ei tiedä mitä saa ennen kuin maksaa.",
-    "var(--neon)",
-    [{teksti:"Osta ("+raha(hinta)+")",lk:"vihrea",toiminto:function(){ tapOstaHarvinaisuus(av,avain,hinta) }},
-     {teksti:"Ei kiitos",lk:"kelt",toiminto:function(){ avaaTapahtuma(av) }}],
-    (amerikkalainen?"Duke":"Reiska")+(idx+1));
-}
-function tapOstaHarvinaisuus(av,hahmoavain,hinta){
-  if(S.raha<hinta){naytaTulos("EI RAHAA","Kaupat eivät onnistu ilman käteistä.","var(--punainen)");return}
-  S.raha-=hinta; rahaPop(-hinta,"harvinaisuudet");
-  const ehdokkaat=OSAT.filter(function(o){return !o.vetovaatimus||AUTOMALLIT[nyk().malli].veto===o.vetovaatimus});
-  const o=ehdokkaat[Math.floor(Math.random()*ehdokkaat.length)];
-  S.varasto.push({avain:o.avain,kauppa:"tori",laatu:0.8+Math.random()*0.35});
-  kirjaa("<b class='v'>💰 Löysit: "+o.nimi+"</b> — varastossa, asenna Tallissa.","v");
-  naytaTulos("💰 LÖYTÖ!",o.nimi+" löytyi laatikosta. Se odottaa nyt varastossasi.","var(--vihrea)");
-  piirra();
-}
-
 function avaaNayttely(av){
   const n=NAYTTELYT.find(function(x){return x.avain===av});
   if(!naytteluTanaan(av)){
@@ -6131,14 +5994,13 @@ var PAKO=null;
 function aloitaPako(syy){
   const a=auto();
   // nopea auto antaa hieman enemmän aikaa
-  const lisa=Math.min(0.6,(a.hv-100)/500);
+  const lisa=Math.min(0.5,(a.hv-100)/600);
   const merkit=["⬆","⬇","⬅","➡"];
   const sarja=[];
-  for(let i=0;i<5;i++)sarja.push(merkit[Math.floor(Math.random()*merkit.length)]);
-  PAKO={sarja:sarja,kohta:0,aika:1.25+lisa,kesto:1.25+lisa,syy:syy,virheet:0};
+  for(let i=0;i<6;i++)sarja.push(merkit[Math.floor(Math.random()*merkit.length)]);
+  PAKO={sarja:sarja,kohta:0,aika:0.95+lisa,kesto:0.95+lisa,syy:syy};
   $("pako-teksti").innerHTML="Kaasu pohjaan ja käännös Toppilan suuntaan.<br>"+
-    "<b>Napauta nuolia samassa järjestyksessä.</b> Yhden hätänapautuksen sallii, "+
-    "mutta toinen virhe jättää sinut kiinni.";
+    "<b>Napauta nuolia samassa järjestyksessä.</b> Yksikin väärin ja jäät kiinni.";
   $("pako").classList.add("on");
   aani("poliisi");
   piirraPako();
@@ -6181,13 +6043,6 @@ function pakoNappain(merkki){
     if(PAKO.kohta>=PAKO.sarja.length){ pakoPaattyy(true); return }
     PAKO.aika=PAKO.kesto;
     piirraPako();
-  }else if(PAKO.virheet<1){
-    // ensimmäinen väärä napautus sallitaan — kosketusnäytöllä sattuu helposti
-    PAKO.virheet++;
-    aani("ohi");
-    const el=$("pako-ohjaus"); if(el){ el.classList.add("virhe");
-      setTimeout(function(){ el.classList.remove("virhe") },220); }
-    $("pako-vaihe").textContent="Väärin! Vielä yksi virhe ja jäät kiinni.";
   }else pakoPaattyy(false);
 }
 function pakoPaattyy(onnistui){
@@ -6726,44 +6581,21 @@ document.addEventListener("keydown",function(e){
   if(INTRO.paalla&&(e.key==="Escape"||e.key===" ")){ e.preventDefault(); lopetaIntro() }
 });
 
-function naytaPuheluSplash(s,teksti,klippi){
-  const el=$("viimeisin");
-  el.className="tulos on";
-  el.style.borderColor="var(--keltainen)";
-  const onTeksti=!!teksti;
-  el.innerHTML='<div class="tulos-laatikko">'+
-    '<div class="haastekortti" style="margin-bottom:2px">'+
-      hahmoKuva(s.hahmo,s.kuva?"hahmo_"+s.kuva:null)+
-      '<div class="hk-tiedot"><b>'+s.nm+'</b><small>'+s.tieto+'</small></div></div>'+
-    (onTeksti?
-      '<button class="puhelu-nayta" id="puhelu-nayta">Näytä viesti</button>'+
-      '<div class="puhelu-teksti piilotettu" id="puhelu-teksti">'+teksti+'</div>':
-      '')+
-    '<button class="tulos-sulje" id="tulos-sulje">Selvä</button></div>';
-  const nappi=$("puhelu-nayta");
-  if(nappi)nappi.onclick=function(){
-    const t=$("puhelu-teksti");
-    const piilossa=t.classList.toggle("piilotettu");
-    nappi.textContent=piilossa?"Näytä viesti":"Piilota viesti";
-  };
-  $("tulos-sulje").onclick=function(){ el.className="tulos" };
-  if(klippi&&AANET_PAALLA)soitaKlippi(klippi,s.nm);
-}
 $("s-vastaa").onclick=function(){
   const s=puhelussa; puhelussa=null;
   $("soitto").classList.remove("on");
-  pysaytaSoittoaani();
   const r=soittoTeksti(s);
   const klippi=aaniPolku(r.klippi);
   VIESTIT.unshift({nm:s.nm,ico:s.ico,teksti:r.teksti,klippi:r.klippi,lk:s.lk,
     aika:"päivä "+S.paiva,vastattu:true,luettu:false});
-  naytaPuheluSplash(s,r.teksti,klippi);
+  ilmoita({ico:s.ico,lk:s.lk==="vinkki"?"paiva":"",otsikko:s.nm,
+    teksti:r.teksti.slice(0,72)+"…",kesto:6500,toiminto:function(){avaaAppi("viestit")}});
+  if(klippi&&AANET_PAALLA)soitaKlippi(klippi,s.nm);
   aani("klik"); piirra();
 };
 $("s-hylkaa").onclick=function(){
   const s=puhelussa; puhelussa=null;
   $("soitto").classList.remove("on");
-  pysaytaSoittoaani();
   VIESTIT.unshift({nm:s.nm,ico:s.ico,lk:s.lk,aika:"vastaamaton",vastattu:false,luettu:false,
     teksti:"Et vastannut. "+(s.lk==="vinkki"?"Ehkä siinä oli jotain asiaa.":"Tuskin siinä oli mitään.")});
   ilmoita({ico:"📵",otsikko:"Vastaamaton puhelu",teksti:s.nm});
