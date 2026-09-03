@@ -3527,6 +3527,7 @@ const APPIT=[
   {id:"tori",ico:"🏷️",nm:"Tori",fn:function(){return pTori}},
   {id:"huuto",ico:"🔨",nm:"Huutokauppa",fn:function(){return pHuutokauppa}},
   {id:"kaasukalle",ico:"💨",nm:"Kaasu-Kalle",piilotettu:true,fn:function(){return avaaKaasuKalle}},
+  {id:"harjlahto",ico:"🚦",nm:"Harjoittele",piilotettu:true,fn:function(){return pHarjoitusLahto}},
   {id:"wiki",ico:"📖",nm:"CarWiki",fn:function(){return pWiki}},
   {id:"maine",ico:"🌟",nm:"Maine",fn:function(){return pMaine}},
   {id:"viestit",ico:"💬",nm:"Viestit",fn:function(){return pViestit}},
@@ -3841,6 +3842,11 @@ const SALAKOODIT={
 ,
  "EVENT":{nimi:"testiportti",avaaTapahtuma:true,toistuva:true,
    viesti:"Kalenteri kiepsahtaa hetkeksi eteenpäin."}
+,
+ "IM THE BOSS":{nimi:"maineloikka",maineTaso:10,toistuva:true,
+   viesti:"Puhelimet soivat yhtä aikaa. Kaikki tietävät nyt kuka olet."},
+ "SKIP EVENT":{nimi:"kalenterihyppy",skippaaTapahtumaan:true,toistuva:true,
+   viesti:"Sivut kelaantuvat kalenterissa seuraavaan isoon tapahtumaan."}
 };
 const SALAAUTOT={
  charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
@@ -3922,6 +3928,34 @@ function kokeileKoodi(teksti){
           avaaTapahtuma(n.avain);
         }};
       }).concat([{teksti:"Peruuta",lk:"kelt",toiminto:null}]));
+    return true;
+  }
+  // huijauskoodi: maine suoraan tasolle
+  if(s.maineTaso){
+    const t=TASOT.find(function(x){return x.taso===s.maineTaso});
+    S.cred=Math.max(S.cred,t.raja);
+    aani("taso");
+    kirjaa("<b class='v'>👑 "+koodi+"</b> — maine tasolle "+t.taso+" ("+t.nimi+").","v");
+    naytaTulos("👑 "+koodi, s.viesti+"<br><br>Taso <b>"+t.taso+"</b>: "+t.nimi+".","var(--keltainen)");
+    piirra();
+    return true;
+  }
+  // huijauskoodi: hyppy seuraavaan isoon tapahtumaan (ei ONC)
+  if(s.skippaaTapahtumaan){
+    const seuraava=NAYTTELYT.map(function(n){return S.naytt[n.avain]})
+      .filter(function(p){return p>=S.paiva})
+      .sort(function(a,b){return a-b})[0];
+    if(seuraava===undefined){
+      naytaTulos("📅 "+koodi,"Kaikki tämän vuoden tapahtumat ovat jo takana.","var(--himmea)");
+      return true;
+    }
+    S.paiva=seuraava; S.energia=100;
+    tarkistaTyot();
+    const n=NAYTTELYT.find(function(x){return S.naytt[x.avain]===seuraava});
+    aani("taso");
+    kirjaa("<b class='v'>📅 "+koodi+"</b> — hypättiin päivään "+seuraava+".","v");
+    naytaTulos("📅 "+koodi, s.viesti+"<br><br>Nyt on <b>"+n.nimi+"</b> -päivä.","var(--neon)");
+    piirra();
     return true;
   }
   // kaikki autot
@@ -4118,6 +4152,10 @@ function pAsetukset(p){
     '<button class="btn haamu wide" id="a-ohjeet">Avaa ohjeet</button></div>'+
     '<div class="kortti"><div class="nm">📞 Testaa puhelu</div><div class="ds">Soita itsellesi satunnainen puhelu.</div>'+
     '<button class="btn haamu wide" id="a-soitto">Soita</button></div>'+
+    '<div class="kortti" style="border-color:var(--neon)"><div class="nm">🚦 Harjoittele</div>'+
+    '<div class="ds">Kiihdytyslähtö ja poliisin pakeneminen ilman rahaa tai seurauksia.</div>'+
+    '<button class="btn haamu wide" id="a-harjlahto">Harjoittele lähtöä</button>'+
+    '<button class="btn haamu wide" id="a-harjpako" style="margin-top:6px">Harjoittele pakoa</button></div>'+
     '<div class="kortti" style="border-color:var(--keltainen)"><div class="nm">📱 Puhelimen väri</div>'+
     '<div class="ds" id="puhvaritila">—</div>'+
     '<div class="puhvarit" id="puhvarit"></div></div>'+
@@ -4147,6 +4185,8 @@ function pAsetukset(p){
   $("a-aani").onclick=function(){AANET_PAALLA=!AANET_PAALLA;aani("klik");avaaAppi("asetukset")};
   $("a-ohjeet").onclick=function(){$("ohjeet").classList.add("on")};
   $("a-soitto").onclick=function(){soi(satunnainenSoittaja())};
+  $("a-harjlahto").onclick=function(){avaaAppi("harjlahto")};
+  $("a-harjpako").onclick=function(){ aloitaPako("harjoitus",true) };
   $("a-alusta").onclick=function(){ if(confirm("Aloitetaanko alusta? Nykyinen peli katoaa.")){
     localStorage.removeItem(TALLENNUSAVAIN); location.reload() } };
 }
@@ -4426,9 +4466,10 @@ function aja(kohde){
       S.raha-=korjaus; rahaPop(-korjaus,"kolari");
       S.cred=Math.max(0,Math.round(S.cred*0.95));
       S.energia=Math.max(0,S.energia-8);
-      kirjaa("<b class='r'>💥 Nukahdit hetkeksi rattiin.</b> Ojaan ja hinaus. Kunto −"+vahinko+" %.","r");
-      naytaTulos("💥 KOLARI","Silmät menivät kiinni sekunniksi. Auto ojaan ja hinausauto yöllä."+
-        "<br><br>Kunto −"+vahinko+" %, kuluja "+raha(korjaus)+".","var(--punainen)");
+      S.paikka="koti";
+      kirjaa("<b class='r'>💥 Nukahdit hetkeksi rattiin.</b> Ojaan ja hinaus kotiin. Kunto −"+vahinko+" %.","r");
+      naytaTulos("💥 KOLARI","Silmät menivät kiinni sekunniksi. Auto ojaan ja hinausauto vei sinut "+
+        "kotiin yöllä.<br><br>Kunto −"+vahinko+" %, kuluja "+raha(korjaus)+".","var(--punainen)");
       paivitaTila(); return;
     }
     if(Math.random()<0.16+vasymys*0.25){
@@ -4479,7 +4520,7 @@ function matkaTapahtuma(matka){
   const a=auto();
   const kerroin=Math.min(2,matka/28);          // pidempi matka, enemmän sattumaa
   // 1. poliisi — melu ja epäilys ratkaisevat
-  const poliisiRiski=(Math.max(0,a.melu-15)*0.5+S.epailys*0.12)*kerroin;
+  const poliisiRiski=(Math.max(0,a.melu-22)*0.32+S.epailys*0.08)*kerroin;
   if(Math.random()*100<poliisiRiski){ poliisiTarkastus("Partio kääntyi perään ja vilkutti."); return }
   // 2. hajoaminen
   if(nyk().kunto<35&&Math.random()*100<(35-nyk().kunto)*0.35){
@@ -5053,6 +5094,53 @@ function avaaKaasuKalle(p){
     g.appendChild(el);
   });
   p.appendChild(g);
+}
+var HARJ=null;
+function pHarjoitusLahto(p){
+  p.innerHTML=
+    '<p style="color:var(--himmea);margin:0 0 10px">Sama mekaniikka kuin oikeassa kiihdytyslähtössä — '+
+    'ei rahaa, ei seurauksia. Harjoittele niin paljon kuin haluat.</p>'+
+    '<div class="valot" id="valot"></div><div class="ohje" id="ohje">Valmistaudu…</div>'+
+    '<div class="ajonapit"><button class="btn iso" id="harjkytkin">KYTKIN YLÖS</button></div>'+
+    '<div id="harjtulos" style="margin-top:16px;text-align:center"></div>';
+  $("harjkytkin").onclick=function(){
+    if(!HARJ||HARJ.valmis)return;
+    HARJ.valmis=true;
+    if(HARJ.vihreaAika===null){
+      $("harjtulos").innerHTML=
+        '<div class="ohje" style="color:var(--punainen)">⛔ Liian aikaisin! Tässä olisit yliveto'+
+        'krenkun takia menettänyt lähdön.</div>'+
+        '<button class="btn wide vihrea" id="harjuudelleen" style="margin-top:10px">Yritä uudestaan</button>';
+    }else{
+      const reaktio=HARJ.kello-HARJ.vihreaAika;
+      let arvio,vari;
+      if(reaktio<0.25){arvio="🔥 Uskomaton refleksi!";vari="var(--vihrea)"}
+      else if(reaktio<0.4){arvio="✅ Hyvä lähtö!";vari="var(--vihrea)"}
+      else if(reaktio<0.6){arvio="👍 Ihan ok.";vari="var(--keltainen)"}
+      else{arvio="🐌 Voisi olla nopeampi.";vari="var(--himmea)"}
+      $("harjtulos").innerHTML=
+        '<div class="ohje" style="color:'+vari+'">'+arvio+'</div>'+
+        '<div style="font-size:30px;font-weight:800;margin:8px 0">'+reaktio.toFixed(3)+' s</div>'+
+        '<button class="btn wide vihrea" id="harjuudelleen">Yritä uudestaan</button>';
+    }
+    $("harjuudelleen").onclick=aloitaLahtoHarjoitus;
+  };
+  aloitaLahtoHarjoitus();
+}
+function aloitaLahtoHarjoitus(){
+  const valoAika=0.45+Math.random()*0.55;
+  HARJ={kello:0,vihreaAika:null,valoAika:valoAika,alku:null,valmis:false};
+  $("ohje").textContent="Kaasu pohjaan ja odota vihreää.";
+  $("harjtulos").innerHTML="";
+  valot(0);
+  requestAnimationFrame(function(nyt){ HARJ.alku=nyt; requestAnimationFrame(harjTikitys) });
+}
+function harjTikitys(nyt){
+  if(!HARJ||HARJ.valmis||VL!=="harjlahto")return;
+  HARJ.kello=(nyt-HARJ.alku)/1000;
+  if(HARJ.kello>=HARJ.valoAika*3&&HARJ.vihreaAika===null){ HARJ.vihreaAika=HARJ.kello; valot(4) }
+  else if(HARJ.vihreaAika===null)valot(Math.min(3,Math.floor(HARJ.kello/HARJ.valoAika)+1));
+  requestAnimationFrame(harjTikitys);
 }
 function tapahtumaTanaanNimi(){
   const n=NAYTTELYT.find(function(x){return naytteluTanaan(x.avain)});
@@ -6270,14 +6358,14 @@ function katsastusEsteet(){
   return esteet;
 }
 var PAKO=null;
-function aloitaPako(syy){
+function aloitaPako(syy,harjoitus){
   const a=auto();
   // nopea auto antaa hieman enemmän aikaa
   const lisa=Math.min(0.7,(a.hv-100)/450);
   const merkit=["⬆","⬇","⬅","➡"];
   const sarja=[];
   for(let i=0;i<4;i++)sarja.push(merkit[Math.floor(Math.random()*merkit.length)]);
-  PAKO={sarja:sarja,kohta:0,aika:1.6+lisa,kesto:1.6+lisa,syy:syy,virheet:0};
+  PAKO={sarja:sarja,kohta:0,aika:1.6+lisa,kesto:1.6+lisa,syy:syy,virheet:0,harjoitus:!!harjoitus};
   $("pako-teksti").innerHTML="Kaasu pohjaan ja käännös Toppilan suuntaan.<br>"+
     "<b>Napauta nuolia samassa järjestyksessä.</b> Kaksi hätänapautusta sallitaan, "+
     "kolmas jättää sinut kiinni.";
@@ -6335,9 +6423,19 @@ function pakoNappain(merkki){
 function pakoPaattyy(onnistui){
   if(!PAKO)return;
   cancelAnimationFrame(PAKO.raf);
-  const syy=PAKO.syy;
+  const syy=PAKO.syy, harjoitus=PAKO.harjoitus;
   PAKO=null;
   $("pako").classList.remove("on");
+  if(harjoitus){
+    naytaValinta(onnistui?"🏃 PÄÄSIT PAKOON":"🚔 JÄIT KIINNI",
+      (onnistui?"Hyvä! Tässä harjoituksessa ei tule mitään oikeita seurauksia.":
+        "Ei hätää — tämä oli vain harjoitus, ei sakkoja eikä ajokieltoa.")+
+      "<br><br>Voit harjoitella niin monta kertaa kuin haluat.",
+      onnistui?"var(--vihrea)":"var(--punainen)",
+      [{teksti:"Yritä uudestaan",lk:"vihrea",toiminto:function(){ aloitaPako("harjoitus",true) }},
+       {teksti:"Lopeta harjoittelu",lk:"kelt",toiminto:function(){ avaaAppi("asetukset") }}]);
+    return;
+  }
   const n=nyk();
   if(onnistui){
     S.epailys=Math.min(100,S.epailys+18);
@@ -6424,8 +6522,8 @@ function poliisiTarkastus(syy){
       "</b> ja huomautus.","var(--punainen)");
     paivitaStatit(); return "rengassakko";
   }
-  const paha = n.kunto<40 || a.melu>45 || S.huomautukset>=2;
-  if(paha&&Math.random()<0.55){
+  const paha = n.kunto<25 || a.melu>58 || S.huomautukset>=3;
+  if(paha&&Math.random()<0.35){
     n.ajokielto=true; S.huomautukset++;
     kirjaa('<b class="r">🚫 AJOKIELTO.</b> Auto määrättiin katsastukseen.',"r");
     naytaTulos("🚫 AJOKIELTO","Poliisi katsoi alustaa ja mittasi melun. Auto määrättiin <b>katsastukseen</b> "+
@@ -6443,8 +6541,8 @@ function poliisiTarkastus(syy){
   const sakko=Math.round(100+a.melu*4+S.epailys*2);
   naytaTulos("🚔 POLIISI VILKUTTAA",(syy||"Melumittaus tien varressa.")+
     "<br>Sakko olisi <b>"+raha(sakko)+"</b>.<br><br>"+
-    "Voit pysähtyä kiltisti tai painaa kaasun pohjaan. <b>Pako on vaikea</b> — kuusi käännöstä peräkkäin "+
-    "sekunnin varoitusajalla, ja kiinni jääminen tarkoittaa isoa sakkoa ja ajokieltoa.<br><br>"+
+    "Voit pysähtyä kiltisti tai painaa kaasun pohjaan. Pako vaatii nopeita nuolinapautuksia "+
+    "oikeassa järjestyksessä, ja kiinni jääminen tarkoittaa isoa sakkoa ja ajokieltoa.<br><br>"+
     '<div class="valintanapit">'+
     '<button class="btn valinta" id="pysahdy">Pysähdy</button>'+
     '<button class="btn valinta puna" id="karkuun">🏃 Kaasu pohjaan</button></div>',"var(--punainen)");
