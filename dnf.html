@@ -91,6 +91,7 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .ak-otsikkorivi h2{margin:0;font-size:19px;flex:1;min-width:0}
 .ak-otsikkorivi .karttavalinta{flex:0 0 auto}
 .autolista{display:flex;flex-direction:column;gap:8px}
+.autolista-vieritys{max-height:472px;overflow-y:auto;padding-right:2px}
 .autolistarivi{display:flex;align-items:center;gap:11px;width:100%;text-align:left;
   background:var(--paneeli2);border:2px solid var(--reuna);border-radius:14px;padding:8px 12px;
   color:var(--teksti);font-family:inherit;cursor:pointer}
@@ -366,6 +367,11 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .qte-otsikko{font-size:26px;font-weight:800;color:var(--punainen);letter-spacing:.03em}
 .qte-teksti{font-size:15px;color:var(--himmea);margin:8px 0 16px;line-height:1.5}
 .puzzlevaiht{display:flex;flex-direction:column;gap:8px}
+.vikanappi{width:120px;height:120px;border-radius:50%;font-size:52px;margin:14px auto;
+  display:block;background:var(--paneeli2);border:4px solid var(--reuna2);cursor:pointer;
+  transition:background .15s,border-color .15s,transform .15s}
+.vikanappi.vika-vihrea{background:#1c3a2a;border-color:var(--vihrea);transform:scale(1.08);
+  box-shadow:0 0 24px -4px var(--vihrea)}
 .puzzlevaiht .btn{font-size:15px;min-height:48px;white-space:normal;line-height:1.25}
 .valoruudukko{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .varovalo{background:#141a24;border:3px solid var(--reuna2);border-radius:14px;padding:12px 4px;
@@ -393,7 +399,17 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
 .isokartta-in{width:min(1200px,96vw);max-height:94vh;display:flex;flex-direction:column;gap:10px}
 .isokartta-otsikko{display:flex;justify-content:space-between;align-items:center;gap:12px;
   font-weight:800;font-size:17px}
-.kartta.iso{aspect-ratio:auto;height:min(82vh,860px);cursor:default}
+.kartta.iso{cursor:default}
+.karttaikkuna{width:100%;overflow:hidden;position:relative;border-radius:12px;
+  border:2px solid var(--reuna);cursor:grab;touch-action:none}
+.karttazoomit{position:absolute;right:8px;bottom:8px;z-index:5;display:flex;flex-direction:column;gap:6px}
+.karttazoomit button{width:38px;height:38px;border-radius:50%;background:rgba(18,22,30,.9);
+  border:2px solid var(--reuna2);color:var(--teksti);font-size:20px;font-weight:800;cursor:pointer;
+  line-height:1;display:grid;place-items:center}
+.karttazoomit button:disabled{opacity:.35;cursor:default}
+.karttaikkuna.veto{cursor:grabbing}
+.karttasisus{position:absolute;top:0;left:0;width:100%;height:100%;
+  aspect-ratio:unset;max-width:none;border:0;border-radius:0}
 .kartta.iso .pallo{width:42px;height:42px;background:none;border:0;padding:0}
 .kartta.iso .pmerkki{width:40px;height:40px;font-size:15px;border-radius:50%;
   box-shadow:0 3px 9px rgba(0,0,0,.6),inset 0 -2px 0 rgba(0,0,0,.25)}
@@ -1005,7 +1021,6 @@ body{margin:0;padding:0;background:radial-gradient(90% 70% at 50% 0%,var(--kuori
   .ohjeet-vinkki{font-size:12.5px}
   /* iso kartta */
   .isokartta{padding:10px}
-  .kartta.iso{height:70vh}
   .kartta.iso .pallo{width:30px;height:30px;font-size:14px}
   .kartta.iso .piste .nimi{font-size:10px;padding:0 4px}
   /* tori-ilmoitukset ja huutokauppa */
@@ -1257,7 +1272,7 @@ const OSAT=[
  {avain:"alusta",osakuva:"coiloverit",sek:240,ikoni:"🛞",nimi:"Jouset ja leveämmät renkaat",hinta:520,kaupat:["motonet","tarviketori","biltema"],
   kuntokatto:90,
   ds:"Pito paranee, mutta laikkamadallettu alusta ei kestä. Kunto enintään 90 %.",pito:0.14,melu:0,tyyli:10,luotto:0},
- {avain:"nitro",sek:120,ikoni:"💨",nimi:"Nitrojärjestelmä",hinta:450,kaupat:["motonet","muhos"],
+ {avain:"nitro",sek:120,ikoni:"💨",nimi:"Nitrojärjestelmä",hinta:450,kaupat:[],
   ds:"Pullo takakonttiin ja suutin imusarjaan. Yksi käyttö kisassa.",nitro:1,melu:0,tyyli:5,luotto:-4},
  {avain:"kansi",osakuva:"sylinterikansi",sek:300,ikoni:"⚙️",nimi:"Työstetty sylinterikansi",hinta:680,kaupat:["muhos","tori"],
   ds:"Virtaus paranee. Moottori kestää vähemmän.",nm:0.10,melu:2,tyyli:0,luotto:-8},
@@ -1273,7 +1288,7 @@ const OSAT=[
   vetovaatimus:"taka",
   ds:"Molemmat vetävät pyörät vetävät. Lähtö paranee huomattavasti. Vain takavetoisiin.",
   pito:0.20,melu:0,tyyli:2,luotto:0},
- {avain:"isopullo",sek:60,ikoni:"🧪",nimi:"Isompi nitropullo",hinta:900,kaupat:["muhos"],vaatii:"nitro",
+ {avain:"isopullo",sek:60,ikoni:"🧪",nimi:"Isompi nitropullo",hinta:900,kaupat:[],vaatii:"nitro",
   ds:"Toinen käyttö samaan kisaan.",nitro:1,melu:0,tyyli:3,luotto:-6}
 ];
 // kaupat: [nimi, hintakerroin, laatukerroin, luotettavuuslisä, kuvaus]
@@ -1291,7 +1306,9 @@ const KAUPAT=[
  {avain:"verkkokauppa",nimi:"Verkkokauppa",hinta:1.05,laatu:1.0,luotto:0,
   ds:"Kaiuttimia, valoja ja muuta elektroniikkaa."},
  {avain:"tori",nimi:"Tori",hinta:0.45,laatu:0.85,luotto:-6,
-  ds:"Käytettyjä spessuosia yksityisiltä. Valikoima vaihtuu joka ilta, kunto on arvoitus."}
+  ds:"Käytettyjä spessuosia yksityisiltä. Valikoima vaihtuu joka ilta, kunto on arvoitus."},
+ {avain:"kaasukalle",nimi:"Kaasu-Kalle",hinta:1.0,laatu:1.0,luotto:-10,
+  ds:"Marjaniemen tuntematon nitromyyjä. Ei kysytä liikaa."}
 ];
 /* Torin valikoima arvotaan joka illalle, ja osien kunto on epävarma */
 const TORIVIHJEET=[
@@ -1310,9 +1327,12 @@ const PUHELINVARIT=[
  {avain:"kulta",nimi:"Kultainen kuori",vari:"#e8c468",kuori:"#5c4a22"}
 ];
 function paivitaPuhelinVari(){
+  // Puhelinväri saa vaikuttaa VAIN puhelimen fyysiseen kuoreen ja taustahehkuun —
+  // ei koskaan --keltainen-muuttujaan, koska sitä käytetään koko pelin läpi
+  // napeissa, korostuksissa ja tekstiruutujen reunoissa. Jos se vaihtuisi, pelin
+  // värikieli (esim. varoituslaatikot) muuttuisi sekavaksi.
   const v=PUHELINVARIT.find(function(x){return x.avain===(S.puhelinVari||"musta")})||PUHELINVARIT[0];
   const juuri=document.documentElement.style;
-  juuri.setProperty("--keltainen",v.vari);
   juuri.setProperty("--kuori",v.kuori);
   juuri.setProperty("--kuorihehku",v.avain==="musta"?"transparent":v.vari+"55");
 }
@@ -1502,7 +1522,7 @@ const HOMMAT=[
  {avain:"oljynvaihto",arvosidonnainen:true,nimi:"Öljynvaihto",iltoja:1,ikoni:"🛢️",hinta:50,
   ds:"Öljyt ja suodatin. Perusjuttu, jonka voi tehdä pihalla.",kunto:12,cred:3},
  {avain:"tulpat",arvosidonnainen:true,nimi:"Sytytystulppien vaihto",iltoja:1,ikoni:"⚡",hinta:40,bensiini:true,
-  ds:"Neljä uutta tulppaa. Vain bensamoottoriin.",nm:0.02,kunto:8,cred:3},
+  ds:"Neljä uutta tulppaa. Vain bensamoottoriin.",kunto:8,cred:3},
  {avain:"pikkuremppa",arvosidonnainen:true,nimi:"Tekemättä jäänyt pikkuremppa",iltoja:1,ikoni:"🔩",hinta:70,
   ds:"Se lista jota olet lykännyt: pyyhkijänsulat, akku, sulakkeet, irronnut lista.",kunto:10,cred:4},
  {avain:"jarrut",arvosidonnainen:true,nimi:"Jarrupalojen vaihto",iltoja:1,ikoni:"🛑",hinta:90,
@@ -2115,41 +2135,49 @@ const PUZZLET=[
  {kys:"Jarrupoljin painuu hitaasti pohjaan pitkässä jarrutuksessa. Mikä?",
   vaiht:["Pääsylinteri vuotaa sisäisesti","Palat ovat loppu",
          "Jarruneste on liian uutta"],oikea:0}];
-var PUZZLE=null;
+var VIKAHAASTE=null;
+/* Reaktiopohjainen korjaushaaste — ei enää autotietovisaa. Kolme nopeaa napautusta 
+   oikeaan hetkeen, sama tyyli kuin poliisipaossa ja lähtöharjoituksessa. */
 function aloitaVikaPuzzle(vika,jatka){
-  const pakka=PUZZLET.slice(); const valitut=[];
-  for(let i=0;i<3;i++)valitut.push(pakka.splice(Math.floor(Math.random()*pakka.length),1)[0]);
-  PUZZLE={kysymykset:valitut,kohta:0,oikein:0,vika:vika,jatka:jatka};
-  piirraPuzzle();
+  VIKAHAASTE={vika:vika,jatka:jatka,kierros:0,onnistui:0,valmis:false,vaihe:"odota"};
   $("qte").classList.add("on");
+  piirraVikaHaaste();
+  aloitaVikaKierros();
 }
-function piirraPuzzle(){
-  const p=PUZZLE, k=p.kysymykset[p.kohta];
-  // sekoita vaihtoehdot mutta muista oikea
-  if(!k.jarjestys){
-    k.jarjestys=k.vaiht.map(function(_,i){return i}).sort(function(){return Math.random()-0.5});
-  }
-  $("qte-otsikko").textContent="🔧 "+p.vika.nimi+" ("+(p.kohta+1)+"/3)";
-  $("qte-teksti").textContent=k.kys;
-  $("qte-koodi").innerHTML='<div class="puzzlevaiht">'+
-    k.jarjestys.map(function(i){
-      return '<button class="btn haamu" data-puz="'+i+'">'+k.vaiht[i]+'</button>';
-    }).join("")+'</div>';
+function piirraVikaHaaste(){
+  const v=VIKAHAASTE;
+  $("qte-otsikko").textContent="🔧 "+v.vika.nimi+" ("+(v.kierros+1)+"/3)";
+  $("qte-teksti").textContent="Napauta 🔧 heti kun se välähtää vihreäksi.";
+  $("qte-koodi").innerHTML='<button class="vikanappi" id="vikanappi">🔧</button>';
   $("qte-palkki").style.width="100%";
-  document.querySelectorAll("[data-puz]").forEach(function(b){
-    b.onclick=function(){
-      if(parseInt(b.dataset.puz,10)===k.oikea)PUZZLE.oikein++;
-      PUZZLE.kohta++;
-      if(PUZZLE.kohta>=3)paataPuzzle(); else piirraPuzzle();
-    };
-  });
+  $("vikanappi").onclick=function(){ vikaNapautus() };
 }
-function paataPuzzle(){
-  const p=PUZZLE; PUZZLE=null;
+function aloitaVikaKierros(){
+  const v=VIKAHAASTE; if(!v)return;
+  v.vaihe="odota"; v.valmis=false;
+  const nappi=$("vikanappi"); if(nappi)nappi.classList.remove("vika-vihrea");
+  const viive=500+Math.random()*1300;
+  v.ajastin=setTimeout(function(){
+    if(!VIKAHAASTE||VIKAHAASTE!==v)return;
+    v.vaihe="nyt"; v.hetki=performance.now();
+    const n=$("vikanappi"); if(n)n.classList.add("vika-vihrea");
+  },viive);
+}
+function vikaNapautus(){
+  const v=VIKAHAASTE; if(!v||v.valmis)return;
+  v.valmis=true; clearTimeout(v.ajastin);
+  const onnistui=v.vaihe==="nyt"&&(performance.now()-v.hetki)<750;
+  if(onnistui)v.onnistui++;
+  v.kierros++;
+  aani(onnistui?"vaihde":"ohi");
+  if(v.kierros>=3)paataVikaHaaste(); else{ piirraVikaHaaste(); aloitaVikaKierros(); }
+}
+function paataVikaHaaste(){
+  const v=VIKAHAASTE; VIKAHAASTE=null;
   $("qte").classList.remove("on");
-  const onnistui=p.oikein>=2;
-  const vahinko=onnistui?Math.round(9+(2-p.oikein)*8):Math.round(34+Math.random()*20);
-  p.jatka(onnistui,vahinko);
+  const onnistui=v.onnistui>=2;
+  const vahinko=onnistui?Math.round(9+(2-v.onnistui)*8):Math.round(34+Math.random()*20);
+  v.jatka(onnistui,vahinko);
 }
 
 /* ============ ASENNUSTYOT ============ */
@@ -2310,13 +2338,14 @@ function tankki(malli){
 function uusiAuto(malli,kunto,km,ostohinta){
   return {malli:malli,osat:{},toriLaatu:{},kunto:kunto===undefined?100:kunto,renkaat:100,
           km:km===undefined?185000:km,bensa:tankki(malli)*0.6,ajokielto:false,rengas:"kesa",vanne:"vakio",
-          ostohinta:ostohinta||0,modeihin:0,omaNimi:null};
+          ostohinta:ostohinta||0,modeihin:0,omaNimi:null,viimeksiAjettu:0};
 }
 function autonNimi(a){ return a.omaNimi||AUTOMALLIT[a.malli].nimi }
 let S={raha:400,epailys:0,voitot:0,tappiot:0,
        autot:[uusiAuto("corolla94",78,243000)], auto:0,
        tori:{}, nettiauto:[], huuto:null,
        toriPuhelin:null, puhelinVari:"musta", puhelinOmistetut:["musta"],
+       nitroAvattu:false, nukuOhitaVaroitus:false,
        pysaytykset:0, sakot:0, huomautukset:0, cred:0,
        paiva:1, energia:100, palkkakertyma:0,
        naytt:{hotsi:105,asc:345,rideinoulu:75}, naytViilaus:null, paikka:"koti",
@@ -2701,7 +2730,11 @@ function pTalliAutot(p){
 function piirraAutolista(p){
   const g=document.createElement("div");
   g.className="autolista";
-  S.autot.forEach(function(a,i){
+  // uusin käytetty ensin — alkuperäinen indeksi säilyy S.auto:a varten
+  const jarjestys=S.autot.map(function(a,i){return i})
+    .sort(function(x,y){return (S.autot[y].viimeksiAjettu||0)-(S.autot[x].viimeksiAjettu||0)});
+  jarjestys.forEach(function(i){
+    const a=S.autot[i];
     const m=AUTOMALLIT[a.malli], kaytossa=i===S.auto;
     const kv=a.kunto<25?"var(--punainen)":a.kunto<50?"#ff8a3d":a.kunto<75?"var(--keltainen)":"var(--vihrea)";
     const el=document.createElement("button");
@@ -2718,12 +2751,23 @@ function piirraAutolista(p){
         (a.laina?'<span class="lappu neon">sijaisauto</span>':'<span class="al-nuoli">›</span>')));
     el.onclick=function(){
       S.auto=i;
+      nyk().viimeksiAjettu=S.paiva;
       if(!kaytossa&&!a.korjaamossa)kirjaa("Vaihdoit ajoon: <b>"+m.nimi+"</b>.","g");
       avaaAppi("talli",true);
     };
     g.appendChild(el);
   });
-  p.appendChild(g);
+  if(S.autot.length>5){
+    const kelluri=document.createElement("div");
+    kelluri.className="autolista-vieritys";
+    kelluri.appendChild(g);
+    p.appendChild(kelluri);
+    p.insertAdjacentHTML("beforeend",
+      "<div class='ds' style='text-align:center;margin-top:6px'>Näytä kaikki "+S.autot.length+
+      " autoa vieritämällä listaa — uusimmat käytetyt yläreunassa.</div>");
+  }else{
+    p.appendChild(g);
+  }
 }
 
 function avaaNimeaAuto(i){
@@ -2755,6 +2799,7 @@ function sidoAutokortit(p){
   }});
   p.querySelectorAll("[data-vaihda]").forEach(function(b){b.onclick=function(){
     S.auto=parseInt(b.dataset.vaihda,10);
+    nyk().viimeksiAjettu=S.paiva;
     kirjaa("Vaihdoit ajoon: <b>"+AUTOMALLIT[nyk().malli].nimi+"</b>.","g");
     avaaAppi("talli",true);
   }});
@@ -2886,7 +2931,7 @@ function pHuutokauppa(p){
     (x.bonus?"<div class='lappu neon' style='margin-top:8px'>"+x.bonus+"</div>":"")+
     "<div class='tiedot' style='margin-top:8px'><b>Lähtöhinta "+raha(x.huuto)+"</b> · korotus "+raha(x.askel)+"</div>"+
     "<button class='btn wide' id='huutoon' "+(S.raha<x.huuto?"disabled":"")+">"+
-    (S.raha<x.huuto?"Ei varaa lähtöhintaan":(x.kaynnissa?"🔨 Palaa saliin":"🔨 Astu saliin"))+"</button>";
+    (S.raha<x.huuto?"Ei varaa lähtöhintaan":(x.kaynnissa?"🔨 Palaa saliin":"🔨 Tee tarjous"))+"</button>";
   p.appendChild(kortti);
   const hn=$("huutoon");
   if(hn)hn.onclick=function(){ avaaHuutolava() };
@@ -3091,8 +3136,9 @@ function pWiki(p){
 function ilmoitaTarjous(t){
   naytaTulos("📩 OSTOTARJOUS","<b>"+t.ostaja+"</b> tarjoaa kohteesta <b>"+t.nimi+
     "</b> hinnan <b>"+raha(t.tarjous)+"</b> (pyyntisi "+raha(t.hinta)+").<br>\u201C"+t.viesti+"\u201D<br><br>"+
+    "<div class=\"valintanapit\">"+
     "<button class=\"btn\" id=\"tarjHyv\">Hyväksy</button> "+
-    "<button class=\"btn haamu\" id=\"tarjHyl\">Kieltäydy</button>","var(--keltainen)");
+    "<button class=\"btn haamu\" id=\"tarjHyl\">Kieltäydy</button></div>","var(--keltainen)");
   $("tarjHyv").onclick=function(){
     const i=S.tarjoukset.indexOf(t); if(i<0)return;
     S.tarjoukset.splice(i,1); S.raha+=t.tarjous; rahaPop(t.tarjous,"myynti");
@@ -3506,6 +3552,8 @@ const APPIT=[
   {id:"nettiauto",ico:"💻",nm:"Nettiauto",fn:function(){return pNettiauto}},
   {id:"tori",ico:"🏷️",nm:"Tori",fn:function(){return pTori}},
   {id:"huuto",ico:"🔨",nm:"Huutokauppa",fn:function(){return pHuutokauppa}},
+  {id:"kaasukalle",ico:"💨",nm:"Kaasu-Kalle",piilotettu:true,fn:function(){return avaaKaasuKalle}},
+  {id:"harjlahto",ico:"🚦",nm:"Harjoittele",piilotettu:true,fn:function(){return pHarjoitusLahto}},
   {id:"wiki",ico:"📖",nm:"CarWiki",fn:function(){return pWiki}},
   {id:"maine",ico:"🌟",nm:"Maine",fn:function(){return pMaine}},
   {id:"viestit",ico:"💬",nm:"Viestit",fn:function(){return pViestit}},
@@ -3528,7 +3576,7 @@ function merkki(id){
 }
 function koti(){
   VL=null; KAUPPANAKYMA=null;
-  $("naytto").innerHTML='<div class="appit">'+APPIT.map(function(a){
+  $("naytto").innerHTML='<div class="appit">'+APPIT.filter(function(a){return !a.piilotettu}).map(function(a){
     const m=merkki(a.id);
     return '<button class="appi'+(a.haamu?" haamuappi":"")+'" data-app="'+a.id+'">'+
       (m?'<span class="pallukka">'+m+'</span>':'')+
@@ -3613,6 +3661,7 @@ function paivitaTila(){
   if(puh)puh.style.background=
     "radial-gradient(120% 55% at 50% -10%,"+hehkuvari+"55,transparent 60%),"+
     "linear-gradient(180deg,"+vv[0]+"22,#12161e 55%)";
+  tarkistaNitroPuhelu();
   const n=nyk(), a=auto();
   const kv=function(v){return v<25?"var(--punainen)":v<50?"#ff8a3d":v<75?"var(--keltainen)":"var(--vihrea)"};
   $("m-raha").textContent=raha(S.raha);
@@ -3816,6 +3865,14 @@ const SALAKOODIT={
    viesti:"Tallin portti jää auki. Sinne ilmestyy joka ikinen malli mitä ei vielä omista."},
  "ALL PHONES":{nimi:"värikartta",kaikkiPuhelimet:true,toistuva:true,
    viesti:"Kuoret sadelevat pöydälle. Kaikki värit ovat nyt sinun valittavissasi."}
+,
+ "EVENT":{nimi:"testiportti",avaaTapahtuma:true,toistuva:true,
+   viesti:"Kalenteri kiepsahtaa hetkeksi eteenpäin."}
+,
+ "IM THE BOSS":{nimi:"maineloikka",maineTaso:10,toistuva:true,
+   viesti:"Puhelimet soivat yhtä aikaa. Kaikki tietävät nyt kuka olet."},
+ "SKIP EVENT":{nimi:"kalenterihyppy",skippaaTapahtumaan:true,toistuva:true,
+   viesti:"Sivut kelaantuvat kalenterissa seuraavaan isoon tapahtumaan."}
 };
 const SALAAUTOT={
  charger69:{nimi:"Dodge Charger 1969 “Kenraali”",vuosi:1969,hv:375,nm:576,paino:1750,veto:"taka",
@@ -3885,6 +3942,48 @@ function kokeileKoodi(teksti){
     piirra();
     return true;
   }
+  // testikoodi: hyppy suoraan johonkin tapahtumaan
+  if(s.avaaTapahtuma){
+    kirjaa("<b class='v'>🔓 "+koodi+"</b> — testiportti avattu.","v");
+    naytaValinta("🔓 "+koodi, s.viesti+"<br><br>Valitse mihin hypätään testaamaan:",
+      "var(--violetti)",
+      NAYTTELYT.map(function(n){
+        return {teksti:n.ikoni+" "+n.nimi.split(" ")[0],lk:"vihrea",toiminto:function(){
+          S.naytt[n.avain]=S.paiva;
+          S.paikka=n.paikka;
+          avaaTapahtuma(n.avain);
+        }};
+      }).concat([{teksti:"Peruuta",lk:"kelt",toiminto:null}]));
+    return true;
+  }
+  // huijauskoodi: maine suoraan tasolle
+  if(s.maineTaso){
+    const t=TASOT.find(function(x){return x.taso===s.maineTaso});
+    S.cred=Math.max(S.cred,t.raja);
+    aani("taso");
+    kirjaa("<b class='v'>👑 "+koodi+"</b> — maine tasolle "+t.taso+" ("+t.nimi+").","v");
+    naytaTulos("👑 "+koodi, s.viesti+"<br><br>Taso <b>"+t.taso+"</b>: "+t.nimi+".","var(--keltainen)");
+    piirra();
+    return true;
+  }
+  // huijauskoodi: hyppy seuraavaan isoon tapahtumaan (ei ONC)
+  if(s.skippaaTapahtumaan){
+    const seuraava=NAYTTELYT.map(function(n){return S.naytt[n.avain]})
+      .filter(function(p){return p>=S.paiva})
+      .sort(function(a,b){return a-b})[0];
+    if(seuraava===undefined){
+      naytaTulos("📅 "+koodi,"Kaikki tämän vuoden tapahtumat ovat jo takana.","var(--himmea)");
+      return true;
+    }
+    S.paiva=seuraava; S.energia=100;
+    tarkistaTyot();
+    const n=NAYTTELYT.find(function(x){return S.naytt[x.avain]===seuraava});
+    aani("taso");
+    kirjaa("<b class='v'>📅 "+koodi+"</b> — hypättiin päivään "+seuraava+".","v");
+    naytaTulos("📅 "+koodi, s.viesti+"<br><br>Nyt on <b>"+n.nimi+"</b> -päivä.","var(--neon)");
+    piirra();
+    return true;
+  }
   // kaikki autot
   if(s.kaikkiAutot){
     const lisatyt=[];
@@ -3946,6 +4045,9 @@ const SOITTAJAT=[
  {nm:"Jonne",tieto:"kaveri",ico:"🧑",lk:"vinkki",aihe:"poliisi",hahmo:"nuorimies",kuva:"Jonne"}
 ,
  {nm:"Vampyyri",tieto:"tuntematon",ico:"🧛",lk:"turha",aihe:"vampyyri",hahmo:"nuorimies",kuva:"Vampyyri"}
+,
+ {nm:"Kaasu-Kalle",tieto:"tuntematon numero",ico:"👤",lk:"vinkki",aihe:"nitro",
+   hahmo:"nuorimies",kuva:"KaasuKalle",piilotettu:true}
 ];
 let VIESTIT=[];
 let puhelussa=null;
@@ -3967,6 +4069,7 @@ const SOITTOKLIPIT={
   erkki:{nimi:"SetaErkki",maara:5},
   vampyyri:{nimi:"Vampyyri",maara:5},
   klubi:{kiintea:true},
+  nitro:{kiintea:true},
   turha:{nimi:"Tuntematon",maara:25}
 };
 function valitseKlippi(s){
@@ -3978,9 +4081,11 @@ function valitseKlippi(s){
 let VIIME_SOITTAJA=-1;
 /* arpoo soittajan niin ettei sama henkilö soita kahdesti peräkkäin */
 function satunnainenSoittaja(){
-  if(SOITTAJAT.length<=1)return 0;
+  const ehdokkaat=SOITTAJAT.map(function(s,i){return i})
+    .filter(function(i){return !SOITTAJAT[i].piilotettu});
+  if(ehdokkaat.length<=1)return ehdokkaat[0]||0;
   let i;
-  do{ i=Math.floor(Math.random()*SOITTAJAT.length) }while(i===VIIME_SOITTAJA);
+  do{ i=ehdokkaat[Math.floor(Math.random()*ehdokkaat.length)] }while(i===VIIME_SOITTAJA);
   return i;
 }
 function soi(i){
@@ -4073,6 +4178,10 @@ function pAsetukset(p){
     '<button class="btn haamu wide" id="a-ohjeet">Avaa ohjeet</button></div>'+
     '<div class="kortti"><div class="nm">📞 Testaa puhelu</div><div class="ds">Soita itsellesi satunnainen puhelu.</div>'+
     '<button class="btn haamu wide" id="a-soitto">Soita</button></div>'+
+    '<div class="kortti" style="border-color:var(--neon)"><div class="nm">🚦 Harjoittele</div>'+
+    '<div class="ds">Kiihdytyslähtö ja poliisin pakeneminen ilman rahaa tai seurauksia.</div>'+
+    '<button class="btn haamu wide" id="a-harjlahto">Harjoittele lähtöä</button>'+
+    '<button class="btn haamu wide" id="a-harjpako" style="margin-top:6px">Harjoittele pakoa</button></div>'+
     '<div class="kortti" style="border-color:var(--keltainen)"><div class="nm">📱 Puhelimen väri</div>'+
     '<div class="ds" id="puhvaritila">—</div>'+
     '<div class="puhvarit" id="puhvarit"></div></div>'+
@@ -4102,6 +4211,8 @@ function pAsetukset(p){
   $("a-aani").onclick=function(){AANET_PAALLA=!AANET_PAALLA;aani("klik");avaaAppi("asetukset")};
   $("a-ohjeet").onclick=function(){$("ohjeet").classList.add("on")};
   $("a-soitto").onclick=function(){soi(satunnainenSoittaja())};
+  $("a-harjlahto").onclick=function(){avaaAppi("harjlahto")};
+  $("a-harjpako").onclick=function(){ aloitaPako("harjoitus",true) };
   $("a-alusta").onclick=function(){ if(confirm("Aloitetaanko alusta? Nykyinen peli katoaa.")){
     localStorage.removeItem(TALLENNUSAVAIN); location.reload() } };
 }
@@ -4142,6 +4253,8 @@ function paikkaToiminnot(pk){
     t.push({ico:"🛏️",nm:"Nuku yön yli",lk:"",toiminto:function(){ajaNukkumaan()}});
   }
   if(pk.tyyppi==="parkki")t.push({ico:"😎",nm:"Esittele autoa",lk:"",toiminto:function(){esittele()}});
+  if(pk.avain==="marjaniemi"&&S.nitroAvattu)
+    t.push({ico:"💨",nm:"Tapaa Kaasu-Kalle",lk:"",toiminto:function(){avaaAppi("kaasukalle")}});
   if(pk.tyyppi==="parkki"||pk.avain==="tupos"){
     const tila=Math.round(tankki(n.malli)-n.bensa);
     if(tila>0)t.push({ico:"⛽",nm:"Tankkaa "+raha(Math.round(tila*1.89*(onEtu("bensa")?0.5:1))),
@@ -4240,30 +4353,122 @@ const KARTTAPOHJA=
    '<text x="36" y="39" fill="#5b6a5c" font-size="2.6">OULU</text>'+
  '</svg>';
 
+/* Kartta on ikkuna + isompi vedettävä sisäpinta. Ikkuna pysyy puhelimen kokoisena
+   ja näyttää vain osan aluetta kerrallaan; sisäpinta on suurempi jotta 31 pistettä
+   mahtuu erilleen, ja zoomausnapeilla voi säätää kuinka paljon suurempi.
+   Sormella/hiirellä vetämällä näkee loput. */
+const ZOOMITASOT=[1.6,2.6,4.0];
+let KARTTAZOOM=1; // indeksi ZOOMITASOT-taulukkoon, 1 = nykyinen oletus (2.6x)
 function avaaIsoKartta(){
   const el=$("isokartta");
-  const sis=el.querySelector(".ik-sisalto")||el;
-  sis.innerHTML="";
+  const sis=el.querySelector(".isokartta-in");
+  const kohde=$("suurikartta");
+  kohde.innerHTML="";
+  kohde.className="";
+  KARTTAZOOM=1;
+  const ikkuna=document.createElement("div");
+  ikkuna.className="karttaikkuna";
   const k=document.createElement("div");
-  k.className="kartta iso";
+  k.className="kartta iso karttasisus";
   k.innerHTML=KARTTAPOHJA;
   PAIKAT.forEach(function(pk){
     const b=document.createElement("button");
     const tassa=pk.avain===S.paikka;
     b.className="piste"+(tassa?" tassa":"");
     b.style.left=pk.x+"%"; b.style.top=pk.y+"%";
+    b.title=pk.nimi+(paikkaKm?" — "+paikkaKm(pk.avain)+" km":"");
     b.innerHTML='<span class="pallo">'+paikkaMerkki(pk.avain,pk.tyyppi)+'</span>'+
       '<span class="nimi">'+pk.nimi+'</span>';
     if(!tassa)b.onclick=function(){ aja(pk.avain); el.classList.remove("on"); avaaAppi("kartta",true) };
     k.appendChild(b);
   });
-  sis.appendChild(k);
-  const sulje=document.createElement("button");
-  sulje.className="btn haamu wide"; sulje.textContent="Sulje kartta";
-  sulje.style.marginTop="10px";
-  sulje.onclick=function(){ el.classList.remove("on") };
-  sis.appendChild(sulje);
+  ikkuna.appendChild(k);
+  const zoomit=document.createElement("div");
+  zoomit.className="karttazoomit";
+  zoomit.innerHTML='<button id="karttaZoomiMiinus">−</button><button id="karttaZoomiPlus">+</button>';
+  ikkuna.appendChild(zoomit);
+  kohde.appendChild(ikkuna);
+  kohde.insertAdjacentHTML("beforeend",
+    "<div class='ds' style='text-align:center;margin-top:6px'>👆 Vedä sormella liikuttaaksesi karttaa — "+
+    "+/− zoomaa</div>");
   el.classList.add("on");
+  requestAnimationFrame(function(){
+    const leveys=ikkuna.getBoundingClientRect().width||sis.clientWidth;
+    const maxKorkeus=Math.min(window.innerHeight*0.85,900);
+    const korkeus=Math.min(leveys*1.5,maxKorkeus);
+    ikkuna.style.width=Math.round(leveys)+"px";
+    ikkuna.style.height=Math.round(korkeus)+"px";
+    ikkuna.dataset.leveys=leveys; ikkuna.dataset.korkeus=korkeus;
+    const nyt=PAIKAT.find(function(p){return p.avain===S.paikka})||PAIKAT[0];
+    sovitaKarttaZoomi(ikkuna,k,nyt.x/100,nyt.y/100);
+    alustaKartanVeto(ikkuna,k);
+    $("karttaZoomiPlus").onclick=function(){ vaihdaKarttaZoomi(ikkuna,k,1) };
+    $("karttaZoomiMiinus").onclick=function(){ vaihdaKarttaZoomi(ikkuna,k,-1) };
+  });
+}
+/* Asettaa sisäpinnan koon nykyiselle zoomitasolle ja keskittää sen annettuun
+   suhteelliseen pisteeseen (0–1), esim. nykyiseen sijaintiin kartalla. */
+function sovitaKarttaZoomi(ikkuna,k,keskiX,keskiY){
+  const leveys=parseFloat(ikkuna.dataset.leveys), korkeus=parseFloat(ikkuna.dataset.korkeus);
+  const skaala=ZOOMITASOT[KARTTAZOOM];
+  k.style.width=Math.round(leveys*skaala)+"px";
+  k.style.height=Math.round(korkeus*skaala)+"px";
+  const tavoiteX=leveys*skaala*keskiX-leveys/2;
+  const tavoiteY=korkeus*skaala*keskiY-korkeus/2;
+  const maxX=leveys*skaala-leveys, maxY=korkeus*skaala-korkeus;
+  const x=-Math.min(maxX,Math.max(0,tavoiteX)), y=-Math.min(maxY,Math.max(0,tavoiteY));
+  k.style.transform="translate("+x+"px,"+y+"px)";
+  k.dataset.x=x; k.dataset.y=y;
+}
+function vaihdaKarttaZoomi(ikkuna,k,suunta){
+  const uusi=Math.max(0,Math.min(ZOOMITASOT.length-1,KARTTAZOOM+suunta));
+  if(uusi===KARTTAZOOM)return;
+  // lasketaan mihin kohtaan karttaa ikkuna tällä hetkellä keskittyy, jotta zoomatessa
+  // näky ei hyppää muualle
+  const leveys=parseFloat(ikkuna.dataset.leveys), korkeus=parseFloat(ikkuna.dataset.korkeus);
+  const vanhaSkaala=ZOOMITASOT[KARTTAZOOM];
+  const x=parseFloat(k.dataset.x)||0, y=parseFloat(k.dataset.y)||0;
+  const keskiX=(-x+leveys/2)/(leveys*vanhaSkaala);
+  const keskiY=(-y+korkeus/2)/(korkeus*vanhaSkaala);
+  KARTTAZOOM=uusi;
+  sovitaKarttaZoomi(ikkuna,k,keskiX,keskiY);
+  $("karttaZoomiMiinus").disabled=KARTTAZOOM===0;
+  $("karttaZoomiPlus").disabled=KARTTAZOOM===ZOOMITASOT.length-1;
+}
+function alustaKartanVeto(ikkuna,sisus){
+  let vedossa=false, alkuX=0, alkuY=0, sisusX=0, sisusY=0, liikkunut=false;
+  function aseta(x,y){
+    // rajat lasketaan aina TUOREELTAAN, koska zoomaus voi muuttaa sisäpinnan kokoa
+    // milloin tahansa veton välissäkin
+    const leveys=parseFloat(ikkuna.dataset.leveys), korkeus=parseFloat(ikkuna.dataset.korkeus);
+    const skaala=ZOOMITASOT[KARTTAZOOM];
+    const minX=-(leveys*skaala-leveys), minY=-(korkeus*skaala-korkeus);
+    const rx=Math.min(0,Math.max(minX,x)), ry=Math.min(0,Math.max(minY,y));
+    sisus.style.transform="translate("+rx+"px,"+ry+"px)";
+    sisus.dataset.x=rx; sisus.dataset.y=ry;
+  }
+  function aloita(x,y){
+    vedossa=true; liikkunut=false; alkuX=x; alkuY=y;
+    sisusX=parseFloat(sisus.dataset.x)||0; sisusY=parseFloat(sisus.dataset.y)||0;
+    ikkuna.classList.add("veto");
+  }
+  function liiku(x,y){
+    if(!vedossa)return;
+    const dx=x-alkuX, dy=y-alkuY;
+    if(Math.abs(dx)>4||Math.abs(dy)>4)liikkunut=true;
+    aseta(sisusX+dx,sisusY+dy);
+  }
+  function lopeta(){ vedossa=false; ikkuna.classList.remove("veto") }
+  ikkuna.addEventListener("pointerdown",function(e){
+    aloita(e.clientX,e.clientY);
+    if(ikkuna.setPointerCapture)ikkuna.setPointerCapture(e.pointerId);
+  });
+  ikkuna.addEventListener("pointermove",function(e){ liiku(e.clientX,e.clientY) });
+  ikkuna.addEventListener("pointerup",lopeta);
+  ikkuna.addEventListener("pointercancel",lopeta);
+  ikkuna.addEventListener("click",function(e){
+    if(liikkunut){ e.stopPropagation(); e.preventDefault() }
+  },true);
 }
 function piirraPelikartta(p){
   const kartta=document.createElement("div");
@@ -4275,8 +4480,7 @@ function piirraPelikartta(p){
     b.className="piste"+(tassa?" tassa":"");
     b.style.left=pk.x+"%"; b.style.top=pk.y+"%";
     b.title=pk.nimi+" — "+paikkaKm(pk.avain)+" km";
-    b.innerHTML='<span class="pallo">'+paikkaMerkki(pk.avain,pk.tyyppi)+'</span>'+
-      '<span class="nimi">'+pk.nimi+'</span>';
+    b.innerHTML='<span class="pallo">'+paikkaMerkki(pk.avain,pk.tyyppi)+'</span>';
     if(!tassa)b.onclick=function(){ aja(pk.avain); avaaAppi("kartta",true) };
     kartta.appendChild(b);
   });
@@ -4379,9 +4583,10 @@ function aja(kohde){
       S.raha-=korjaus; rahaPop(-korjaus,"kolari");
       S.cred=Math.max(0,Math.round(S.cred*0.95));
       S.energia=Math.max(0,S.energia-8);
-      kirjaa("<b class='r'>💥 Nukahdit hetkeksi rattiin.</b> Ojaan ja hinaus. Kunto −"+vahinko+" %.","r");
-      naytaTulos("💥 KOLARI","Silmät menivät kiinni sekunniksi. Auto ojaan ja hinausauto yöllä."+
-        "<br><br>Kunto −"+vahinko+" %, kuluja "+raha(korjaus)+".","var(--punainen)");
+      S.paikka="koti";
+      kirjaa("<b class='r'>💥 Nukahdit hetkeksi rattiin.</b> Ojaan ja hinaus kotiin. Kunto −"+vahinko+" %.","r");
+      naytaTulos("💥 KOLARI","Silmät menivät kiinni sekunniksi. Auto ojaan ja hinausauto vei sinut "+
+        "kotiin yöllä.<br><br>Kunto −"+vahinko+" %, kuluja "+raha(korjaus)+".","var(--punainen)");
       paivitaTila(); return;
     }
     if(Math.random()<0.16+vasymys*0.25){
@@ -4410,6 +4615,7 @@ function aja(kohde){
   n.bensa-=tarve; S.energia=Math.max(0,S.energia-2);
   n.km+=Math.round(km);
   S.paikka=kohde;
+  n.viimeksiAjettu=S.paiva;
   aani("kaynnistys");
   if(n.osat.pakoputki)soitaSatunnainen("Drivingloud",11); else soitaSatunnainen("Driving",9);
   kirjaa("Ajoit "+paikka(kohde).nimi+"lle — "+km.toFixed(1)+" km, "+tarve.toFixed(1)+" l.","");
@@ -4431,7 +4637,7 @@ function matkaTapahtuma(matka){
   const a=auto();
   const kerroin=Math.min(2,matka/28);          // pidempi matka, enemmän sattumaa
   // 1. poliisi — melu ja epäilys ratkaisevat
-  const poliisiRiski=(Math.max(0,a.melu-15)*0.5+S.epailys*0.12)*kerroin;
+  const poliisiRiski=(Math.max(0,a.melu-32)*0.15+S.epailys*0.06)*kerroin;
   if(Math.random()*100<poliisiRiski){ poliisiTarkastus("Partio kääntyi perään ja vilkutti."); return }
   // 2. hajoaminen
   if(nyk().kunto<35&&Math.random()*100<(35-nyk().kunto)*0.35){
@@ -4484,16 +4690,19 @@ function matkaTapahtuma(matka){
     const pito=keli().pito*rengasKerroin();
     const talvitapahtumat=[
       function(){
+        const rt=rengasTyyppi();
+        const syySelite=rt.talvirengas?
+          "Jopa "+rt.nimi.toLowerCase()+" liukastuivat tässä kelillä.":
+          "<b>"+rt.nimi+"</b> ei pidä talvikelillä — vaihda nasta- tai kitkarenkaisiin.";
         if(pito<0.6&&Math.random()<0.55){
           const hinaus=arpo2(120,320);
           S.raha-=hinaus; rahaPop(-hinaus,"hinaus");
           nyk().kunto=Math.max(8,nyk().kunto-arpo2(5,14));
           return {ico:"🛷",otsikko:"OJAAN",teksti:"Perä lähti Kiiminkijoen sillalla ja auto valui ojaan. "+
-            "Hinaus maksoi <b>"+raha(hinaus)+"</b> ja kunnosta lähti pala.<br>"+
-            "Kunnon renkaat olisivat pitäneet auton tiellä.",vari:"var(--punainen)"};
+            "Hinaus maksoi <b>"+raha(hinaus)+"</b> ja kunnosta lähti pala.<br>"+syySelite,vari:"var(--punainen)"};
         }
         return {ico:"🛷",otsikko:"MELKEIN OJAAN",teksti:"Perä lähti mutta sait sen kiinni. "+
-          "Renkaat pitivät juuri ja juuri.",vari:"var(--keltainen)"};
+          "Renkaat pitivät juuri ja juuri.<br>"+syySelite,vari:"var(--keltainen)"};
       },
       function(){
         nyk().bensa=Math.max(0,nyk().bensa-1.5);
@@ -4972,11 +5181,130 @@ function aloitaCruising(){
   aani("voitto");
   paivitaStatit(); piirra();
 }
+const NITROKYNNYS=200;
+function tarkistaNitroPuhelu(){
+  if(S.nitroAvattu||puhelussa||K)return;
+  if((S.cred||0)>=NITROKYNNYS){
+    S.nitroAvattu=true;
+    soi(SOITTAJAT.findIndex(function(s){return s.nm==="Kaasu-Kalle"}));
+  }
+}
+function avaaKaasuKalle(p){
+  const nitroA=OSAT.find(function(o){return o.avain==="nitro"});
+  const isoA=OSAT.find(function(o){return o.avain==="isopullo"});
+  const n=nyk();
+  const g=teeRuudukko();
+  [nitroA,isoA].forEach(function(o){
+    if(o.avain==="isopullo"&&!n.osat.nitro)return; // isompi pullo vaatii perusnitron ensin
+    const omistaa=!!n.osat[o.avain];
+    const el=teeRuutu({
+      kuva:"osa_"+(o.osakuva||o.avain), ikoni:o.ikoni, nimi:o.nimi,
+      alle:omistaa?"jo asennettu":"Kaasu-Kallen erikoiserä", hinta:raha(o.hinta),
+      eiVaraa:omistaa||S.raha<o.hinta,
+      klik:function(){
+        if(omistaa||S.raha<o.hinta)return;
+        S.raha-=o.hinta; rahaPop(-o.hinta,"kaasu-kalle");
+        n.osat[o.avain]="kaasukalle";
+        n.toriLaatu=n.toriLaatu||{}; n.toriLaatu[o.avain]=1;
+        kirjaa("<b class='v'>"+o.nimi+" ostettu Kaasu-Kallelta.</b> Asennettu heti.","v");
+        naytaTulos("💨 KAUPAT TEHTY",o.nimi+" on nyt autossasi. Kalle katosi yöhön.","var(--vihrea)");
+        avaaAppi("kartta",true);
+        piirra();
+      }});
+    g.appendChild(el);
+  });
+  p.appendChild(g);
+}
+var HARJ=null;
+function pHarjoitusLahto(p){
+  p.innerHTML=
+    '<div class="kortti" style="margin-bottom:12px"><b>Miten tämä toimii</b>'+
+    '<div class="ds" style="margin-top:6px">Kierrosmittari nousee ja pomppii rajoittimessa '+
+    'ihan itsestään — sitä ei tarvitse hallita mitenkään. Sinun tehtäväsi on vain katsoa '+
+    '<b>valoja</b>: kun ne syttyvät vihreäksi, paina <b>KYTKIN YLÖS</b> mahdollisimman nopeasti. '+
+    'Reaktioaika ratkaisee lähdön — ei mikään muu. Liian aikainen painallus on varaslähtö.</div></div>'+
+    '<div class="mittarit"><div class="tacho"><svg viewBox="0 0 200 200">'+
+    '<circle cx="100" cy="100" r="88" fill="#141922" stroke="#3a4557" stroke-width="4"/>'+
+    '<path id="lahtovyo" fill="none" stroke="#4fc3f7" stroke-width="13" opacity=".55"/>'+
+    '<path id="vihervyo" fill="none" stroke="#3fd07a" stroke-width="13" opacity=".9"/>'+
+    '<path id="punavyo" fill="none" stroke="#e4483c" stroke-width="13" opacity=".9"/>'+
+    '<g id="asteikko"></g>'+
+    '<line id="neula" x1="100" y1="100" x2="100" y2="28" stroke="#fff" stroke-width="4" stroke-linecap="round"/>'+
+    '<circle cx="100" cy="100" r="9" fill="#55637a"/></svg>'+
+    '<div class="luku"><span id="rpmluku">0</span><small>R / MIN</small></div></div></div>'+
+    '<div class="valot" id="valot"></div><div class="ohje" id="ohje">Valmistaudu…</div>'+
+    '<div class="ajonapit"><button class="btn iso" id="harjkytkin">KYTKIN YLÖS</button></div>'+
+    '<div id="harjtulos" style="margin-top:16px;text-align:center"></div>';
+  piirraMittari(auto());
+  $("harjkytkin").onclick=function(){
+    if(!HARJ||HARJ.valmis)return;
+    HARJ.valmis=true;
+    if(HARJ.vihreaAika===null){
+      $("harjtulos").innerHTML=
+        '<div class="ohje" style="color:var(--punainen)">⛔ Liian aikaisin! Tässä olisit yliveto'+
+        'krenkun takia menettänyt lähdön.</div>'+
+        '<button class="btn wide vihrea" id="harjuudelleen" style="margin-top:10px">Yritä uudestaan</button>';
+    }else{
+      const reaktio=HARJ.kello-HARJ.vihreaAika;
+      let arvio,vari;
+      if(reaktio<0.25){arvio="🔥 Uskomaton refleksi!";vari="var(--vihrea)"}
+      else if(reaktio<0.4){arvio="✅ Hyvä lähtö!";vari="var(--vihrea)"}
+      else if(reaktio<0.6){arvio="👍 Ihan ok.";vari="var(--keltainen)"}
+      else{arvio="🐌 Voisi olla nopeampi.";vari="var(--himmea)"}
+      $("harjtulos").innerHTML=
+        '<div class="ohje" style="color:'+vari+'">'+arvio+'</div>'+
+        '<div style="font-size:30px;font-weight:800;margin:8px 0">'+reaktio.toFixed(3)+' s</div>'+
+        '<button class="btn wide vihrea" id="harjuudelleen">Yritä uudestaan</button>';
+    }
+    $("harjuudelleen").onclick=aloitaLahtoHarjoitus;
+  };
+  aloitaLahtoHarjoitus();
+}
+function aloitaLahtoHarjoitus(){
+  const valoAika=0.45+Math.random()*0.55;
+  HARJ={kello:0,vihreaAika:null,valoAika:valoAika,alku:null,valmis:false,rpm:900,viimeNyt:null};
+  $("ohje").textContent="Kaasu pohjaan ja odota vihreää.";
+  $("harjtulos").innerHTML="";
+  valot(0);
+  requestAnimationFrame(function(nyt){ HARJ.alku=nyt; HARJ.viimeNyt=nyt; requestAnimationFrame(harjTikitys) });
+}
+function harjTikitys(nyt){
+  if(!HARJ||HARJ.valmis||VL!=="harjlahto")return;
+  const dt=Math.min(0.05,(nyt-HARJ.viimeNyt)/1000); HARJ.viimeNyt=nyt;
+  HARJ.kello=(nyt-HARJ.alku)/1000;
+  // kierrokset nousevat ja pomppivat rajoittimessa — sama kaava kuin oikeassa lähdössä
+  const a=auto(), katto=a.puna;
+  if(HARJ.rpm<katto-260)HARJ.rpm+=5200*dt;
+  else HARJ.rpm=katto-15+Math.sin(HARJ.kello*26)*90;
+  neula(a,HARJ.rpm);
+  $("rpmluku").textContent=Math.round(HARJ.rpm/10)*10;
+  if(HARJ.kello>=HARJ.valoAika*3&&HARJ.vihreaAika===null){ HARJ.vihreaAika=HARJ.kello; valot(4) }
+  else if(HARJ.vihreaAika===null)valot(Math.min(3,Math.floor(HARJ.kello/HARJ.valoAika)+1));
+  requestAnimationFrame(harjTikitys);
+}
+function tapahtumaTanaanNimi(){
+  const n=NAYTTELYT.find(function(x){return naytteluTanaan(x.avain)});
+  if(n)return n.ikoni+" "+n.nimi.split(" — ")[0];
+  if(cruisingTanaan())return "🦆 Oulu Night Cruising";
+  return null;
+}
 function ajaNukkumaan(){
   if(S.paikka!=="koti"){
     naytaTulos("🏠 EI VIELÄ KOTONA","Nukkumaan pääsee vasta kotona. Aja ensin kotiin.","var(--keltainen)");
     return;
   }
+  const tapahtuma=tapahtumaTanaanNimi();
+  if(tapahtuma&&!S.nukuOhitaVaroitus){
+    naytaValinta("💤 OLETKO VARMA?",
+      "Tänään on <b>"+tapahtuma+"</b>. Jos nukut nyt, päivä vaihtuu etkä ehdi enää mukaan.",
+      "var(--keltainen)",
+      [{teksti:"Nuku silti",lk:"kelt",toiminto:function(){ jatkaNukkumista() }},
+       {teksti:"Peruuta, menen tapahtumaan",lk:"vihrea",toiminto:null}]);
+    return;
+  }
+  jatkaNukkumista();
+}
+function jatkaNukkumista(){
   const n=nyk(), matka=0;
   iltaLoppu(); return;
   // väsyneenä kotimatka on riski (siirretty ajamiseen)
@@ -5819,10 +6147,10 @@ function tingi(avain){
   const hinta=Math.round(o.hinta*t.hinta);
   naytaTulos("💬 TINGITÄÄN","<b>"+o.nimi+"</b> — pyyntihinta "+raha(hinta)+
     ". Myyjä vaikuttaa "+(t.karsivallisyys>0.6?"rennolta":t.karsivallisyys>0.35?"vähän kärttyisältä":"äkäiseltä")+
-    ".<br><br>"+[0.90,0.75,0.55].map((v,i)=>
+    '.<br><br><div class="valintanapit" style="flex-direction:column">'+[0.90,0.75,0.55].map((v,i)=>
       '<button class="btn '+(i?"haamu":"")+'" data-tarjous="'+v+'" style="margin:3px">'+
       raha(Math.round(hinta*v))+'</button>').join("")+
-    '<br><button class="btn haamu" data-tarjous="0" style="margin-top:8px">Anna olla</button>',"var(--neon)");
+    '<button class="btn haamu" data-tarjous="0" style="margin-top:8px">Anna olla</button></div>',"var(--neon)");
   document.querySelectorAll("[data-tarjous]").forEach(b=>b.onclick=()=>{
     const v=parseFloat(b.dataset.tarjous);
     $("viimeisin").className="tulos";
@@ -5839,7 +6167,8 @@ function tingi(avain){
     }else{
       const vasta=Math.round(hinta*(v+0.12));
       naytaTulos("💬 VASTATARJOUS","Myyjä ei suostu, mutta tarjoaa hintaan <b>"+raha(vasta)+"</b>.<br><br>"+
-        '<button class="btn" id="hyvaksy">Käy</button> <button class="btn haamu" id="hylkaa">Ei kiitos</button>',"var(--keltainen)");
+        '<div class="valintanapit"><button class="btn" id="hyvaksy">Käy</button> '+
+        '<button class="btn haamu" id="hylkaa">Ei kiitos</button></div>',"var(--keltainen)");
       $("hyvaksy").onclick=()=>{$("viimeisin").className="tulos";ostaOsa(avain,vasta)};
       $("hylkaa").onclick=()=>{$("viimeisin").className="tulos";piirra()};
     }
@@ -5957,7 +6286,7 @@ function aloitaKisa(){
      rajoitin:0,sutinut:false,
      sim:simuloiRata(oikea,o.taito+(Math.random()-0.5)*0.10-(S.sorsaOnni?0.22:0),200,alku),
      sorsa:S.sorsaOnni,
-     vikaTullut:false,vikaKohta:110+Math.random()*70,
+     vikaTullut:false,vikaTarkistettu:false,vikaKohta:110+Math.random()*70,
      vastusHajoaa:Math.random()<0.10?(80+Math.random()*100):null,vastusPysahtyi:false,
      vastusS:0,pohjassa:false,vihreaAika:null,reaktio:0,lahtoRpm:0,
      valoAika:1.3+Math.random()*1.0,kello:0,loppu:false,rajoitinFaasi:0};
@@ -6029,16 +6358,19 @@ function pyorita(){
         K.vastusRullaa=Math.min(K.matka,K.vastusRullaa+9*dt);   // rullaa vapaalla ~32 km/h
         K.vastusS=K.vastusRullaa;
       }
-      // oma vika
-      if(!K.vikaTullut&&K.s>=K.vikaKohta&&Math.random()<vikaRiski()){
-        K.vikaTullut=true;
-        cancelAnimationFrame(ajastin);
-        soitaSatunnainen("Breakdown",3);
-        aloitaVikaPuzzle(arvoVika(),(onnistui)=>{
-          if(onnistui){ K.v*=0.72; pyorita(); }
-          else { K.keskeytys=true; maali(); }
-        });
-        return;
+      // oma vika — tarkistetaan VAIN kerran vikaKohdan ylityksellä, ei joka ruudulla
+      if(!K.vikaTarkistettu&&K.s>=K.vikaKohta){
+        K.vikaTarkistettu=true;
+        if(Math.random()<vikaRiski()){
+          K.vikaTullut=true;
+          cancelAnimationFrame(ajastin);
+          soitaSatunnainen("Breakdown",3);
+          aloitaVikaPuzzle(arvoVika(),(onnistui)=>{
+            if(onnistui){ K.v*=0.72; pyorita(); }
+            else { K.keskeytys=true; maali(); }
+          });
+          return;
+        }
       }
       naytaMittari(rpmOf(K.oma,K.v,K.g),true);
       $("autoA").style.left=(3+Math.min(1,K.s/K.matka)*92)+"%";
@@ -6170,14 +6502,15 @@ function katsastusEsteet(){
   return esteet;
 }
 var PAKO=null;
-function aloitaPako(syy){
+function aloitaPako(syy,harjoitus){
   const a=auto();
   // nopea auto antaa hieman enemmän aikaa
   const lisa=Math.min(0.7,(a.hv-100)/450);
   const merkit=["⬆","⬇","⬅","➡"];
   const sarja=[];
   for(let i=0;i<4;i++)sarja.push(merkit[Math.floor(Math.random()*merkit.length)]);
-  PAKO={sarja:sarja,kohta:0,aika:1.6+lisa,kesto:1.6+lisa,syy:syy,virheet:0};
+  PAKO={sarja:sarja,kohta:0,aika:1.6+lisa,kesto:1.6+lisa,syy:syy,virheet:0,harjoitus:!!harjoitus,
+    alkuviive:2.2};
   $("pako-teksti").innerHTML="Kaasu pohjaan ja käännös Toppilan suuntaan.<br>"+
     "<b>Napauta nuolia samassa järjestyksessä.</b> Kaksi hätänapautusta sallitaan, "+
     "kolmas jättää sinut kiinni.";
@@ -6208,6 +6541,14 @@ function pakoTikitys(){
   const loop=function(nyt){
     if(!PAKO)return;
     const dt=(nyt-viime)/1000; viime=nyt;
+    if(PAKO.alkuviive>0){
+      PAKO.alkuviive-=dt;
+      const v=$("pako-vaihe");
+      if(v)v.textContent=PAKO.alkuviive>1?"Valmistaudu…":"Nyt!";
+      const el2=$("pako-palkki"); if(el2)el2.style.width="100%";
+      PAKO.raf=requestAnimationFrame(loop);
+      return;
+    }
     PAKO.aika-=dt;
     const el=$("pako-palkki"); if(el)el.style.width=Math.max(0,PAKO.aika/PAKO.kesto*100)+"%";
     if(PAKO.aika<=0){ pakoPaattyy(false); return }
@@ -6235,9 +6576,19 @@ function pakoNappain(merkki){
 function pakoPaattyy(onnistui){
   if(!PAKO)return;
   cancelAnimationFrame(PAKO.raf);
-  const syy=PAKO.syy;
+  const syy=PAKO.syy, harjoitus=PAKO.harjoitus;
   PAKO=null;
   $("pako").classList.remove("on");
+  if(harjoitus){
+    naytaValinta(onnistui?"🏃 PÄÄSIT PAKOON":"🚔 JÄIT KIINNI",
+      (onnistui?"Hyvä! Tässä harjoituksessa ei tule mitään oikeita seurauksia.":
+        "Ei hätää — tämä oli vain harjoitus, ei sakkoja eikä ajokieltoa.")+
+      "<br><br>Voit harjoitella niin monta kertaa kuin haluat.",
+      onnistui?"var(--vihrea)":"var(--punainen)",
+      [{teksti:"Yritä uudestaan",lk:"vihrea",toiminto:function(){ aloitaPako("harjoitus",true) }},
+       {teksti:"Lopeta harjoittelu",lk:"kelt",toiminto:function(){ avaaAppi("asetukset") }}]);
+    return;
+  }
   const n=nyk();
   if(onnistui){
     S.epailys=Math.min(100,S.epailys+18);
@@ -6317,15 +6668,15 @@ function poliisiTarkastus(syy){
       "</b>.<br>Talvirenkaat ovat pakolliset marraskuusta huhtikuulle.","var(--punainen)");
     paivitaStatit(); return "rengassakko";
   }
-  if(!rengasTyyppi().laillinen&&Math.random()<0.6){
+  if(!rengasTyyppi().laillinen&&Math.random()<0.4){
     const s3=Math.round(250+S.epailys*3);
-    S.raha-=s3; S.sakot+=s3; S.huomautukset++; rahaPop(-s3,"rengassakko");
+    S.raha-=s3; S.sakot+=s3; rahaPop(-s3,"rengassakko");
     naytaTulos("🚔 LAITTOMAT RENKAAT","Renkaissa ei ole kuviota lainkaan. Sakko <b>"+raha(s3)+
-      "</b> ja huomautus.","var(--punainen)");
+      "</b>.","var(--punainen)");
     paivitaStatit(); return "rengassakko";
   }
-  const paha = n.kunto<40 || a.melu>45 || S.huomautukset>=2;
-  if(paha&&Math.random()<0.55){
+  const paha = n.kunto<25 || a.melu>58 || S.huomautukset>=3;
+  if(paha&&Math.random()<0.35){
     n.ajokielto=true; S.huomautukset++;
     kirjaa('<b class="r">🚫 AJOKIELTO.</b> Auto määrättiin katsastukseen.',"r");
     naytaTulos("🚫 AJOKIELTO","Poliisi katsoi alustaa ja mittasi melun. Auto määrättiin <b>katsastukseen</b> "+
@@ -6343,8 +6694,8 @@ function poliisiTarkastus(syy){
   const sakko=Math.round(100+a.melu*4+S.epailys*2);
   naytaTulos("🚔 POLIISI VILKUTTAA",(syy||"Melumittaus tien varressa.")+
     "<br>Sakko olisi <b>"+raha(sakko)+"</b>.<br><br>"+
-    "Voit pysähtyä kiltisti tai painaa kaasun pohjaan. <b>Pako on vaikea</b> — kuusi käännöstä peräkkäin "+
-    "sekunnin varoitusajalla, ja kiinni jääminen tarkoittaa isoa sakkoa ja ajokieltoa.<br><br>"+
+    "Voit pysähtyä kiltisti tai painaa kaasun pohjaan. Pako vaatii nopeita nuolinapautuksia "+
+    "oikeassa järjestyksessä, ja kiinni jääminen tarkoittaa isoa sakkoa ja ajokieltoa.<br><br>"+
     '<div class="valintanapit">'+
     '<button class="btn valinta" id="pysahdy">Pysähdy</button>'+
     '<button class="btn valinta puna" id="karkuun">🏃 Kaasu pohjaan</button></div>',"var(--punainen)");
