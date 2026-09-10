@@ -407,6 +407,32 @@ body{margin:0;padding-top:80px;padding-bottom:24px;background:radial-gradient(13
   border:2px solid var(--reuna2);color:var(--teksti);font-size:20px;font-weight:800;cursor:pointer;
   line-height:1;display:grid;place-items:center}
 .karttazoomit button:disabled{opacity:.35;cursor:default}
+.ajoikkuna{width:100%;height:min(58vh,520px);overflow:hidden;position:relative;
+  border-radius:12px;border:2px solid var(--reuna);background:#0e1420}
+.ajomaailma{position:absolute;top:0;left:0;transform-origin:0 0}
+.ajovalokuva{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:fill;
+  pointer-events:none;-webkit-user-drag:none}
+.ajomaailma .karttasvg{position:absolute;top:0;left:0;width:100%;height:100%}
+.ajoauto{position:absolute;font-size:26px;z-index:3;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.ajopiste{position:absolute;transform:translate(-50%,-100%);background:none;border:0;padding:0;
+  display:flex;flex-direction:column;align-items:center;gap:2px;z-index:2;pointer-events:none}
+.ajopiste .pallo{width:26px;height:26px;border-radius:50%;background:rgba(18,22,30,.9);
+  border:2px solid var(--reuna2);display:grid;place-items:center;font-size:13px}
+.ajopiste .nimi{font-size:10px;font-weight:700;background:rgba(0,0,0,.7);padding:1px 5px;
+  border-radius:5px;white-space:nowrap}
+.ajopiste.tassa .pallo{border-color:var(--vihrea)}
+.ajosaapumis{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:4;
+  background:var(--paneeli);border:2px solid var(--vihrea);border-radius:12px;padding:8px 12px;
+  display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800}
+.ajo-ohjaimet{display:flex;justify-content:space-between;align-items:flex-end;margin-top:12px}
+.ajo-suunta,.ajo-kaasu{display:flex;gap:10px}
+.ajonappi{width:56px;height:56px;border-radius:50%;background:var(--paneeli2);
+  border:2px solid var(--reuna2);color:var(--teksti);font-size:22px;cursor:pointer;
+  display:grid;place-items:center;touch-action:none;-webkit-user-select:none;user-select:none}
+.ajonappi.iso{width:64px;height:64px;font-size:26px}
+.ajonappi:active{background:var(--reuna2)}
+.ajo-hud{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:var(--teksti);
+  padding:4px 10px;border-radius:8px;font-size:13px;font-weight:800;z-index:5}
 .karttaikkuna.veto{cursor:grabbing}
 .karttasisus{position:absolute;top:0;left:0;width:100%;height:100%;
   aspect-ratio:unset;max-width:none;border:0;border-radius:0}
@@ -3554,6 +3580,7 @@ const APPIT=[
   {id:"huuto",ico:"🔨",nm:"Huutokauppa",fn:function(){return pHuutokauppa}},
   {id:"kaasukalle",ico:"💨",nm:"Kaasu-Kalle",piilotettu:true,fn:function(){return avaaKaasuKalle}},
   {id:"harjlahto",ico:"🚦",nm:"Harjoittele",piilotettu:true,fn:function(){return pHarjoitusLahto}},
+  {id:"ajoproto",ico:"🚗",nm:"Ajoprototyyppi",piilotettu:true,fn:function(){return pAjoproto}},
   {id:"wiki",ico:"📖",nm:"CarWiki",fn:function(){return pWiki}},
   {id:"maine",ico:"🌟",nm:"Maine",fn:function(){return pMaine}},
   {id:"viestit",ico:"💬",nm:"Viestit",fn:function(){return pViestit}},
@@ -4182,6 +4209,9 @@ function pAsetukset(p){
     '<div class="ds">Kiihdytyslähtö ja poliisin pakeneminen ilman rahaa tai seurauksia.</div>'+
     '<button class="btn haamu wide" id="a-harjlahto">Harjoittele lähtöä</button>'+
     '<button class="btn haamu wide" id="a-harjpako" style="margin-top:6px">Harjoittele pakoa</button></div>'+
+    '<div class="kortti" style="border-color:var(--violetti)"><div class="nm">🚗 Ajoprototyyppi</div>'+
+    '<div class="ds">Kokeile vapaata ajamista kartalla — kesken, ei vielä osa peliä.</div>'+
+    '<button class="btn haamu wide" id="a-ajoproto">Kokeile</button></div>'+
     '<div class="kortti" style="border-color:var(--keltainen)"><div class="nm">📱 Puhelimen väri</div>'+
     '<div class="ds" id="puhvaritila">—</div>'+
     '<div class="puhvarit" id="puhvarit"></div></div>'+
@@ -4213,6 +4243,7 @@ function pAsetukset(p){
   $("a-soitto").onclick=function(){soi(satunnainenSoittaja())};
   $("a-harjlahto").onclick=function(){avaaAppi("harjlahto")};
   $("a-harjpako").onclick=function(){ aloitaPako("harjoitus",true) };
+  $("a-ajoproto").onclick=function(){avaaAppi("ajoproto")};
   $("a-alusta").onclick=function(){ if(confirm("Aloitetaanko alusta? Nykyinen peli katoaa.")){
     localStorage.removeItem(TALLENNUSAVAIN); location.reload() } };
 }
@@ -4358,6 +4389,160 @@ const KARTTAPOHJA=
    mahtuu erilleen, ja zoomausnapeilla voi säätää kuinka paljon suurempi.
    Sormella/hiirellä vetämällä näkee loput. */
 const ZOOMITASOT=[1.6,2.6,4.0];
+
+/* ============ AJOPROTOTYYPPI: vapaa ajaminen kartalla (GTA 1–2 -tyyli) ============ */
+let AJOPROTO=null;
+/* Tiet on jäljitetty käsin oikeasta Oulun ajokartta-valokuvasta (kuvat/oulu_ajokartta.jpg).
+   Jokainen rivi on lista pisteitä [x0,y0, x1,y1, x2,y2, ...] 0-100-koordinaatistossa,
+   suoraan kuvan leveys/korkeus-suhteisiin. Tämä on ensimmäinen, käsin arvioitu veto —
+   tarkkuutta voi parantaa myöhemmin lisäämällä pisteitä. */
+const TIET=[
+ [36.65,14.91, 36.91,26.62, 37.28,37.27, 37.7,47.92, 38.12,58.57, 38.48,69.22], // keskustan pääkatu
+ [50.0,1.6, 50.16,10.65, 50.52,21.3, 51.05,31.95, 50.79,42.6, 49.74,51.12, 48.17,59.64, 47.12,69.22], // silta → etelä
+ [51.57,14.91, 54.45,19.17, 56.28,27.69, 56.81,37.27, 55.5,46.86, 52.88,55.38, 50.26,61.77, 48.17,67.09], // kehätie itä
+ [37.59,29.82, 37.96,40.47, 38.48,51.12, 39.01,61.77, 39.53,72.42, 40.05,80.94], // rautatien vierustä
+ [25.13,69.22, 31.41,69.76, 39.27,70.29, 47.12,69.22, 54.97,67.09, 62.83,64.96], // eteläinen poikittaistie
+ [7.85,44.73, 13.09,48.99, 18.32,52.18, 23.56,56.44, 26.18,59.64] // Toppilan satamatie
+].map(function(lista){
+  const p=[]; for(let i=0;i<lista.length;i+=2)p.push({x:lista[i],y:lista[i+1]}); return p;
+});
+function naytteistaTie(tie){
+  // pisteiden väliin lisätään välipisteitä tasaisempaa etäisyyslaskentaa varten
+  const tulos=[];
+  for(let i=0;i<tie.length-1;i++){
+    for(let s=0;s<8;s++){
+      const t=s/8;
+      tulos.push({x:tie[i].x+(tie[i+1].x-tie[i].x)*t, y:tie[i].y+(tie[i+1].y-tie[i].y)*t});
+    }
+  }
+  tulos.push(tie[tie.length-1]);
+  return tulos;
+}
+const TIEPISTEET=TIET.map(naytteistaTie);
+const TIELEVEYS=6; // prosenttiyksikkoa — kuinka leveä ajokaista on tien ympärillä
+function etaisyysTiehen(xProsentti,yProsentti){
+  let lahin=999;
+  TIEPISTEET.forEach(function(tie){
+    tie.forEach(function(p){
+      const dx=p.x-xProsentti, dy=p.y-yProsentti;
+      const et=Math.sqrt(dx*dx+dy*dy);
+      if(et<lahin)lahin=et;
+    });
+  });
+  return lahin;
+}
+const AJOMAAILMA_LEVEYS=2400, AJOMAAILMA_KORKEUS=Math.round(2400*939/1910); // vastaa valokuvan 1910x939-kuvasuhdetta
+function pAjoproto(p){
+  p.innerHTML=
+    '<p style="color:var(--himmea);margin:0 0 8px">Prototyyppi oikealla Oulun valokuvalla. Tiet on '+
+    'käsin jäljitetty eivätkä vielä ole täysin tarkkoja, eikä paikkoja (kaupat, kisapaikat) '+
+    'ole vielä sijoitettu tähän kuvaan. Aja vain tunnustelemiseksi.</p>'+
+    '<div class="ajoikkuna" id="ajoikkuna">'+
+      '<div class="ajomaailma" id="ajomaailma"><img src="kuvat/oulu_ajokartta.jpg" '+
+        'class="ajovalokuva" draggable="false"></div>'+
+      '<div class="ajo-hud" id="ajohud">0 km/h</div>'+
+    '</div>'+
+    '<div class="ajo-ohjaimet">'+
+      '<div class="ajo-suunta">'+
+        '<button class="ajonappi" data-ohjaus="vasen">↶</button>'+
+        '<button class="ajonappi" data-ohjaus="oikea">↷</button>'+
+      '</div>'+
+      '<div class="ajo-kaasu">'+
+        '<button class="ajonappi iso" data-ohjaus="peruuta">▼</button>'+
+        '<button class="ajonappi iso" data-ohjaus="kaasu">▲</button>'+
+      '</div>'+
+    '</div>';
+  aloitaAjoproto();
+}
+function aloitaAjoproto(){
+  const ikkuna=$("ajoikkuna"), maailma=$("ajomaailma");
+  const auto=document.createElement("div");
+  auto.className="ajoauto"; auto.textContent="🚗";
+  maailma.appendChild(auto);
+  // Aloitussijainti on toistaiseksi kiinteä keskustan tuntumaan, koska nimettyjä
+  // paikkoja (PAIKAT) ei ole vielä kalibroitu tähän oikeaan valokuvaan.
+  AJOPROTO={
+    x:AJOMAAILMA_LEVEYS*0.39, y:AJOMAAILMA_KORKEUS*0.30,
+    kulma:0, nopeus:0,
+    ohjaus:{kaasu:false,peruuta:false,vasen:false,oikea:false},
+    viime:null, lahella:null
+  };
+  document.querySelectorAll("[data-ohjaus]").forEach(function(b){
+    const nappi=b.dataset.ohjaus;
+    const alas=function(e){ e.preventDefault(); AJOPROTO.ohjaus[nappi]=true };
+    const ylos=function(){ if(AJOPROTO)AJOPROTO.ohjaus[nappi]=false };
+    b.addEventListener("pointerdown",alas);
+    b.addEventListener("pointerup",ylos);
+    b.addEventListener("pointerleave",ylos);
+    b.addEventListener("pointercancel",ylos);
+  });
+  requestAnimationFrame(ajoprotoSilmukka);
+}
+function ajoprotoSilmukka(nyt){
+  if(!AJOPROTO||VL!=="ajoproto")return;
+  const a=AJOPROTO;
+  const dt=a.viime?Math.min(0.05,(nyt-a.viime)/1000):0.016; a.viime=nyt;
+  // tiellä olo vaikuttaa huippunopeuteen ja kitkaan — maastossa on hitaampaa ja jarruttaa enemmän
+  const etTiehen=etaisyysTiehen(a.x/AJOMAAILMA_LEVEYS*100,a.y/AJOMAAILMA_KORKEUS*100);
+  const tiella=etTiehen<TIELEVEYS;
+  a.tiella=tiella;
+  const KIIHTYVYYS=tiella?380:220, JARRU=460, KITKA=tiella?300:520,
+    MAXNOPEUS=tiella?300:150, KAANTO=2.9;
+  if(a.ohjaus.kaasu)a.nopeus=Math.min(MAXNOPEUS,a.nopeus+KIIHTYVYYS*dt);
+  else if(a.ohjaus.peruuta)a.nopeus=Math.max(-MAXNOPEUS*0.45,a.nopeus-JARRU*dt);
+  else{
+    if(a.nopeus>0)a.nopeus=Math.max(0,a.nopeus-KITKA*dt);
+    else if(a.nopeus<0)a.nopeus=Math.min(0,a.nopeus+KITKA*dt);
+  }
+  a.nopeus=Math.max(-MAXNOPEUS*0.45,Math.min(MAXNOPEUS,a.nopeus));
+  // kaantyminen pehmenee nopeuden mukaan, mutta reagoi nyt nopeammin pienilläkin nopeuksilla
+  if(Math.abs(a.nopeus)>6){
+    const suunta=a.nopeus>0?1:-1;
+    const kaantokerroin=Math.min(1,Math.abs(a.nopeus)/60);
+    if(a.ohjaus.vasen)a.kulma-=KAANTO*kaantokerroin*dt*suunta;
+    if(a.ohjaus.oikea)a.kulma+=KAANTO*kaantokerroin*dt*suunta;
+  }
+  a.x+=Math.sin(a.kulma)*a.nopeus*dt;
+  a.y-=Math.cos(a.kulma)*a.nopeus*dt;
+  // pehmeae reuna: nopeus hidastuu lahestyttaessa reunaa sen sijaan etta tormaa
+  const reunaVyohyke=60;
+  if(a.x<reunaVyohyke){ a.nopeus*=0.85; a.x=Math.max(15,a.x) }
+  if(a.x>AJOMAAILMA_LEVEYS-reunaVyohyke){ a.nopeus*=0.85; a.x=Math.min(AJOMAAILMA_LEVEYS-15,a.x) }
+  if(a.y<reunaVyohyke){ a.nopeus*=0.85; a.y=Math.max(15,a.y) }
+  if(a.y>AJOMAAILMA_KORKEUS-reunaVyohyke){ a.nopeus*=0.85; a.y=Math.min(AJOMAAILMA_KORKEUS-15,a.y) }
+  piirraAjoproto();
+  requestAnimationFrame(ajoprotoSilmukka);
+}
+const AJO_NAPPAIMET={ArrowUp:"kaasu",w:"kaasu",ArrowDown:"peruuta",s:"peruuta",
+  ArrowLeft:"vasen",a:"vasen",ArrowRight:"oikea",d:"oikea"};
+function ajoprotoNappainAlas(e){
+  if(!AJOPROTO||VL!=="ajoproto")return;
+  if(e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"))return;
+  const ohjaus=AJO_NAPPAIMET[e.key];
+  if(ohjaus){ AJOPROTO.ohjaus[ohjaus]=true; e.preventDefault() }
+}
+function ajoprotoNappainYlos(e){
+  if(!AJOPROTO||VL!=="ajoproto")return;
+  const ohjaus=AJO_NAPPAIMET[e.key];
+  if(ohjaus)AJOPROTO.ohjaus[ohjaus]=false;
+}
+document.addEventListener("keydown",ajoprotoNappainAlas);
+document.addEventListener("keyup",ajoprotoNappainYlos);
+function piirraAjoproto(){
+  const a=AJOPROTO; if(!a)return;
+  const ikkuna=$("ajoikkuna"), maailma=$("ajomaailma"), auto=$("ajoikkuna").querySelector(".ajoauto");
+  if(!ikkuna||!maailma||!auto)return;
+  const leveys=ikkuna.clientWidth||340, korkeus=ikkuna.clientHeight||480;
+  maailma.style.width=AJOMAAILMA_LEVEYS+"px"; maailma.style.height=AJOMAAILMA_KORKEUS+"px";
+  maailma.style.transform="translate("+(leveys/2-a.x)+"px,"+(korkeus/2-a.y)+"px)";
+  auto.style.left=a.x+"px"; auto.style.top=a.y+"px";
+  auto.style.transform="translate(-50%,-50%) rotate("+(a.kulma)+"rad)";
+  $("ajohud").textContent=Math.round(Math.abs(a.nopeus)*0.12)+" km/h"+(a.nopeus<-1?" (peruutus)":"")+
+    (a.tiella?"":" 🌿 maastossa");
+  $("ajohud").style.color=a.tiella?"var(--teksti)":"var(--keltainen)";
+  // HUOM: paikkamerkit (PAIKAT) puuttuvat toistaiseksi tästä valokuvaversiosta,
+  // koska niiden oikeita sijainteja tällä kuvalla ei ole vielä vahvistettu.
+}
 let KARTTAZOOM=1; // indeksi ZOOMITASOT-taulukkoon, 1 = nykyinen oletus (2.6x)
 function avaaIsoKartta(){
   const el=$("isokartta");
