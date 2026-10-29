@@ -1257,6 +1257,11 @@
 </style>
 </head>
 <body>
+<!--
+  🦆 Kvaak. Lähdekoodia kaivelemassa?
+  Turha etsiä täältä, salaisuudet ei oo kommenteissa.
+  Mutta sivulla kannattaa klikkailla asioita. Monta kertaa. Nopeasti.
+-->
 
 <!-- MOBILE MENU -->
 <div class="nav-mobile-menu" id="mobile-menu">
@@ -1534,6 +1539,7 @@
             <div class="carousel-slide"><img src="KMB1_2.jpeg" alt="Kombo 1b" loading="lazy"></div>
             <div class="carousel-slide"><img src="KMB2.jpeg" alt="Kombo 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="KMB3.jpeg" alt="Kombo 3" loading="lazy"></div>
+            <div class="carousel-slide"><img src="KMB4.jpeg" alt="Kombo 4" loading="lazy"></div>
           </div>
           <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
           <button class="carousel-btn prev" onclick="carouselMove('kmb',-1)">&#8249;</button>
@@ -1543,6 +1549,7 @@
             <div class="carousel-dot" onclick="carouselGo('kmb',1)"></div>
             <div class="carousel-dot" onclick="carouselGo('kmb',2)"></div>
             <div class="carousel-dot" onclick="carouselGo('kmb',3)"></div>
+            <div class="carousel-dot" onclick="carouselGo('kmb',4)"></div>
           </div>
         </div>
         <div class="car-body">
@@ -1694,7 +1701,7 @@
       <div class="car-card" data-owner="gadwall" data-cat="kaytto">
         <div class="car-carousel" id="carousel-gep">
           <div class="carousel-track" id="track-gep">
-            <div class="carousel-slide"><div class="car-photo-placeholder"><span>📷</span>Kuva tulossa</div></div>
+            <div class="carousel-slide"><img src="GEP1.jpeg" alt="Gadwallin Volvo V70" loading="lazy"></div>
           </div>
           <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
@@ -1717,7 +1724,7 @@
       <div class="car-card" data-owner="drake" data-cat="kaytto">
         <div class="car-carousel" id="carousel-ims">
           <div class="carousel-track" id="track-ims">
-            <div class="carousel-slide"><div class="car-photo-placeholder"><span>📷</span>Kuva tulossa</div></div>
+            <div class="carousel-slide"><img src="IMS1.jpeg" alt="Draken BMW 330d" loading="lazy"></div>
           </div>
           <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
           <button class="carousel-btn prev" style="display:none">&#8249;</button>
@@ -1725,13 +1732,36 @@
           <div class="carousel-dots" id="dots-ims"></div>
         </div>
         <div class="car-body">
-          <div class="car-name">BMW 330d</div>
+          <div class="car-name">BMW 330d Coupé</div>
           <div class="car-owner">Omistaja: Drake</div>
           <div class="car-specs">
             <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">2011</span></div>
             <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">180 kW / 245hv</span></div>
             <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">3,0 R6 diesel</span></div>
             <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Käyttöauto</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car: GRN - Geran-2 / Shahed -->
+      <div class="car-card" data-owner="none" data-cat="nayttely">
+        <div class="car-carousel" id="carousel-grn">
+          <div class="carousel-track" id="track-grn">
+            <div class="carousel-slide"><img src="GRN1.jpeg" alt="Geran-2 ja Outlaw Ducks -tarra" loading="lazy"></div>
+          </div>
+          <span class="car-type-badge badge-nayttely" style="position:absolute;top:12px;right:12px;z-index:10;">Näyttelyauto</span>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-grn"></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Geran-2 "Shahed"</div>
+          <div class="car-owner">Omistaja: Ei kukaan. Tarra on meidän.</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">Ei papereita</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">~37 kW / 50hv</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">2-tahti, mopon äänellä</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Lentokiellossa</span></div>
           </div>
         </div>
       </div>
@@ -1814,6 +1844,7 @@
             <div class="carousel-slide"><img src="XXJ1.png" alt="Volvo V90 1" loading="lazy"></div>
             <div class="carousel-slide"><img src="XXJ2.png" alt="Volvo V90 2" loading="lazy"></div>
             <div class="carousel-slide"><img src="XXJ3.jpeg" alt="Volvo V90 3" loading="lazy"></div>
+            <div class="carousel-slide"><img src="XXJ4.jpeg" alt="Volvo V90 4" loading="lazy"></div>
           </div>
           <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
           <button class="carousel-btn prev" onclick="carouselMove('xxj',-1)">&#8249;</button>
@@ -1822,6 +1853,7 @@
             <div class="carousel-dot active" onclick="carouselGo('xxj',0)"></div>
             <div class="carousel-dot" onclick="carouselGo('xxj',1)"></div>
             <div class="carousel-dot" onclick="carouselGo('xxj',2)"></div>
+            <div class="carousel-dot" onclick="carouselGo('xxj',3)"></div>
           </div>
         </div>
         <div class="car-body">
@@ -1900,7 +1932,7 @@
 <section id="saannot">
   <div class="section-inner">
     <div class="section-label">Käyttäytymiskoodi</div>
-    <h2 class="section-title" id="saannot-title" style="-webkit-tap-highlight-color:transparent;">Säännöt</h2>
+    <h2 class="section-title">Säännöt</h2>
     <div class="section-divider"></div>
     <div class="rules-grid" id="rules-grid">
       <div class="rules-page active" id="rules-p1">
@@ -2524,54 +2556,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "be6548925ea64c9195797579bdece083"}'></script>
 <!-- End Cloudflare Web Analytics -->
 
-<script src="salaovi.js"></script>
+<script src="efektit.js"></script>
 
-<!-- PIILOLINKKI: 5 klikkausta "Säännöt"-otsikkoon avaa virus.html (QR-harjoitus) -->
-<script>
-(function(){
-  var el = document.getElementById('saannot-title');
-  if (!el) return;
-  var n = 0, timer = null;
-  el.addEventListener('click', function(){
-    n++; clearTimeout(timer);
-    timer = setTimeout(function(){ n = 0; }, 2000);
-    if (n >= 5){ n = 0; window.location.href = 'virus.html'; }
-  });
-})();
-</script>
-
-<!-- ================================================================
-     OUTLAW DUCKS - PIILOLINKKI ENERGIAJUOMATESTEIHIN (robusti v2)
-     Liita ennen </body>. 5 klikkausta "Outlaw Ducks TC" -tekstiin.
-     ================================================================ -->
-<script>
-(function(){
-  var TARGET    = "/energiatestit/";  // sivun osoite (juuresta)
-  var NEEDED    = 5;                   // klikkausten maara
-  var WINDOW_MS = 1500;               // aikaikkuna (ms)
-  var DEBUG     = false;              // true -> tulostaa konsoliin (F12) testaukseen
- 
-  var n = 0, timer = null;
-  function log(){ if (DEBUG && window.console) console.log.apply(console,
-    ["[piilolinkki]"].concat([].slice.call(arguments))); }
-  function tick(){
-    n++; log("klik", n + "/" + NEEDED);
-    clearTimeout(timer);
-    timer = setTimeout(function(){ n = 0; }, WINDOW_MS);
-    if (n >= NEEDED){ n = 0; log("avataan", TARGET); window.location.href = TARGET; }
-  }
-  // Kuunnellaan kaikkia klikkauksia (capture) ja etsitaan teksti klikkauskohdasta.
-  document.addEventListener("click", function(ev){
-    var el = ev.target, hops = 0;
-    while (el && hops < 5){
-      var t = (el.textContent || "").replace(/\s+/g, " ").trim();
-      if (t.length <= 60 && /outlaw ducks tc/i.test(t)){ tick(); return; }
-      el = el.parentElement; hops++;
-    }
-  }, true);
-  log("piilolinkki ladattu");
-})();
-</script>
-  
 </body>
 </html>
