@@ -1253,7 +1253,7 @@
 </div>
 
 <nav>
-  <a href="#" class="nav-logo">
+  <a href="#" class="nav-logo" id="nav-logo-secret">
     <img src="pyoreä.png" alt="Outlaw Ducks logo">
     <div class="nav-brand">
       Outlaw Ducks
@@ -2472,6 +2472,46 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   setTimeout(startWalk, 32000 + Math.random() * 22000);
+})();
+</script>
+
+<!-- SALAINEN LOGO-KLIKKI: 5x 2sek → Cloudflare dashboard, energialabra -->
+<script>
+(function() {
+  var logo = document.getElementById('nav-logo-secret');
+  if (!logo) return;
+  var clicks = 0, timer = null;
+  logo.addEventListener('click', function(e) {
+    e.preventDefault();
+    clicks++;
+    if (clicks === 1) {
+      timer = setTimeout(function() { clicks = 0; }, 2000);
+    }
+    if (clicks >= 5) {
+      clearTimeout(timer);
+      clicks = 0;
+      // Avaa Cloudflare dashboard
+      window.open('https://dash.cloudflare.com/ba07aadd96c6abdee085946f7c80cf47/web-analytics/overview/visits?siteTag~in=f55c2349c7a143bab92f974b963be6b8&excludeBots=Yes&time-window=43200', '_blank');
+    }
+  });
+
+  // Energialabra: napauta ankka-counter 3x nopeasti
+  var counter = document.getElementById('duck-counter');
+  if (counter) {
+    var eCnt = 0, eTimer = null;
+    counter.addEventListener('click', function(e) {
+      e.stopPropagation();
+      eCnt++;
+      if (eCnt === 1) {
+        eTimer = setTimeout(function() { eCnt = 0; }, 1500);
+      }
+      if (eCnt >= 3) {
+        clearTimeout(eTimer);
+        eCnt = 0;
+        window.open('https://energialabra.outlawducks.com', '_blank');
+      }
+    });
+  }
 })();
 </script>
 
