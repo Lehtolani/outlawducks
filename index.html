@@ -10,9 +10,9 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
 <title>Outlaw Ducks TC – Oulu</title>
-<meta name="description" content="Outlaw Ducks Tuning Crew – Oululainen autoporukka. Autot, jäsenet, tapahtumat ja merch. Olemme luontokappaleita tiellä.">
+<meta name="description" content="Outlaw Ducks Tuning Crew (Oulu) on autoharrastajien yhteisö. Tutustu jäseniin, autoihin, tapahtumiin ja kerhon säännöt. Olemme luontokappaleita tiellä.">
 <meta property="og:title" content="Outlaw Ducks TC – Oulu">
-<meta property="og:description" content="Oululainen autoporukka. Autot, jäsenet, tapahtumat ja merch.">
+<meta property="og:description" content="Outlaw Ducks Tuning Crew (Oulu) on autoharrastajien yhteisö. Tutustu jäseniin, autoihin ja tapahtumiin.">
 <meta property="og:image" content="https://outlawducks.com/pyoreä.png">
 <meta property="og:url" content="https://outlawducks.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -421,6 +421,8 @@
     width: 100%; height: 100%;
     object-fit: cover; object-position: top center;
     display: block;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
 
   .member-info { display: flex; flex-direction: column; justify-content: center; min-width: 0; overflow: hidden; padding: 0; }
@@ -478,6 +480,22 @@
     width: 100%; height: 100%;
     object-fit: cover; display: block;
     pointer-events: none;
+  }
+  .car-photo-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem;
+    background: repeating-linear-gradient(45deg, #161616 0 14px, #1a1a1a 14px 28px);
+    color: var(--lightgray);
+    font-family: var(--font-body); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase;
+  }
+  .car-photo-placeholder span { font-size: 2rem; opacity: 0.5; letter-spacing: 0; }
+  .member-avatar.member-initial {
+    font-family: var(--font-display); color: var(--gold); font-size: 2.2rem;
+  }
+  .filter-initial {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--midgray);
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-family: var(--font-display); font-size: 0.8rem; color: var(--gold);
   }
 
   /* Mobile: 4:3 ratio feels better for portrait photos */
@@ -1253,7 +1271,7 @@
 </div>
 
 <nav>
-  <a href="#" class="nav-logo" id="nav-logo-secret">
+  <a href="#" class="nav-logo">
     <img src="pyoreä.png" alt="Outlaw Ducks logo">
     <div class="nav-brand">
       Outlaw Ducks
@@ -1330,7 +1348,7 @@
         data-fi="Kesällä 2025 joukko ouluaisia autoihmisiä löysi itsensä saman pöydän äärestä. Yhteistä oli rakkaus koneisiin, tiehen ja siihen tunteeseen kun moottori laulaa juuri oikein. Outlaw Ducks TC syntyi — ei vallankumouksena, vaan yhteisönä."
         data-en="In the summer of 2025, a group of car enthusiasts from Oulu found themselves around the same table. What they had in common was a love of machines, the road, and that feeling when an engine sings just right. Outlaw Ducks TC was born — not as a revolution, but as a community."
         data-kvaak="Kvaak kvaak 2025 kvaak kvaak kvaak kvaak kvaak kvaak kvaak kvaak kvaak kvaak. Kvaak kvaak kvaak kvaak, kvaak, kvaak kvaak kvaak kvaak kvaak kvaak kvaak. Outlaw Ducks TC kvaak — kvaak kvaak kvaak, kvaak kvaak.">
-        Kesällä 2025 joukko ouluaisia autoihmisiä löysi itsensä saman pöydän äärestä. Yhteistä oli rakkaus koneisiin, tiehen ja siihen tunteeseen kun moottori laulaa juuri oikein. Outlaw Ducks TC syntyi — ei vallankumouksena, vaan yhteisönä.
+        Kesällä 2025 joukko ouluaisia autoihmisiä löysi itsensä saman pöydän äärestä. Yhteistä oli rakkaus ajeluun ja autoihin. Outlaw Ducks TC syntyi.
       </p>
       <p class="translatable" style="color:var(--bone); margin-bottom:2rem; font-size:1rem; line-height:1.8;"
         data-fi="Porukka koostuu täysi-ikäisistä, jotka tykkäävät värkätä autoja. Tai eihän siitä kukaan tykkää, mutta värkkää silti. Jos ajammekin vahingossa ylinopeutta tutkaan, se on vain luonnon kutsua — eihän luontokappaleita voi vastuuttaa. Pliis?"
@@ -1401,13 +1419,21 @@
           <div class="member-desc">Liikaa puhetta, liian vähän tekoja. Kuvaa kyllä, muttei postaa mitään. Aika ei riitä mihinkään ja kaikki on puolivalmista. Silti yrittää. Länsirajan ylittäny ja joutas jo takas.</div>
         </div>
       </div>
-      <!-- GADWALL + TYHJÄ -->
+      <!-- GADWALL + DRAKE + TYHJÄ -->
       <div class="member-card">
-        <div class="member-avatar">🐤</div>
+        <div class="member-avatar member-initial">G</div>
         <div class="member-info">
           <div class="member-callsign">Gadwall</div>
           <div class="member-role">Jäsen</div>
-          <div class="member-desc">U18, see you soon.</div>
+          <div class="member-desc">Ei enää odotuslistalla, nyt virallisesti parvessa. Alla Volvo V70, koska perinteitä kunnioitetaan.</div>
+        </div>
+      </div>
+      <div class="member-card">
+        <div class="member-avatar member-initial">D</div>
+        <div class="member-info">
+          <div class="member-callsign">Drake</div>
+          <div class="member-role">Jäsen</div>
+          <div class="member-desc">Parven uusin lintu. Kuusisylinterinen diesel-Bemari, joten vääntöä riittää ja tankilla käydään harvoin.</div>
         </div>
       </div>
       <div class="member-card">
@@ -1457,7 +1483,10 @@
           <img src="goosander.png" alt="Goosander" style="width:26px;height:26px;border-radius:50%;object-fit:cover;object-position:top center;flex-shrink:0;">Goosander
         </button>
         <button class="filter-btn btn-person" onclick="filterCars('gadwall', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
-          <span style="width:26px;height:26px;border-radius:50%;background:var(--midgray);display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🐤</span>Gadwall
+          <span class="filter-initial">G</span>Gadwall
+        </button>
+        <button class="filter-btn btn-person" onclick="filterCars('drake', this)" style="display:flex;align-items:center;gap:7px;padding:5px 12px 5px 5px;border-radius:99px;">
+          <span class="filter-initial">D</span>Drake
         </button>
       </div>
     </div>
@@ -1661,6 +1690,52 @@
         </div>
       </div>
 
+      <!-- Car: GEP - Gadwallin Volvo V70 -->
+      <div class="car-card" data-owner="gadwall" data-cat="kaytto">
+        <div class="car-carousel" id="carousel-gep">
+          <div class="carousel-track" id="track-gep">
+            <div class="carousel-slide"><div class="car-photo-placeholder"><span>📷</span>Kuva tulossa</div></div>
+          </div>
+          <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-gep"></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">Volvo V70</div>
+          <div class="car-owner">Omistaja: Gadwall</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">2001</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">103 kW / 140hv</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">2,4 R5 bensa</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Käyttöauto</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Car: IMS - Draken BMW 330d -->
+      <div class="car-card" data-owner="drake" data-cat="kaytto">
+        <div class="car-carousel" id="carousel-ims">
+          <div class="carousel-track" id="track-ims">
+            <div class="carousel-slide"><div class="car-photo-placeholder"><span>📷</span>Kuva tulossa</div></div>
+          </div>
+          <span class="car-type-badge badge-kaytto" style="position:absolute;top:12px;right:12px;z-index:10;">Käyttöauto</span>
+          <button class="carousel-btn prev" style="display:none">&#8249;</button>
+          <button class="carousel-btn next" style="display:none">&#8250;</button>
+          <div class="carousel-dots" id="dots-ims"></div>
+        </div>
+        <div class="car-body">
+          <div class="car-name">BMW 330d</div>
+          <div class="car-owner">Omistaja: Drake</div>
+          <div class="car-specs">
+            <div class="spec-item"><span class="spec-label">Vuosimalli</span><span class="spec-value">2011</span></div>
+            <div class="spec-item"><span class="spec-label">Teho</span><span class="spec-value">180 kW / 245hv</span></div>
+            <div class="spec-item"><span class="spec-label">Moottori</span><span class="spec-value">3,0 R6 diesel</span></div>
+            <div class="spec-item"><span class="spec-label">Tila</span><span class="spec-value">Käyttöauto</span></div>
+          </div>
+        </div>
+      </div>
+
       <!-- Car 7: XGX - Mallardin projekti Volvo -->
       <div class="car-card" data-owner="mallard" data-cat="projekti">
         <div class="car-carousel" id="carousel-xgx">
@@ -1825,31 +1900,30 @@
 <section id="saannot">
   <div class="section-inner">
     <div class="section-label">Käyttäytymiskoodi</div>
-    <h2 class="section-title">Säännöt</h2>
+    <h2 class="section-title" id="saannot-title" style="-webkit-tap-highlight-color:transparent;">Säännöt</h2>
     <div class="section-divider"></div>
     <div class="rules-grid" id="rules-grid">
       <div class="rules-page active" id="rules-p1">
         <div class="rule-item"><div class="rule-num">01</div><div class="rule-text">Polliisia kuunnellaan. Aina. Ilman dramatiikkaa.</div></div>
-        <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Ei avointa rasismia, syrjintää tai turhaa draamaa — tässä porukassa tai sen nimissä.</div></div>
-        <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Arvojärjestystä noudatetaan. Johto on johto syystä.</div></div>
-        <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Kuljettajan ajoa ei kommentoida kesken ajon. Huomiot esitetään pysähdyksillä.</div></div>
-        <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Vain johtohenkilöstö voi antaa julkisia linjauksia porukan nimissä.</div></div>
-        <div class="rule-item"><div class="rule-num">06</div><div class="rule-text">Toisten työkaluja tai autoja ei kohdella kuin omia — ne kohdellaan paremmin.</div></div>
+        <div class="rule-item"><div class="rule-num">02</div><div class="rule-text">Ei avointa rasismia, syrjintää tai turhaa draamaa. Ei tässä porukassa tai sen nimissä.</div></div>
+        <div class="rule-item"><div class="rule-num">03</div><div class="rule-text">Kuljettajan ajoa ei kommentoida kesken ajon.</div></div>
+        <div class="rule-item"><div class="rule-num">04</div><div class="rule-text">Vain johtohenkilöstö voi antaa julkisia linjauksia porukan nimissä.</div></div>
+        <div class="rule-item"><div class="rule-num">05</div><div class="rule-text">Toisten työkaluja tai autoja ei kohdella kuin omia, niitä kohdellaan paremmin.</div></div>
       </div>
       <div class="rules-page" id="rules-p2">
-        <div class="rule-item"><div class="rule-num">07</div><div class="rule-text">Kerhoa edustetaan selvinpäin. Tapahtumat ovat tapahtumia, ei juhlia.</div></div>
-        <div class="rule-item"><div class="rule-num">08</div><div class="rule-text">Turha huomionhaku ja sekoilu jätetään kotiin. Tapahtumissa ollaan asialla.</div></div>
-        <div class="rule-item"><div class="rule-num">09</div><div class="rule-text">Jokainen vastaa omista teoistaan ja sakoistaan. Kerho ei ole vakuutus.</div></div>
-        <div class="rule-item"><div class="rule-num">10</div><div class="rule-text">Riidat selvitetään kasvotusten. Ei somedraamaa, ei välitettyjä viestejä.</div></div>
-        <div class="rule-item"><div class="rule-num">11</div><div class="rule-text">Uudet jäsenet tulevat mukaan tutustumisjakson kautta. Kärsivällisyys kannattaa.</div></div>
-        <div class="rule-item"><div class="rule-num">12</div><div class="rule-text">Toisten yksityisyyttä kunnioitetaan — kuvia tai videoita ei julkaista ilman lupaa.</div></div>
+        <div class="rule-item"><div class="rule-num">06</div><div class="rule-text">Kerhoa edustetaan selvinpäin. Tapahtumat ovat tapahtumia, ei juhlia.</div></div>
+        <div class="rule-item"><div class="rule-num">07</div><div class="rule-text">Turha huomionhaku ja sekoilu jätetään kotiin. Tapahtumissa ollaan asiallisesti.</div></div>
+        <div class="rule-item"><div class="rule-num">08</div><div class="rule-text">Jokainen vastaa omista teoistaan ja sakoistaan. Kerho ei ole vakuutus.</div></div>
+        <div class="rule-item"><div class="rule-num">09</div><div class="rule-text">Riidat selvitetään kasvotusten. Ei somedraamaa.</div></div>
+        <div class="rule-item"><div class="rule-num">10</div><div class="rule-text">Uudet jäsenet tulevat mukaan tutustumisjakson kautta. Kärsivällisyys kannattaa.</div></div>
+        <div class="rule-item"><div class="rule-num">11</div><div class="rule-text">Toisten yksityisyyttä kunnioitetaan. Tunnistettavia kuvia tai videoita ei julkaista ilman lupaa.</div></div>
       </div>
       <div class="rules-page" id="rules-p3">
-        <div class="rule-item"><div class="rule-num">13</div><div class="rule-text">Tallissa ja tapahtumissa pidetään paikat siistinä. Omat jäljet siivotaan.</div></div>
-        <div class="rule-item"><div class="rule-num">14</div><div class="rule-text">Autoilla ei tarkoituksella vaaranneta muita tienkäyttäjiä. Ei koskaan.</div></div>
-        <div class="rule-item"><div class="rule-num">15</div><div class="rule-text">Kerhon maineesta pidetään huolta myös netissä. Olet edustaja aina kun näyt.</div></div>
-        <div class="rule-item"><div class="rule-num">16</div><div class="rule-text">Jatkuvasti huonosti käyttäytyvä jäsen voidaan poistaa porukasta johdon päätöksellä.</div></div>
-        <div class="rule-item"><div class="rule-num">17</div><div class="rule-text">Musiikkia ei huudateta turhaan tapahtumissa tai kaupungilla. Naapureilla on korvat.</div></div>
+        <div class="rule-item"><div class="rule-num">12</div><div class="rule-text">Tallissa ja tapahtumissa pidetään paikat siistinä. Omat jäljet siivotaan.</div></div>
+        <div class="rule-item"><div class="rule-num">13</div><div class="rule-text">Autoilla ei tarkoituksella vaaranneta muita tienkäyttäjiä. Ei koskaan.</div></div>
+        <div class="rule-item"><div class="rule-num">14</div><div class="rule-text">Kerhon maineesta pidetään huolta myös netissä. Olet edustaja aina kun näyt.</div></div>
+        <div class="rule-item"><div class="rule-num">15</div><div class="rule-text">Jatkuvasti huonosti käyttäytyvä jäsen voidaan poistaa porukasta johdon päätöksellä.</div></div>
+        <div class="rule-item"><div class="rule-num">16</div><div class="rule-text">Musiikkia ei huudateta turhaan tapahtumissa tai kaupungilla. Naapureilla on korvat.</div></div>
       </div>
     </div>
 
@@ -1861,7 +1935,7 @@
     <div class="warning-banner">
       <div class="warning-icon">🦆</div>
       <div class="warning-text">
-        <strong>Huomio:</strong> Olemme luontokappaleita — ja luonto ei tunne nopeusrajoituksia. Mutta me tunnemme lain ja liikennesäännöt, joten ei vaaranneta muita. Yksi sorsa ei ole kokonainen parvi — pidetään huolta toisistamme ja maineestamme.
+        <strong>Huomio:</strong> Olemme luontokappaleita ja luonto ei tunne nopeusrajoituksia. Mutta me tunnemme lain ja liikennesäännöt, joten ei vaaranneta muita. Yksi sorsa ei ole kokonainen parvi, eli pidetään huolta toisistamme ja maineestamme. Muuten, naputappa sivun ylintä logoa muutaman kerran. 
       </div>
     </div>
   </div>
@@ -1916,7 +1990,7 @@
           <div class="shop-name">Outlaw Ducks Tarra</div>
           <div class="shop-desc">Logotarra laadukkaalla vinyylipohjalla. UV-kestävä, säänkestävä. Sopii auton korin, ikkunan tai kaiken muun koristeluun.</div>
           <div class="shop-price-row">
-            <div class="shop-price">0 €<span>+ postikulut n. 2–3 €</span></div>
+            <div class="shop-price">0 €<span>+ Toimituskulut 2,99 €</span></div>
             <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Outlaw Ducks Tarra" class="btn-order">Tilaa</a>
           </div>
         </div>
@@ -1925,9 +1999,9 @@
         <div class="shop-img" style="padding:0;overflow:hidden;"><img src="tarraTAIhajuste.png" alt="Autohajuste" style="width:100%;height:100%;object-fit:cover;"></div>
         <div class="shop-body">
           <div class="shop-name">Autohajuste – Joku hyvä tuoksu</div>
-          <div class="shop-desc">Klassinen autohajuste Outlaw Ducks -brändillä. Ehkä UV-kestävä, ehkä säänkestävä. Sopii ehkä auton peilin varteen tai kaiken muun koristeluun.</div>
+          <div class="shop-desc">Klassinen autohajuste Outlaw Ducks -brändillä. Ehkä UV-kestävä, ehkä säänkestävä. Sopii ehkä auton peilin varteen tai kaiken muun koristeluun. Saatavilla vaihetelevasti.</div>
           <div class="shop-price-row">
-            <div class="shop-price">0 €<span>+ postikulut n. 3 €</span></div>
+            <div class="shop-price">0 €<span>+ Toimituskulut 3,99 €</span></div>
             <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Autohajuste" class="btn-order">Tilaa</a>
           </div>
         </div>
@@ -1936,9 +2010,9 @@
         <div class="shop-img">📦</div>
         <div class="shop-body">
           <div class="shop-name">Combo-paketti</div>
-          <div class="shop-desc">Tarra + hajuste yhdessä paketissa. Täydellinen lahja itselle tai kaverille, joka ei vielä tiedä, ettei hän voi elää ilman näitä.</div>
+          <div class="shop-desc">Tarra + hajuste yhdessä paketissa. Täydellinen lahja itselle tai kaverille, joka ei vielä tiedä, ettei hän voi elää ilman näitä. Saatavilla vaihtelevasti.</div>
           <div class="shop-price-row">
-            <div class="shop-price">0 €<span>+ postikulut n. 3 €</span></div>
+            <div class="shop-price">0 €<span>+ Toimituskulut 3,99 €</span></div>
             <a href="mailto:OutlawDucksGarage@gmail.com?subject=Tilaus: Combo-paketti" class="btn-order">Tilaa</a>
           </div>
         </div>
@@ -1978,21 +2052,6 @@
         </div>
       </div>
       <a href="peli.html" style="font-family:var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); background:transparent; border:1px solid rgba(201,168,76,0.4); padding:0.7rem 1.5rem; text-decoration:none; border-radius:2px; white-space:nowrap; flex-shrink:0; transition:all 0.2s;" onmouseover="this.style.background='rgba(201,168,76,0.1)'" onmouseout="this.style.background='transparent'">Pelaa →</a>
-    </div>
-
-    <div style="height:1px; background:rgba(255,42,42,0.12);"></div>
-
-    <!-- Virus rivi -->
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:2rem; flex-wrap:wrap;">
-      <div style="display:flex; align-items:center; gap:1.25rem;">
-        <span style="font-size:2.2rem; animation: float 2.8s ease-in-out infinite;">⚠️</span>
-        <div>
-          <div style="font-family:var(--font-body); font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:#e05050; margin-bottom:0.2rem;">Kokeilu</div>
-          <div style="font-family:var(--font-display); font-size:1.2rem; color:var(--white);">Testaa tunnistamiskykyäsi</div>
-          <div style="font-size:0.82rem; color:var(--bone); margin-top:0.2rem;">Napauta ja katso mitä tapahtuu. Täysin turvallista — tai onko?</div>
-        </div>
-      </div>
-      <a href="virus.html" target="_blank" style="font-family:var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:#e05050; background:transparent; border:1px solid rgba(224,80,80,0.4); padding:0.7rem 1.5rem; text-decoration:none; border-radius:2px; white-space:nowrap; flex-shrink:0; transition:all 0.2s;" onmouseover="this.style.background='rgba(224,80,80,0.08)'" onmouseout="this.style.background='transparent'">Avaa →</a>
     </div>
 
   </div>
@@ -2071,24 +2130,10 @@ function setLang(lang, btn) {
   // Duck mode easter egg
   if (lang === 'kvaak') {
     document.title = 'Kvaak Kvaak TC – Kvaak';
-  } else if (lang === 'en') {
-    document.title = 'Outlaw Ducks TC – Oulu';
   } else {
     document.title = 'Outlaw Ducks TC – Oulu';
   }
-
-  // Store preference
-  localStorage.setItem('odLang', lang);
 }
-
-// Restore language on load
-document.addEventListener('DOMContentLoaded', function() {
-  const saved = localStorage.getItem('odLang');
-  if (saved && saved !== 'fi') {
-    const btn = document.querySelector('.lang-btn[onclick*="' + saved + '"]');
-    setLang(saved, btn);
-  }
-});
 </script>
 
 <!-- HAMBURGER JS -->
@@ -2125,7 +2170,7 @@ function filterCars(filter, btn) {
     const owner = card.dataset.owner;
     const cat = card.dataset.cat;
     let show = filter === 'all' ? true
-      : ['mallard','wigeon','goosander','gadwall','duckling'].includes(filter) ? owner === filter
+      : ['mallard','wigeon','goosander','gadwall','drake','duckling'].includes(filter) ? owner === filter
       : cat === filter;
     card.classList.toggle('hidden', !show);
   });
@@ -2475,49 +2520,58 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
-<!-- SALAINEN LOGO-KLIKKI: 5x 2sek → Cloudflare dashboard, energialabra -->
-<script>
-(function() {
-  var logo = document.getElementById('nav-logo-secret');
-  if (!logo) return;
-  var clicks = 0, timer = null;
-  logo.addEventListener('click', function(e) {
-    e.preventDefault();
-    clicks++;
-    if (clicks === 1) {
-      timer = setTimeout(function() { clicks = 0; }, 2000);
-    }
-    if (clicks >= 5) {
-      clearTimeout(timer);
-      clicks = 0;
-      // Avaa Cloudflare dashboard
-      window.open('https://dash.cloudflare.com/ba07aadd96c6abdee085946f7c80cf47/web-analytics/overview/visits?siteTag~in=f55c2349c7a143bab92f974b963be6b8&excludeBots=Yes&time-window=43200', '_blank');
-    }
-  });
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "be6548925ea64c9195797579bdece083"}'></script>
+<!-- End Cloudflare Web Analytics -->
 
-  // Energialabra: napauta ankka-counter 3x nopeasti
-  var counter = document.getElementById('duck-counter');
-  if (counter) {
-    var eCnt = 0, eTimer = null;
-    counter.addEventListener('click', function(e) {
-      e.stopPropagation();
-      eCnt++;
-      if (eCnt === 1) {
-        eTimer = setTimeout(function() { eCnt = 0; }, 1500);
-      }
-      if (eCnt >= 3) {
-        clearTimeout(eTimer);
-        eCnt = 0;
-        window.open('https://energialabra.outlawducks.com', '_blank');
-      }
-    });
-  }
+<script src="salaovi.js"></script>
+
+<!-- PIILOLINKKI: 5 klikkausta "Säännöt"-otsikkoon avaa virus.html (QR-harjoitus) -->
+<script>
+(function(){
+  var el = document.getElementById('saannot-title');
+  if (!el) return;
+  var n = 0, timer = null;
+  el.addEventListener('click', function(){
+    n++; clearTimeout(timer);
+    timer = setTimeout(function(){ n = 0; }, 2000);
+    if (n >= 5){ n = 0; window.location.href = 'virus.html'; }
+  });
 })();
 </script>
 
-<!-- Cloudflare Web Analytics -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "be6548925ea64c9195797579bdece083"}'></script>
-<!-- End Cloudflare Web Analytics -->
-
+<!-- ================================================================
+     OUTLAW DUCKS - PIILOLINKKI ENERGIAJUOMATESTEIHIN (robusti v2)
+     Liita ennen </body>. 5 klikkausta "Outlaw Ducks TC" -tekstiin.
+     ================================================================ -->
+<script>
+(function(){
+  var TARGET    = "/energiatestit/";  // sivun osoite (juuresta)
+  var NEEDED    = 5;                   // klikkausten maara
+  var WINDOW_MS = 1500;               // aikaikkuna (ms)
+  var DEBUG     = false;              // true -> tulostaa konsoliin (F12) testaukseen
+ 
+  var n = 0, timer = null;
+  function log(){ if (DEBUG && window.console) console.log.apply(console,
+    ["[piilolinkki]"].concat([].slice.call(arguments))); }
+  function tick(){
+    n++; log("klik", n + "/" + NEEDED);
+    clearTimeout(timer);
+    timer = setTimeout(function(){ n = 0; }, WINDOW_MS);
+    if (n >= NEEDED){ n = 0; log("avataan", TARGET); window.location.href = TARGET; }
+  }
+  // Kuunnellaan kaikkia klikkauksia (capture) ja etsitaan teksti klikkauskohdasta.
+  document.addEventListener("click", function(ev){
+    var el = ev.target, hops = 0;
+    while (el && hops < 5){
+      var t = (el.textContent || "").replace(/\s+/g, " ").trim();
+      if (t.length <= 60 && /outlaw ducks tc/i.test(t)){ tick(); return; }
+      el = el.parentElement; hops++;
+    }
+  }, true);
+  log("piilolinkki ladattu");
+})();
+</script>
+  
 </body>
 </html>
